@@ -12,11 +12,14 @@ function App() {
         <header className="bg-color text-white py-1 shadow-sm">
           <div className="container-fluid d-flex justify-content-between align-items-center px-4">
             <div className="d-flex align-items-start">
-              <img
-                src="/logo3.webp"
-                alt="Hospital Logo"
-                style={{ height: "70px", marginRight: "50px" }}
-              />
+              <a href="https://raagvitech.com/">
+                {" "}
+                <img
+                  src="/logo3.webp"
+                  alt="Hospital Logo"
+                  style={{ height: "70px", marginRight: "50px" }}
+                />
+              </a>
             </div>
             <h1 className="text-center me-5 fs-1 flex-grow-1 d-none d-md-block">
               RaagviCare
