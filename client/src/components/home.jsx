@@ -2,17 +2,10 @@ import { Link } from "react-router-dom";
 import "./home.css";
 
 export function Home() {
-  function handleMouseover(e) {
-    e.target.stop();
-  }
-  function handleMouseOut(e) {
-    e.target.start();
-  }
-
   return (
     <div className="home-wrapper">
       <div className="home-top">
-        <div className="justify-content-center align-items-center mb-4">
+        <div className=" mb-4">
           Delivering leading-edge <br />
           medical care, with compassion.
         </div>

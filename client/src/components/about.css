@@ -1,0 +1,34 @@
+.about-bg {
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  background: url("/public/about-bg.jpg") no-repeat center center;
+  background-size: cover;
+  color: gray;
+  font-size: x-large;
+}
+
+.title {
+  font-size: 5rem;
+  padding-left: 10%;
+}
+
+.inner-titile {
+  font-size: 2rem;
+}
+
+.sub-title {
+  padding-left: 10%;
+}
+
+.description {
+  font-size: 1rem;
+  color: gray;
+}
+
+.btm-title {
+  font-size: 3rem;
+  color: gray;
+}

@@ -1,6 +1,7 @@
 import "./App.css";
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import { Home } from "./components/home";
+import { About } from "./components/about-us";
 
 function App() {
   return (
@@ -62,6 +63,7 @@ function App() {
         <main className="flex-grow-1 container-fluid py-4 px-4">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="about" element={<About />} />
           </Routes>
         </main>
 
