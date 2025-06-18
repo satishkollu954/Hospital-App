@@ -8,20 +8,20 @@ function App() {
       <div className="d-flex flex-column min-vh-100">
         {/* Header */}
         <header className="bg-color text-white py-1 shadow-sm">
-          <div className="container d-flex justify-content-between align-items-center">
+          <div className="container-fluid d-flex justify-content-between align-items-center px-4">
             <div className="d-flex align-items-start">
               <img
-                src="/logo.png"
+                src="/logo3.webp"
                 alt="Hospital Logo"
                 style={{ height: "70px", marginRight: "50px" }}
               />
             </div>
-            <h1 className="text-center me-4 flex-grow-1 d-none d-md-block">
-              Hospital Management
+            <h1 className="text-center me-5 fs-1 flex-grow-1 d-none d-md-block">
+              RaagviCare
             </h1>
           </div>
-          <div className="container pb-2 me-4">
-            <nav className="d-flex justify-content-end">
+          <div className="container-fluid pb-0 px-4">
+            <nav className="d-flex  ms-5 justify-content-center">
               <ul className="nav">
                 <li className="nav-item">
                   <Link to="/" className="nav-link text-white">
@@ -31,11 +31,6 @@ function App() {
                 <li className="nav-item">
                   <Link to="/about" className="nav-link text-white">
                     About Us
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/services" className="nav-link text-white">
-                    Services
                   </Link>
                 </li>
                 <li className="nav-item">
@@ -50,7 +45,7 @@ function App() {
                 </li>
                 <li className="nav-item">
                   <Link to="/contact" className="nav-link text-white">
-                    Contact
+                    Contact Us
                   </Link>
                 </li>
                 <li className="nav-item">
@@ -64,7 +59,7 @@ function App() {
         </header>
 
         {/* Main content */}
-        <main className="flex-grow-1 container py-4">
+        <main className="flex-grow-1 container-fluid py-4 px-4">
           <Routes>
             <Route path="/" element={<Home />} />
           </Routes>
@@ -72,10 +67,9 @@ function App() {
 
         {/* Footer */}
         <footer className="bg-footer text-white py-4 mt-auto">
-          <div className="container text-center">
+          <div className="container-fluid text-center px-4">
             <p className="mb-1">
-              &copy; {new Date().getFullYear()} Hospital Management System. All
-              rights reserved.
+              &copy; {new Date().getFullYear()} RaagviCare. All rights reserved.
             </p>
             <p className="mb-2">
               Providing quality care for a healthier future.
