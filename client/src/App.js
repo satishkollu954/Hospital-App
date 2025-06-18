@@ -1,24 +1,106 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
+import { Home } from "./components/home";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <div className="d-flex flex-column min-vh-100">
+        {/* Header */}
+        <header className="bg-color text-white py-1 shadow-sm">
+          <div className="container d-flex justify-content-between align-items-center">
+            <div className="d-flex align-items-start">
+              <img
+                src="/logo.png"
+                alt="Hospital Logo"
+                style={{ height: "70px", marginRight: "50px" }}
+              />
+            </div>
+            <h1 className="text-center me-4 flex-grow-1 d-none d-md-block">
+              Hospital Management
+            </h1>
+          </div>
+          <div className="container pb-2 me-4">
+            <nav className="d-flex justify-content-end">
+              <ul className="nav">
+                <li className="nav-item">
+                  <Link to="/" className="nav-link text-white">
+                    Home
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/about" className="nav-link text-white">
+                    About Us
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/services" className="nav-link text-white">
+                    Services
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/treatments" className="nav-link text-white">
+                    Treatments
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/doctors" className="nav-link text-white">
+                    Doctors
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/contact" className="nav-link text-white">
+                    Contact
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/location" className="nav-link text-white">
+                    Location
+                  </Link>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </header>
+
+        {/* Main content */}
+        <main className="flex-grow-1 container py-4">
+          <Routes>
+            <Route path="/" element={<Home />} />
+          </Routes>
+        </main>
+
+        {/* Footer */}
+        <footer className="bg-footer text-white py-4 mt-auto">
+          <div className="container text-center">
+            <p className="mb-1">
+              &copy; {new Date().getFullYear()} Hospital Management System. All
+              rights reserved.
+            </p>
+            <p className="mb-2">
+              Providing quality care for a healthier future.
+            </p>
+            <div>
+              <a href="https://raagvitech.com/" className="text-white mx-2">
+                <i className="bi bi-facebook"></i>
+              </a>
+              <a href="https://raagvitech.com/" className="text-white mx-2">
+                <i className="bi bi-twitter"></i>
+              </a>
+              <a href="https://raagvitech.com/" className="text-white mx-2">
+                <i className="bi bi-instagram"></i>
+              </a>
+              <a
+                href="https://www.linkedin.com/company/raagvitech/posts/?feedView=all"
+                className="text-white mx-2"
+              >
+                <i className="bi bi-linkedin"></i>
+              </a>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </BrowserRouter>
   );
 }
 
