@@ -2,6 +2,7 @@ import "./App.css";
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import { Home } from "./components/home";
 import { About } from "./components/about-us";
+import { Treatment } from "./components/treatments";
 
 function App() {
   return (
@@ -64,6 +65,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="about" element={<About />} />
+            <Route path="treatments" element={<Treatment />} />
           </Routes>
         </main>
 
