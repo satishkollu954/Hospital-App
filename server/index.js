@@ -4,6 +4,7 @@ const { connectToDatabase } = require("./connection.js");
 const app = express();
 
 const userRoute = require("./Routers/user");
+const locationRoutes = require("./Routers/locationRoutes");
 
 app.use(cors());
 app.use(express.json({ limit: "20mb" }));
@@ -18,3 +19,4 @@ app.listen(5000, () => {
 //Connect to MongoDB
 connectToDatabase("mongodb://localhost:27017/Hospital-App");
 app.use("/api", userRoute);
+app.use("/admin", locationRoutes);
