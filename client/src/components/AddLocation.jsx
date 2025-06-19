@@ -1,0 +1,134 @@
+import React, { useState } from "react";
+import axios from "axios";
+import "./AddLocation.css";
+
+export const AddLocation = () => {
+  const [city, setCity] = useState("");
+  const [branches, setBranches] = useState([{ name: "", mapUrl: "" }]);
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
+
+  const handleBranchChange = (index, field, value) => {
+    const updatedBranches = [...branches];
+    updatedBranches[index][field] = value;
+    setBranches(updatedBranches);
+  };
+
+  const addBranch = () => {
+    setBranches([...branches, { name: "", mapUrl: "" }]);
+  };
+
+  const removeBranch = (index) => {
+    const updated = branches.filter((_, i) => i !== index);
+    setBranches(updated);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage(null);
+    setError(null);
+
+    const filledBranches = branches.filter((b) => b.name && b.mapUrl);
+
+    if (!city || filledBranches.length === 0) {
+      return setError("Please enter city and at least one complete branch.");
+    }
+
+    try {
+      await axios.post("http://localhost:5000/admin/locations", {
+        city,
+        branches: filledBranches,
+      });
+      setMessage("Location added successfully!");
+      setCity("");
+      setBranches([{ name: "", mapUrl: "" }]);
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Failed to add location. Try again."
+      );
+    }
+  };
+
+  return (
+    <div className="container mt-5">
+      <h2 className="text-center text-primary mb-4">Add Hospital Location</h2>
+
+      {message && <div className="alert alert-success">{message}</div>}
+      {error && <div className="alert alert-danger">{error}</div>}
+
+      <form onSubmit={handleSubmit} className="shadow p-4 bg-light rounded">
+        <div className="mb-3">
+          <label className="form-label">City Name</label>
+          <input
+            type="text"
+            className="form-control"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            placeholder="Enter city name"
+            required
+          />
+        </div>
+
+        <h5 className="mt-4 mb-2">Branches</h5>
+        {branches.map((branch, index) => (
+          <div
+            key={index}
+            className="border p-3 rounded mb-3 position-relative branch-box"
+          >
+            <div className="row">
+              <div className="col-md-5 mb-2">
+                <label className="form-label">Branch Name</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={branch.name}
+                  onChange={(e) =>
+                    handleBranchChange(index, "name", e.target.value)
+                  }
+                  placeholder="e.g., RaagviCare - Banashankari"
+                />
+              </div>
+              <div className="col-md-6 mb-2">
+                <label className="form-label">Google Map URL</label>
+                <input
+                  type="url"
+                  className="form-control"
+                  value={branch.mapUrl}
+                  onChange={(e) =>
+                    handleBranchChange(index, "mapUrl", e.target.value)
+                  }
+                  placeholder="https://www.google.com/maps?q=..."
+                />
+              </div>
+              <div className="col-md-1 d-flex align-items-end justify-content-end">
+                {branches.length > 1 && (
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm"
+                    onClick={() => removeBranch(index)}
+                  >
+                    &times;
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+
+        <button
+          type="button"
+          className="btn btn-secondary mb-3"
+          onClick={addBranch}
+        >
+          + Add Another Branch
+        </button>
+
+        <div className="text-end">
+          <button type="submit" className="btn btn-primary">
+            Save Location
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};

@@ -1,4 +1,5 @@
-const HospitalLocation = require("../models/HospitalLocation");
+const HospitalLocation = require("../Models/HospitalLocation");
+const { appointmentModel } = require("../Models/appointment");
 
 // Save location data manually
 const addLocation = async (req, res) => {
@@ -58,4 +59,16 @@ const getAllLocations = async (req, res) => {
   }
 };
 
-module.exports = { addLocation, getAllLocations };
+const getAllAppointment = async (req, res) => {
+  try {
+    const appointments = await appointmentModel.find().sort({ date: -1 }); // optional sort
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    res
+      .status(500)
+      .json({ message: "Server error while fetching appointments" });
+  }
+};
+
+module.exports = { addLocation, getAllLocations, getAllAppointment };

@@ -1,0 +1,38 @@
+.container {
+  max-width: 800px;
+}
+
+h2 {
+  font-weight: 600;
+}
+
+h5 {
+  font-weight: 500;
+  color: #0d6efd;
+}
+
+.border {
+  border: 1px solid #dee2e6 !important;
+  background-color: #f8f9fa;
+}
+
+.form-label {
+  font-weight: 500;
+}
+
+input[type="text"],
+input[type="url"] {
+  border-radius: 5px;
+}
+
+button.btn-danger {
+  margin-top: 5px;
+}
+
+button.btn-secondary {
+  margin-top: 15px;
+}
+
+button.btn-primary {
+  margin-top: 20px;
+}

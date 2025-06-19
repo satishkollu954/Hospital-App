@@ -1,5 +1,6 @@
 const { contactModel } = require("../Models/contactus");
 const { appointmentModel } = require("../Models/appointment");
+
 const contactus = async (req, res) => {
   try {
     console.log("Received contact form data:", req.body);
@@ -35,7 +36,8 @@ const appointment = async (req, res) => {
 
     // Convert MM/DD/YYYY to Date object
     const parsedDate = new Date(date); // "06/21/2025" ➝ Date object
-
+    const formattedDate = new Date(parsedDate).toISOString().split("T")[0];
+    console.log("formattedDate", formattedDate);
     if (isNaN(parsedDate)) {
       return res
         .status(400)
@@ -46,7 +48,7 @@ const appointment = async (req, res) => {
       fullName,
       email,
       phone,
-      date: parsedDate,
+      date: formattedDate,
       reason,
     });
 
@@ -66,4 +68,27 @@ const appointment = async (req, res) => {
     }
   }
 };
-module.exports = { contactus, appointment };
+
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (email === "admin@gmail.com" && password === "admin123") {
+    return res.json({ success: true });
+  }
+  return res.json({ success: false, message: "Invalid credentials" });
+};
+
+//To Update the appointment status
+const appointmentChange = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    await appointmentModel.findByIdAndUpdate(id, { status });
+    res.json({ message: "Status updated" });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to update status" });
+  }
+};
+
+module.exports = { contactus, appointment, login, appointmentChange };
