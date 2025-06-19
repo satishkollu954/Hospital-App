@@ -69,6 +69,7 @@ const appointment = async (req, res) => {
   }
 };
 
+//This is used for Admin Log in
 const login = async (req, res) => {
   const { email, password } = req.body;
 

@@ -1,13 +1,66 @@
-.table th,
-.table td {
-  vertical-align: middle;
+.admin-dashboard {
+  width: 100%;
+  overflow-x: hidden;
+}
+/* Give update buttons consistent height and spacing */
+td .btn-lg {
+  width: 100%;
+  font-size: 1.1rem;
+  padding: 0.65rem 1rem;
+}
+td .btn {
+  font-size: 0.95rem;
+  padding: 0.45rem 1rem;
 }
 
+/* Ensure table rows are not wrapped */
+table th,
+table td {
+  white-space: nowrap;
+}
+
+/* Optional: reduce font-size if many columns */
+table {
+  font-size: 0.95rem;
+}
+
+/* Ensure responsive layout without scroll */
+.admin-dashboard .table {
+  table-layout: auto;
+  width: 100%;
+}
+
+/* Adjust badge size */
 .badge {
-  font-size: 0.9rem;
-  padding: 0.5em 0.8em;
+  font-size: 0.8rem;
+  padding: 0.4em 0.6em;
+}
+/* Keep update column from expanding too much */
+table td:last-child {
+  max-width: 180px;
+  white-space: nowrap;
 }
 
-.btn-group .btn {
-  margin-right: 5px;
+/* Optional: smaller button padding */
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+/* Keep update column compact */
+table td:last-child {
+  white-space: nowrap;
+  max-width: 1%;
+}
+
+/* Button group should stay inline and compact */
+.update-buttons {
+  display: inline-flex;
+  gap: 4px;
+}
+
+/* Smaller buttons for cleaner look */
+.update-buttons .btn {
+  padding: 0.25rem 0.4rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
 }

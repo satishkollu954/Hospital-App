@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // ✅ Import this
 import "./AddLocation.css";
 
 export const AddLocation = () => {
@@ -7,6 +8,7 @@ export const AddLocation = () => {
   const [branches, setBranches] = useState([{ name: "", mapUrl: "" }]);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); // ✅ useNavigate hook
 
   const handleBranchChange = (index, field, value) => {
     const updatedBranches = [...branches];
@@ -58,7 +60,7 @@ export const AddLocation = () => {
 
       <form onSubmit={handleSubmit} className="shadow p-4 bg-light rounded">
         <div className="mb-3">
-          <label className="form-label">City Name</label>
+          <label className="form-label">State Name</label>
           <input
             type="text"
             className="form-control"
@@ -77,7 +79,7 @@ export const AddLocation = () => {
           >
             <div className="row">
               <div className="col-md-5 mb-2">
-                <label className="form-label">Branch Name</label>
+                <label className="form-label">City Name</label>
                 <input
                   type="text"
                   className="form-control"
@@ -123,8 +125,15 @@ export const AddLocation = () => {
           + Add Another Branch
         </button>
 
-        <div className="text-end">
-          <button type="submit" className="btn btn-primary">
+        <div className="d-flex justify-content-between align-items-center mt-4">
+          <button
+            type="button"
+            className="btn btn-outline-primary px-4 py-2"
+            onClick={() => navigate(-1)}
+          >
+            Back to Home
+          </button>
+          <button type="submit" className="btn btn-primary px-4 py-2">
             Save Location
           </button>
         </div>
