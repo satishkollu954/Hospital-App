@@ -30,7 +30,7 @@ export function About() {
         commitment. Our hospital combines state-of-the-art medical technology
         with a deep-rooted passion for patient-centric care, ensuring every
         patient feels supported, respected, and understood. <br /> <br />
-        <b>🌟 What We Offer:</b> Comprehensive Medical Services: From routine
+        <b>» What We Offer:</b> Comprehensive Medical Services: From routine
         check-ups to complex surgeries, our services cover a wide spectrum of
         healthcare needs. Experienced and Dedicated Team: Our doctors, nurses,
         and specialists are not only highly qualified but deeply empathetic —
@@ -44,13 +44,11 @@ export function About() {
         interventions. Holistic Well-being: At RaagviCare, we care for the mind,
         body, and soul. Our wellness programs, physiotherapy, counseling, and
         follow-up care make healing complete. <br />
-        <br />
-        💙 Our Mission To deliver{" "}
+        <br />» Our Mission To deliver{" "}
         <b>accessible, affordable, and advanced healthcare</b> that improves
         lives — while maintaining the highest ethical standards and
         compassionate practices. <br />
-        <br />
-        🤝 Why Choose RaagviCare? Because your health deserves{" "}
+        <br />» Why Choose RaagviCare? Because your health deserves{" "}
         <b>
           more than treatment — it deserves care, trust, and human connection.
         </b>{" "}
