@@ -20,10 +20,10 @@ const appointmentSchema = new mongoose.Schema({
   phone: {
     type: String,
   },
-  Date: {
+  date: {
     type: Date,
   },
-  Reason: {
+  reason: {
     type: String,
   },
 });
