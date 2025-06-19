@@ -6,6 +6,7 @@ import { Treatment } from "./components/treatments";
 import { ContactUs } from "./components/contact-us";
 import { Appointment } from "./components/appointment";
 import { Doctors } from "./components/doctors";
+import { Location } from "./components/locations";
 
 function App() {
   return (
@@ -84,6 +85,7 @@ function App() {
             <Route path="appointment" element={<Appointment />} />
             <Route path="contact" element={<ContactUs />} />
             <Route path="doctors" element={<Doctors />} />
+            <Route path="location" element={<Location />} />
           </Routes>
         </main>
 
