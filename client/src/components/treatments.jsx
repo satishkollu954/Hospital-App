@@ -67,8 +67,16 @@ export function Treatment() {
               >
                 {item.title}
               </div>
-              <div className="card-body fs-6" style={{ color: "gray" }}>
+              <div className="card-body fs-6" style={{ color: "grey" }}>
                 {item.description}
+              </div>
+              <div className="ms-3">
+                <a
+                  href="https://en.wikipedia.org/wiki/Skin_condition"
+                  style={{ color: "grey" }}
+                >
+                  Learn More
+                </a>
               </div>
             </div>
           ))}

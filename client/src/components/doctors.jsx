@@ -13,7 +13,7 @@ export function Doctors() {
 
   return (
     <div>
-      <div className="fs-3 fw-bold doc-titile">
+      <div className="fs-3 fw-bold" style={{ color: "grey" }}>
         <u>Doctors</u>
       </div>
       <div>
@@ -26,6 +26,11 @@ export function Doctors() {
                   {item.Name}
                 </p>
                 <p className="doc-label">{item.About}</p>
+                <p className="doc-label">
+                  <a href="https://www.northshore.org/apps/findadoctor/physicians/jaime-beth-alexander">
+                    Learn More
+                  </a>
+                </p>
               </div>
             ))}
           </div>
