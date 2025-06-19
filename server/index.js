@@ -15,6 +15,6 @@ app.listen(5000, () => {
   console.log("Server running on http://localhost:5000");
 });
 
-// Connect to MongoDB
-// connectToDatabase("mongodb://localhost:27017/");
+//Connect to MongoDB
+connectToDatabase("mongodb://localhost:27017/Hospital-App");
 app.use("/api", userRoute);
