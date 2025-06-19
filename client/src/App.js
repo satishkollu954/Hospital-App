@@ -5,6 +5,7 @@ import { About } from "./components/about-us";
 import { Treatment } from "./components/treatments";
 import { ContactUs } from "./components/contact-us";
 import { Appointment } from "./components/appointment";
+import { Doctors } from "./components/doctors";
 
 function App() {
   return (
@@ -82,6 +83,7 @@ function App() {
             <Route path="treatments" element={<Treatment />} />
             <Route path="appointment" element={<Appointment />} />
             <Route path="contact" element={<ContactUs />} />
+            <Route path="doctors" element={<Doctors />} />
           </Routes>
         </main>
 

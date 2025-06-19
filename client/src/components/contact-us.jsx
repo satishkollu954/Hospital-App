@@ -1,10 +1,8 @@
-import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
+import { useState } from "react";
 import axios from "axios";
 import "./contact-us.css"; // Add custom CSS
 
-export const ContactUs = () => {
+export function ContactUs() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -135,4 +133,4 @@ export const ContactUs = () => {
       </div>
     </div>
   );
-};
+}
