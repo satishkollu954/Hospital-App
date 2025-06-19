@@ -58,7 +58,7 @@ export function Treatment() {
           {state.map((item, index) => (
             <div
               key={index}
-              className="card p-2 m-2"
+              className="card p-2 m-2 shadow h-150"
               style={{ width: "300px" }}
             >
               <div

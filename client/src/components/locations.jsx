@@ -30,7 +30,7 @@ export const Location = () => {
       <h2 className="text-center text-primary mb-4">Our Locations</h2>
       <div className="row">
         {hospitals.map((hospital, index) => (
-          <div key={index} className="col-md-6 col-lg-4 mb-4">
+          <div key={index} className="col-md-6 col-lg-6 mb-4">
             <div className="card shadow h-100">
               <div className="card-body">
                 <h5 className="card-title">{hospital.name}</h5>
