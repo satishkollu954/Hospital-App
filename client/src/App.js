@@ -3,6 +3,7 @@ import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import { Home } from "./components/home";
 import { About } from "./components/about-us";
 import { Treatment } from "./components/treatments";
+import { Appointment } from "./components/appointment";
 
 function App() {
   return (
@@ -21,12 +22,21 @@ function App() {
                 />
               </a>
             </div>
-            <h1 className="text-center me-5 fs-1 flex-grow-1 d-none d-md-block">
+            <h1 className="text-center fs-1 flex-grow-1 d-none d-md-block">
               RaagviCare
             </h1>
+            <nav className="d-flex justify-content-end">
+              <Link
+                to="appointment"
+                className="text-white fw-bold px-3 py-2 rounded mt-2 d-inline-block text-decoration-none boxshadow border-0"
+                style={{ cursor: "pointer" }}
+              >
+                Book an Appointment <span className="ms-2">&rarr;</span>
+              </Link>
+            </nav>
           </div>
           <div className="container-fluid pb-0 px-4">
-            <nav className="d-flex  ms-5 justify-content-center">
+            <nav className="d-flex me-4 justify-content-center">
               <ul className="nav">
                 <li className="nav-item">
                   <Link to="/" className="nav-link text-white">
@@ -69,6 +79,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="about" element={<About />} />
             <Route path="treatments" element={<Treatment />} />
+            <Route path="appointment" element={<Appointment />} />
           </Routes>
         </main>
 
