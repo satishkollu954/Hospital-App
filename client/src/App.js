@@ -3,6 +3,7 @@ import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import { Home } from "./components/home";
 import { About } from "./components/about-us";
 import { Treatment } from "./components/treatments";
+import { ContactUs } from "./components/contact-us";
 
 function App() {
   return (
@@ -69,6 +70,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="about" element={<About />} />
             <Route path="treatments" element={<Treatment />} />
+            <Route path="contact" element={<ContactUs />} />
           </Routes>
         </main>
 
