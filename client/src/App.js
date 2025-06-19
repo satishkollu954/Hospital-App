@@ -3,11 +3,8 @@ import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import { Home } from "./components/home";
 import { About } from "./components/about-us";
 import { Treatment } from "./components/treatments";
-<<<<<<< HEAD
-import { Appointment } from "./components/appointment";
-=======
 import { ContactUs } from "./components/contact-us";
->>>>>>> 5c55442488a6a345d60e307be3c2408582054781
+import { Appointment } from "./components/appointment";
 
 function App() {
   return (
@@ -83,11 +80,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="about" element={<About />} />
             <Route path="treatments" element={<Treatment />} />
-<<<<<<< HEAD
             <Route path="appointment" element={<Appointment />} />
-=======
             <Route path="contact" element={<ContactUs />} />
->>>>>>> 5c55442488a6a345d60e307be3c2408582054781
           </Routes>
         </main>
 
