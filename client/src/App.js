@@ -10,6 +10,7 @@ import { Location } from "./components/locations";
 import { AdminLogin } from "./components/AdminLogin";
 import { AdminDashboard } from "./components/admindashboard";
 import { AddLocation } from "./components/AddLocation";
+import { ProtectRoute } from "./components/protectroute";
 
 function App() {
   return (
@@ -89,9 +90,23 @@ function App() {
             <Route path="contact" element={<ContactUs />} />
             <Route path="doctors" element={<Doctors />} />
             <Route path="location" element={<Location />} />
-            <Route path="/admin" element={<AdminLogin />} />
-            <Route path="/admin-dashboard" element={<AdminDashboard />} />
-            <Route path="/add-location" element={<AddLocation />} />
+            <Route path="/adminlogin" element={<AdminLogin />} />
+            <Route
+              path="/admin-dashboard"
+              element={
+                <ProtectRoute>
+                  <AdminDashboard />
+                </ProtectRoute>
+              }
+            />
+            <Route
+              path="/add-location"
+              element={
+                <ProtectRoute>
+                  <AddLocation />
+                </ProtectRoute>
+              }
+            />
           </Routes>
         </main>
 

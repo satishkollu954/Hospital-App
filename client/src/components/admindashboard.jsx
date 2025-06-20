@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./AdminDashboard.css";
+import { useCookies } from "react-cookie";
 
 export const AdminDashboard = () => {
   const [appointments, setAppointments] = useState([]);
   const navigate = useNavigate();
+  const [cookie, removeCookie] = useCookies(["email"]);
 
   useEffect(() => {
     axios
@@ -27,6 +29,13 @@ export const AdminDashboard = () => {
       .catch((err) => console.error("Error updating appointment status:", err));
   };
 
+  function handleSignOutClick() {
+    removeCookie("email", { path: "/" });
+    alert("signed out successfull");
+    navigate("/adminlogin");
+    // window.location.href = "/adminlogin";
+  }
+
   return (
     <div className="admin-dashboard mt-5 px-3">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -43,6 +52,12 @@ export const AdminDashboard = () => {
             onClick={() => navigate("/add-doctor")}
           >
             Add Doctors
+          </button>
+          <button
+            className="btn btn-danger ms-2 mb-1"
+            onClick={handleSignOutClick}
+          >
+            Sign out
           </button>
         </div>
       </div>
