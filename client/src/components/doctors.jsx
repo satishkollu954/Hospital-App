@@ -6,9 +6,14 @@ export function Doctors() {
   const [state, setState] = useState([{ image: "", Name: "", About: "" }]);
 
   useEffect(() => {
-    axios.get("doctors.json").then((response) => {
-      setState(response.data);
-    });
+    axios
+      .get("http://localhost:5000/admin/alldoctors") // 🔁 Changed from doctors.json to API
+      .then((response) => {
+        setState(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching doctor data:", error);
+      });
   }, []);
 
   return (
@@ -21,7 +26,10 @@ export function Doctors() {
           <div className="doc-grid">
             {state.map((item, index) => (
               <div className="doc-item" key={index}>
-                <img src={item.image} alt="doc-img" />
+                <img
+                  src={`http://localhost:5000/uploads/${item.image}`}
+                  alt="doc-img"
+                />
                 <p className="doc-label" style={{ color: "blue" }}>
                   {item.Name}
                 </p>

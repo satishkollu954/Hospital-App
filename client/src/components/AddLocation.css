@@ -36,3 +36,24 @@ button.btn-secondary {
 button.btn-primary {
   margin-top: 20px;
 }
+
+/* Apply background to the whole page */
+body {
+  background-image: url("/public/home-bg.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+/* Optional: add slight dark overlay for contrast */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.85); /* Light overlay for form readability */
+  z-index: -1;
+}

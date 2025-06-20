@@ -10,6 +10,7 @@ import { Location } from "./components/locations";
 import { AdminLogin } from "./components/AdminLogin";
 import { AdminDashboard } from "./components/admindashboard";
 import { AddLocation } from "./components/AddLocation";
+import { AddDoctors } from "./components/addDoctors";
 
 function App() {
   return (
@@ -92,6 +93,7 @@ function App() {
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/add-location" element={<AddLocation />} />
+            <Route path="/add-doctor" element={<AddDoctors />} />
           </Routes>
         </main>
 

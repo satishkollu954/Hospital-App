@@ -20,3 +20,4 @@ app.listen(5000, () => {
 connectToDatabase("mongodb://localhost:27017/Hospital-App");
 app.use("/api", userRoute);
 app.use("/admin", locationRoutes);
+app.use("/uploads", express.static("uploads"));

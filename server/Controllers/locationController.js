@@ -1,6 +1,6 @@
 const HospitalLocation = require("../Models/HospitalLocation");
 const { appointmentModel } = require("../Models/appointment");
-
+const Doctor = require("../Models/Doctor");
 // Save location data manually
 const addLocation = async (req, res) => {
   try {
@@ -71,4 +71,32 @@ const getAllAppointment = async (req, res) => {
   }
 };
 
-module.exports = { addLocation, getAllLocations, getAllAppointment };
+const addDoctors = async (req, res) => {
+  try {
+    const { Name, About } = req.body;
+    const image = req.file.filename;
+
+    const newDoctor = new Doctor({ image, Name, About });
+    await newDoctor.save();
+    res.status(201).json({ message: "Doctor added" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const getAllDoctors = async (req, res) => {
+  try {
+    const doctors = await Doctor.find();
+    res.json(doctors);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+module.exports = {
+  addLocation,
+  getAllLocations,
+  getAllAppointment,
+  addDoctors,
+  getAllDoctors,
+};
