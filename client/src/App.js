@@ -10,6 +10,7 @@ import { Location } from "./components/locations";
 import { AdminLogin } from "./components/AdminLogin";
 import { AdminDashboard } from "./components/admindashboard";
 import { AddLocation } from "./components/AddLocation";
+import { ProtectRoute } from "./components/protectroute";
 import { AddDoctors } from "./components/addDoctors";
 
 function App() {
@@ -90,7 +91,7 @@ function App() {
             <Route path="contact" element={<ContactUs />} />
             <Route path="doctors" element={<Doctors />} />
             <Route path="location" element={<Location />} />
-            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/adminlogin" element={<AdminLogin />} />
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/add-location" element={<AddLocation />} />
             <Route path="/add-doctor" element={<AddDoctors />} />

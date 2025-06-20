@@ -3,11 +3,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./AdminLogin.css"; // Custom styles (optional)
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
 
 export const AdminLogin = () => {
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [cookie, setCookie] = useCookies(["email"]);
 
   const handleChange = (e) => {
     setLoginData((prev) => ({
@@ -25,8 +27,12 @@ export const AdminLogin = () => {
         "http://localhost:5000/api/admin/login",
         loginData
       );
+      // console.log("======", loginData);
+      // console.log(loginData.email);
       if (res.data.success) {
+        setCookie("email", loginData.email, { path: "/" });
         alert("Login successful!");
+
         navigate("/admin-dashboard"); // or wherever your dashboard is
       } else {
         setError("Invalid credentials");
