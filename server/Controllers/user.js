@@ -30,6 +30,7 @@ const contactus = async (req, res) => {
   }
 };
 
+// Adding Appointments
 const appointment = async (req, res) => {
   try {
     const { fullName, email, phone, date, reason } = req.body;
@@ -92,4 +93,9 @@ const appointmentChange = async (req, res) => {
   }
 };
 
-module.exports = { contactus, appointment, login, appointmentChange };
+module.exports = {
+  contactus,
+  appointment,
+  login,
+  appointmentChange,
+};

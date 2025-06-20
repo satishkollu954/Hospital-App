@@ -6,9 +6,10 @@ const {
   addLocation,
   getAllLocations,
   getAllAppointment,
+  DeleteAppointment,
   addDoctors,
   getAllDoctors,
-} = require("../controllers/locationController");
+} = require("../Controllers/locationController");
 
 const { appointmentChange } = require("../Controllers/user");
 
@@ -18,6 +19,7 @@ router.get("/locations", getAllLocations); // fetch to show in UI
 // To Update status
 router.patch("/appointments/:id", appointmentChange);
 router.get("/appointments", getAllAppointment);
+router.delete("/appointments/:id", DeleteAppointment);
 router.post("/adddoctors", upload.single("image"), addDoctors);
 router.get("/alldoctors", getAllDoctors);
 module.exports = router;

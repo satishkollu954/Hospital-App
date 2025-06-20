@@ -29,6 +29,22 @@ export const AdminDashboard = () => {
       .catch((err) => console.error("Error updating appointment status:", err));
   };
 
+  const deleteAppointment = (id) => {
+    var flag = window.confirm("Are you sure? what to delete");
+    if (flag === true) {
+      axios
+        .delete(`http://localhost:5000/admin/appointments/${id}`)
+        .then(() => {
+          alert("deleted successfully..");
+          setAppointments((prev) => prev.filter((a) => a._id !== id));
+        })
+        .catch((err) => {
+          console.error("Error deleting appointment:", err);
+          alert("Failed to delete.");
+        });
+    }
+  };
+
   function handleSignOutClick() {
     removeCookie("email", { path: "/" });
     alert("signed out successfull");
@@ -117,6 +133,12 @@ export const AdminDashboard = () => {
                       onClick={() => updateStatus(appt._id, "Completed")}
                     >
                       Completed
+                    </button>
+                    <button
+                      className="btn btn-outline-danger px-3 py-2 fw-semibold"
+                      onClick={() => deleteAppointment(appt._id)}
+                    >
+                      Delete
                     </button>
                   </div>
                 </td>
