@@ -52,8 +52,13 @@ export const AdminDashboard = () => {
     // window.location.href = "/adminlogin";
   }
 
+  function handleQueryClick() {
+    console.log("coming inside query");
+    navigate("/queries");
+  }
+
   return (
-    <div className="admin-dashboard mt-5 px-3">
+    <div className="admin-dashboard mt-1 px-3">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="text-primary">Admin Dashboard</h2>
         <div>
@@ -64,13 +69,19 @@ export const AdminDashboard = () => {
             Add Location
           </button>
           <button
-            className="btn btn-warning"
+            className="btn btn-primary mb-4"
             onClick={() => navigate("/add-doctor")}
           >
             Add Doctors
           </button>
           <button
-            className="btn btn-danger ms-2 mb-1"
+            className="btn btn-warning ms-2 mb-1"
+            onClick={handleQueryClick}
+          >
+            All Queries
+          </button>
+          <button
+            className="btn btn-danger ms-2 mb-2"
             onClick={handleSignOutClick}
           >
             Sign out
@@ -135,7 +146,7 @@ export const AdminDashboard = () => {
                       Completed
                     </button>
                     <button
-                      className="btn btn-outline-danger px-3 py-2 fw-semibold"
+                      className="bi bi-trash-fill btn btn-outline-danger px-3 py-2 fw-semibold"
                       onClick={() => deleteAppointment(appt._id)}
                     >
                       Delete
