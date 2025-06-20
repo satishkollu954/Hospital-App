@@ -30,12 +30,11 @@ export const AdminDashboard = () => {
   };
 
   const deleteAppointment = (id) => {
-    var flag = window.confirm("Are you sure? what to delete");
-    if (flag === true) {
+    if (window.confirm("Are you sure you want to delete this appointment?")) {
       axios
         .delete(`http://localhost:5000/admin/appointments/${id}`)
         .then(() => {
-          alert("deleted successfully..");
+          alert("Deleted successfully.");
           setAppointments((prev) => prev.filter((a) => a._id !== id));
         })
         .catch((err) => {
@@ -45,12 +44,11 @@ export const AdminDashboard = () => {
     }
   };
 
-  function handleSignOutClick() {
+  const handleSignOutClick = () => {
     removeCookie("email", { path: "/" });
-    alert("signed out successfull");
+    alert("Signed out successfully");
     navigate("/adminlogin");
-    // window.location.href = "/adminlogin";
-  }
+  };
 
   return (
     <div className="admin-dashboard mt-5 px-3">
@@ -64,15 +62,12 @@ export const AdminDashboard = () => {
             Add Location
           </button>
           <button
-            className="btn btn-warning"
+            className="btn btn-warning me-2"
             onClick={() => navigate("/add-doctor")}
           >
             Add Doctors
           </button>
-          <button
-            className="btn btn-danger ms-2 mb-1"
-            onClick={handleSignOutClick}
-          >
+          <button className="btn btn-danger" onClick={handleSignOutClick}>
             Sign out
           </button>
         </div>
@@ -81,13 +76,13 @@ export const AdminDashboard = () => {
       <table className="table table-bordered shadow-sm w-100">
         <thead className="table-light">
           <tr>
-            <th>Full Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Date</th>
-            <th>Reason</th>
-            <th>Status</th>
-            <th>Update</th>
+            <th style={{ width: "12%" }}>Full Name</th>
+            <th style={{ width: "12%" }}>Email</th>
+            <th style={{ width: "10%" }}>Phone</th>
+            <th style={{ width: "10%" }}>Date</th>
+            <th style={{ width: "22%" }}>Reason</th>
+            <th style={{ width: "10%" }}>Status</th>
+            <th style={{ width: "24%" }}>Update</th>
           </tr>
         </thead>
         <tbody>
@@ -98,7 +93,7 @@ export const AdminDashboard = () => {
                 <td>{appt.email}</td>
                 <td>{appt.phone}</td>
                 <td>{new Date(appt.date).toISOString().split("T")[0]}</td>
-                <td>{appt.reason}</td>
+                <td className="reason-cell">{appt.reason}</td>
                 <td>
                   <span
                     className={`badge ${
@@ -115,27 +110,27 @@ export const AdminDashboard = () => {
                   </span>
                 </td>
                 <td>
-                  <div className="d-flex gap-2 flex-wrap">
+                  <div className="d-flex gap-2 flex-wrap justify-content-center">
                     <button
-                      className="btn btn-outline-primary px-3 py-2 fw-semibold"
+                      className="btn btn-outline-primary btn-sm fw-semibold"
                       onClick={() => updateStatus(appt._id, "Started")}
                     >
                       Start
                     </button>
                     <button
-                      className="btn btn-outline-warning px-3 py-2 fw-semibold"
+                      className="btn btn-outline-warning btn-sm fw-semibold"
                       onClick={() => updateStatus(appt._id, "In Progress")}
                     >
                       Progress
                     </button>
                     <button
-                      className="btn btn-outline-success px-3 py-2 fw-semibold"
+                      className="btn btn-outline-success btn-sm fw-semibold"
                       onClick={() => updateStatus(appt._id, "Completed")}
                     >
                       Completed
                     </button>
                     <button
-                      className="btn btn-outline-danger px-3 py-2 fw-semibold"
+                      className="btn btn-outline-danger btn-sm fw-semibold"
                       onClick={() => deleteAppointment(appt._id)}
                     >
                       Delete

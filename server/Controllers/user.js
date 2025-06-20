@@ -35,10 +35,9 @@ const appointment = async (req, res) => {
   try {
     const { fullName, email, phone, date, reason } = req.body;
 
-    // Convert MM/DD/YYYY to Date object
-    const parsedDate = new Date(date); // "06/21/2025" ➝ Date object
+    const parsedDate = new Date(date);
     const formattedDate = new Date(parsedDate).toISOString().split("T")[0];
-    console.log("formattedDate", formattedDate);
+
     if (isNaN(parsedDate)) {
       return res
         .status(400)
@@ -54,19 +53,13 @@ const appointment = async (req, res) => {
     });
 
     await newAppointment.save();
-
+    console.log("Appointment saved");
     res.status(201).json({ message: "Appointment booked successfully." });
   } catch (error) {
     console.error("Error saving appointment:", error);
-    if (error.code === 11000 && error.keyValue?.email) {
-      res
-        .status(409)
-        .json({ message: "Email already used for an appointment." });
-    } else {
-      res
-        .status(500)
-        .json({ message: "Server error while booking appointment." });
-    }
+    res
+      .status(500)
+      .json({ message: "Server error while booking appointment." });
   }
 };
 
