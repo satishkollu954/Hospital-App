@@ -7,7 +7,7 @@ import { useCookies } from "react-cookie";
 export const AdminDashboard = () => {
   const [appointments, setAppointments] = useState([]);
   const navigate = useNavigate();
-  const [cookie, removeCookie] = useCookies(["email"]);
+  const [cookie, setCookie, removeCookie] = useCookies(["email"]);
 
   useEffect(() => {
     axios

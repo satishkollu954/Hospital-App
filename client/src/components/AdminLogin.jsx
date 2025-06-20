@@ -32,7 +32,6 @@ export const AdminLogin = () => {
       if (res.data.success) {
         setCookie("email", loginData.email, { path: "/" });
         alert("Login successful!");
-
         navigate("/admin-dashboard"); // or wherever your dashboard is
       } else {
         setError("Invalid credentials");

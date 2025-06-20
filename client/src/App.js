@@ -92,9 +92,30 @@ function App() {
             <Route path="doctors" element={<Doctors />} />
             <Route path="location" element={<Location />} />
             <Route path="/adminlogin" element={<AdminLogin />} />
-            <Route path="/admin-dashboard" element={<AdminDashboard />} />
-            <Route path="/add-location" element={<AddLocation />} />
-            <Route path="/add-doctor" element={<AddDoctors />} />
+            <Route
+              path="/admin-dashboard"
+              element={
+                <ProtectRoute>
+                  <AdminDashboard />
+                </ProtectRoute>
+              }
+            />
+            <Route
+              path="/add-location"
+              element={
+                <ProtectRoute>
+                  <AddLocation />
+                </ProtectRoute>
+              }
+            />
+            <Route
+              path="/add-doctor"
+              element={
+                <ProtectRoute>
+                  <AddDoctors />
+                </ProtectRoute>
+              }
+            />
           </Routes>
         </main>
 
