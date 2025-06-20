@@ -11,7 +11,7 @@ const {
   getAllDoctors,
 } = require("../Controllers/locationController");
 
-const { appointmentChange } = require("../Controllers/user");
+const { appointmentChange, AllQueries } = require("../Controllers/user");
 
 router.post("/locations", addLocation); // to add manually via Postman
 router.get("/locations", getAllLocations); // fetch to show in UI
@@ -22,4 +22,5 @@ router.get("/appointments", getAllAppointment);
 router.delete("/appointments/:id", DeleteAppointment);
 router.post("/adddoctors", upload.single("image"), addDoctors);
 router.get("/alldoctors", getAllDoctors);
+router.get("/Allqueries", AllQueries);
 module.exports = router;

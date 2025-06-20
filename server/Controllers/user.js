@@ -1,6 +1,7 @@
 const { contactModel } = require("../Models/contactus");
 const { appointmentModel } = require("../Models/appointment");
 
+// inserting new queries
 const contactus = async (req, res) => {
   try {
     console.log("Received contact form data:", req.body);
@@ -27,6 +28,17 @@ const contactus = async (req, res) => {
     } else {
       res.status(500).json({ message: "Server error while saving contact." });
     }
+  }
+};
+
+// fetching all the contact queries
+const AllQueries = async (req, res) => {
+  try {
+    const queries = await contactModel.find();
+    console.log(queries);
+    res.json(queries);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -91,4 +103,5 @@ module.exports = {
   appointment,
   login,
   appointmentChange,
+  AllQueries,
 };

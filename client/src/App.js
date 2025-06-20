@@ -12,6 +12,7 @@ import { AdminDashboard } from "./components/admindashboard";
 import { AddLocation } from "./components/AddLocation";
 import { ProtectRoute } from "./components/protectroute";
 import { AddDoctors } from "./components/addDoctors";
+import { AllQueries } from "./components/AllQueries";
 
 function App() {
   return (
@@ -114,6 +115,29 @@ function App() {
                 <ProtectRoute>
                   <AddDoctors />
                 </ProtectRoute>
+              }
+            />
+            <Route
+              path="/queries"
+              element={
+                <ProtectRoute>
+                  <AllQueries />
+                </ProtectRoute>
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <div className="d-flex flex-column justify-content-center align-items-center vh-100 bg-light text-center">
+                  <h1 className="display-4 text-danger">404</h1>
+                  <h3>Looking for something?</h3>
+                  <p className="text-muted">
+                    We are sorry, the page you requested could not be found.
+                  </p>
+                  <a href="/" className="btn btn-primary mt-3">
+                    Go to Home
+                  </a>
+                </div>
               }
             />
           </Routes>
