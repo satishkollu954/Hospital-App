@@ -12,7 +12,7 @@ app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 
 // Create HTTP server & socket
 
-app.listen(5000, () => {
+app.listen(5000, "0.0.0.0", () => {
   console.log("Server running on http://localhost:5000");
 });
 

@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Doctor = require("../Models/Doctor");
+const sendOTP = require("../Controllers/sendotp");
 const upload = require("../middlewares/upload");
+const verifyOTP = require("../Controllers/verifyOTP");
 const {
   addLocation,
   getAllLocations,
@@ -23,4 +25,6 @@ router.delete("/appointments/:id", DeleteAppointment);
 router.post("/adddoctors", upload.single("image"), addDoctors);
 router.get("/alldoctors", getAllDoctors);
 router.get("/Allqueries", AllQueries);
+router.post("/send-otp", sendOTP);
+router.post("/verify-otp", verifyOTP);
 module.exports = router;
