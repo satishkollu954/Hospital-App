@@ -1,6 +1,6 @@
 const { contactModel } = require("../Models/contactus");
 const { appointmentModel } = require("../Models/appointment");
-
+const Staff = require("../Models/staffs");
 // inserting new queries
 const contactus = async (req, res) => {
   try {
@@ -79,10 +79,34 @@ const appointment = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
 
+  // Step 1: Check if admin login
   if (email === "admin@gmail.com" && password === "admin123") {
-    return res.json({ success: true });
+    return res.json({ success: true, role: "admin" });
   }
-  return res.json({ success: false, message: "Invalid credentials" });
+
+  try {
+    // Step 2: Find staff user
+    const staff = await Staff.findOne({ Email: email });
+
+    if (!staff) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    // Step 3: Compare password directly (plain text)
+    if (staff.Password !== password) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Incorrect password" });
+    }
+
+    // Step 4: Success
+    return res.json({ success: true, role: "staff" });
+  } catch (err) {
+    console.error("Login error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
 };
 
 //To Update the appointment status

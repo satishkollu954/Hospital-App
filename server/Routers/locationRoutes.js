@@ -9,9 +9,8 @@ const {
   getAllLocations,
   getAllAppointment,
   DeleteAppointment,
-  addDoctors,
-  getAllDoctors,
 } = require("../Controllers/locationController");
+const { addDoctors, getAllDoctors } = require("../Controllers/doctor");
 
 const { appointmentChange, AllQueries } = require("../Controllers/user");
 
