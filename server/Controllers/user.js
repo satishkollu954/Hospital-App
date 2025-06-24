@@ -45,7 +45,28 @@ const AllQueries = async (req, res) => {
 // Adding Appointments
 const appointment = async (req, res) => {
   try {
-    const { fullName, email, phone, date, reason } = req.body;
+    const {
+      fullName,
+      email,
+      phone,
+      date,
+      reason,
+      disease,
+      state,
+      city,
+      doctor,
+    } = req.body;
+
+    console.log(
+      "disease ",
+      disease,
+      "state ",
+      state,
+      "city ",
+      city,
+      "doctor ",
+      doctor
+    );
 
     const parsedDate = new Date(date);
     const formattedDate = new Date(parsedDate).toISOString().split("T")[0];
@@ -62,6 +83,10 @@ const appointment = async (req, res) => {
       phone,
       date: formattedDate,
       reason,
+      disease,
+      state,
+      city,
+      doctor,
     });
 
     await newAppointment.save();

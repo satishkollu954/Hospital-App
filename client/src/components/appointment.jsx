@@ -16,7 +16,7 @@ export function Appointment() {
   const [states, setStates] = useState([]);
   const [city, setCities] = useState([]);
 
-  const [diseases] = useState(["Orthopedic", "Cardio", "Skin"]);
+  const [diseases, setDiseases] = useState([]);
 
   const formik = useFormik({
     initialValues: {
@@ -27,7 +27,7 @@ export function Appointment() {
       state: "",
       city: "",
       date: "",
-      Doctor: "",
+      doctor: "",
       time: "",
       reason: "",
     },
@@ -41,7 +41,7 @@ export function Appointment() {
       state: yup.string().required("State is required"),
       city: yup.string().required("City is required"),
       disease: yup.string().required("Disease is required"),
-      Doctor: yup.string().required("Doctor is required"),
+      doctor: yup.string().required("Doctor is required"),
       date: yup
         .date()
         .min(today, "Date cannot be in the past")
@@ -90,9 +90,9 @@ export function Appointment() {
   }, [formik.values.city, formik.values.disease]);
 
   useEffect(() => {
-    if (formik.values.Doctor) {
+    if (formik.values.doctor) {
       const selectedDoctor = doctors.find(
-        (doc) => doc.Name === formik.values.Doctor
+        (doc) => doc.Name === formik.values.doctor
       );
       if (selectedDoctor) {
         const from = selectedDoctor.From || "";
@@ -107,7 +107,7 @@ export function Appointment() {
         }
       }
     }
-  }, [formik.values.Doctor, doctors]);
+  }, [formik.values.doctor, doctors]);
 
   useEffect(() => {
     axios
@@ -119,6 +119,19 @@ export function Appointment() {
       .catch((err) => {
         console.error("Failed to load states", err);
         setStates([]);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/admin/getdisease")
+      .then((res) => {
+        console.log("response", res.data);
+        setDiseases(res.data); // assuming res.data is an array of state strings
+      })
+      .catch((err) => {
+        console.error("Failed to load states", err);
+        setDiseases([]);
       });
   }, []);
 
@@ -307,8 +320,8 @@ export function Appointment() {
                 >
                   <option value="">Select Disease</option>
                   {diseases.map((d) => (
-                    <option key={d} value={d}>
-                      {d}
+                    <option key={d._id} value={d.disease}>
+                      {d.disease}
                     </option>
                   ))}
                 </select>
@@ -335,10 +348,10 @@ export function Appointment() {
               <div className="mb-3">
                 <label className="form-label fw-bold">Doctor</label>
                 <select
-                  name="Doctor"
+                  name="doctor"
                   className="form-control"
                   onChange={formik.handleChange}
-                  value={formik.values.Doctor}
+                  value={formik.values.doctor}
                   disabled={!Array.isArray(doctors) || doctors.length === 0}
                 >
                   <option value="">Select Doctor</option>
@@ -349,8 +362,8 @@ export function Appointment() {
                       </option>
                     ))}
                 </select>
-                {formik.touched.Doctor && formik.errors.Doctor && (
-                  <p className="text-danger">{formik.errors.Doctor}</p>
+                {formik.touched.doctor && formik.errors.doctor && (
+                  <p className="text-danger">{formik.errors.doctor}</p>
                 )}
               </div>
               {/*Time */}

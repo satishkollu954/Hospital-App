@@ -21,7 +21,9 @@ export const AdminDashboard = () => {
       .patch(`http://localhost:5000/admin/appointments/${id}`, {
         status: newStatus,
       })
-      .then(() => {
+      .then((res) => {
+        console.log("id --> ", id);
+        console.log("res --> ", res.data.message);
         setAppointments((prev) =>
           prev.map((a) => (a._id === id ? { ...a, status: newStatus } : a))
         );
