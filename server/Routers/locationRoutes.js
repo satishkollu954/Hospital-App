@@ -4,6 +4,8 @@ const Doctor = require("../Models/Doctor");
 const sendOTP = require("../Controllers/sendotp");
 const upload = require("../middlewares/upload");
 const verifyOTP = require("../Controllers/verifyOTP");
+const diseaseController = require("../Controllers/diseaseController");
+
 const {
   addLocation,
   getAllLocations,
@@ -30,5 +32,8 @@ router.post("/send-otp", sendOTP);
 router.post("/verify-otp", verifyOTP);
 router.get("/states", getAllStates);
 router.get("/cities", getCitiesByState);
+
+router.post("/adddisease", diseaseController.addDisease);
+router.get("/getdisease", diseaseController.getDiseases);
 
 module.exports = router;

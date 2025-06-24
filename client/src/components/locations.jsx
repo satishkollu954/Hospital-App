@@ -17,7 +17,7 @@ export const Location = () => {
       <h2 className="text-center text-primary mb-5">Our Locations</h2>
       {cities.map((cityData, index) => (
         <div key={index} className="mb-5">
-          <h4 className="text-dark fw-bold mb-3">{cityData.city}</h4>
+          <h4 className="text-dark fw-bold mb-3">{cityData.State}</h4>
           <div className="row">
             {cityData.branches.map((branch, idx) => (
               <div key={idx} className="col-md-6 col-lg-4 mb-4">
