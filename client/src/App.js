@@ -15,6 +15,7 @@ import { AddDoctors } from "./components/addDoctors";
 import { AllQueries } from "./components/AllQueries";
 import { DoctorDashboard } from "./components/doctorDashboard";
 import { ForgetPassword } from "./components/forgetPassword";
+import { AddDiseases } from "./components/AddDiseases";
 
 function App() {
   return (
@@ -97,6 +98,7 @@ function App() {
             <Route path="/login" element={<AdminLogin />} />
             <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
             <Route path="forgetPassword" element={<ForgetPassword />} />
+            <Route path="add-disease" element={<AddDiseases />} />
 
             <Route
               path="/admin-dashboard"

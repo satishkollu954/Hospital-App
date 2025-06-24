@@ -50,6 +50,10 @@ export const AdminDashboard = () => {
     navigate("/adminlogin");
   };
 
+  function handleDiseaseClick() {
+    navigate("/add-disease");
+  }
+
   function handleQueryClick() {
     console.log("coming inside query");
     navigate("/queries");
@@ -74,10 +78,17 @@ export const AdminDashboard = () => {
           </button>
           <button
             className="btn btn-warning ms-2 mb-1"
+            onClick={handleDiseaseClick}
+          >
+            Add diseases
+          </button>
+          <button
+            className="btn btn-warning ms-2 mb-1"
             onClick={handleQueryClick}
           >
             All Queries
           </button>
+
           <button
             className="btn btn-danger ms-2 mb-2"
             onClick={handleSignOutClick}
