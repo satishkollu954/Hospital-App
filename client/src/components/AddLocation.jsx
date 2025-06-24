@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"; // ✅ Import this
 import "./AddLocation.css";
 
 export const AddLocation = () => {
-  const [city, setCity] = useState("");
+  const [State, setState] = useState("");
   const [branches, setBranches] = useState([{ name: "", mapUrl: "" }]);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
@@ -32,17 +32,17 @@ export const AddLocation = () => {
 
     const filledBranches = branches.filter((b) => b.name && b.mapUrl);
 
-    if (!city || filledBranches.length === 0) {
+    if (!State || filledBranches.length === 0) {
       return setError("Please enter city and at least one complete branch.");
     }
 
     try {
       await axios.post("http://localhost:5000/admin/locations", {
-        city,
+        State,
         branches: filledBranches,
       });
       setMessage("Location added successfully!");
-      setCity("");
+      setState("");
       setBranches([{ name: "", mapUrl: "" }]);
     } catch (err) {
       setError(
@@ -64,8 +64,8 @@ export const AddLocation = () => {
           <input
             type="text"
             className="form-control"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
+            value={State}
+            onChange={(e) => setState(e.target.value)}
             placeholder="Enter city name"
             required
           />

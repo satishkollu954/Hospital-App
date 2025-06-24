@@ -9,11 +9,11 @@ const doctorSchema = new mongoose.Schema({
   Designation: String,
   Specialization: String,
   Age: Number,
-  WorkingLocation: String,
-  Availability: {
-    from: String, // e.g., "10:00 AM"
-    to: String, // e.g., "06:00 PM"
-  },
+  State: String,
+  City: String,
+  Availability: Boolean,
+  From: String, // e.g., "10:00 AM"
+  To: String, // e.g., "06:00 PM"
 });
 
 module.exports = mongoose.model("Doctor", doctorSchema);

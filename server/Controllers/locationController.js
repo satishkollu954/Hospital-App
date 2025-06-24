@@ -4,27 +4,27 @@ const { appointmentModel } = require("../Models/appointment");
 // Save location data manually
 const addLocation = async (req, res) => {
   try {
-    const { city, branches } = req.body;
+    const { State, branches } = req.body;
 
-    // Check if the city already exists
-    const existingCity = await HospitalLocation.findOne({ city });
+    // Check if the State already exists
+    const existingState = await HospitalLocation.findOne({ State });
 
-    if (existingCity) {
+    if (existingState) {
       let added = false;
 
       // Add only new branches (by name)
       branches.forEach((newBranch) => {
-        const exists = existingCity.branches.some(
+        const exists = existingState.branches.some(
           (b) => b.name === newBranch.name
         );
         if (!exists) {
-          existingCity.branches.push(newBranch);
+          existingState.branches.push(newBranch);
           added = true;
         }
       });
 
       if (added) {
-        await existingCity.save();
+        await existingState.save();
         return res.status(200).json({
           message: "New branches added to existing city.",
         });
@@ -36,7 +36,7 @@ const addLocation = async (req, res) => {
     }
 
     // City doesn't exist, create new
-    const newLocation = new HospitalLocation({ city, branches });
+    const newLocation = new HospitalLocation({ State, branches });
     await newLocation.save();
 
     res.status(201).json({ message: "City and branches added successfully." });

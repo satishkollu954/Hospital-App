@@ -12,13 +12,32 @@ const addDoctors = async (req, res) => {
       Designation,
       Specialization,
       Age,
-      WorkingLocation,
-      AvailabilityFrom,
-      AvailabilityTo,
+      State,
+      City,
+      From,
+      To,
+      Availability,
     } = req.body;
 
     const image = req.file?.filename || null;
 
+    // 🔍 Check if email already exists in Doctor collection
+    const doctorExists = await Doctor.findOne({ Email });
+    if (doctorExists) {
+      return res
+        .status(400)
+        .json({ message: "Doctor with this email already exists" });
+    }
+
+    // 🔍 Check if email already exists in Staff collection
+    const staffExists = await Staff.findOne({ Email });
+    if (staffExists) {
+      return res
+        .status(400)
+        .json({ message: "Email already exists in staff records" });
+    }
+
+    // ✅ Create new doctor
     const newDoctor = new Doctor({
       image,
       Name,
@@ -27,20 +46,18 @@ const addDoctors = async (req, res) => {
       Designation,
       Specialization,
       Age,
-      WorkingLocation,
-      Availability: {
-        from: AvailabilityFrom,
-        to: AvailabilityTo,
-      },
+      State,
+      City,
+      From,
+      To,
+      Availability,
     });
 
     await newDoctor.save();
 
-    const existingStaff = await Staff.findOne({ Email });
+    // ✅ Add email to Staff collection (no password/otp)
+    await Staff.create({ Email, Password: "", Otp: "" });
 
-    if (!existingStaff) {
-      await Staff.create({ Email });
-    }
     res.status(201).json({ message: "Doctor added successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -67,9 +84,11 @@ const updateDoctor = async (req, res) => {
       Designation,
       Specialization,
       Age,
-      WorkingLocation,
-      AvailabilityFrom,
-      AvailabilityTo,
+      State,
+      City,
+      From,
+      To,
+      Availability,
     } = req.body;
 
     const updatedFields = {
@@ -78,11 +97,11 @@ const updateDoctor = async (req, res) => {
       Designation,
       Specialization,
       Age,
-      WorkingLocation,
-      Availability: {
-        from: AvailabilityFrom,
-        to: AvailabilityTo,
-      },
+      State,
+      City,
+      From,
+      To,
+      Availability,
     };
 
     if (req.file?.filename) {

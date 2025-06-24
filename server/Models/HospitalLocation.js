@@ -6,7 +6,7 @@ const branchSchema = new mongoose.Schema({
 });
 
 const hospitalLocationSchema = new mongoose.Schema({
-  city: {
+  State: {
     type: String,
     required: true,
   },

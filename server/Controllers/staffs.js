@@ -109,3 +109,26 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: "Login failed" });
   }
 };
+
+exports.doctorsBasedOnCityAndDiseas = async (req, res) => {
+  try {
+    const { city, Specialization } = req.query;
+
+    // 💡 Build filter object dynamically
+    const filter = {};
+    if (city) filter.City = city;
+    if (Specialization) filter.Specialization = Specialization;
+    console.log("filter", filter);
+    const doctors = await Doctor.find(filter);
+    console.log(doctors);
+    if (doctors.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No doctors found for given filters" });
+    }
+
+    res.status(200).json({ doctors });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch doctors" });
+  }
+};
