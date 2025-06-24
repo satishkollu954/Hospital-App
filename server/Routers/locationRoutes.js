@@ -14,7 +14,12 @@ const {
   getCitiesByState,
   getAllStates,
 } = require("../Controllers/locationController");
-const { addDoctors, getAllDoctors } = require("../Controllers/doctor");
+const {
+  addDoctors,
+  getAllDoctors,
+  oneDoctor,
+  updateDoctor,
+} = require("../Controllers/doctor");
 
 const { appointmentChange, AllQueries } = require("../Controllers/user");
 
@@ -32,6 +37,8 @@ router.post("/send-otp", sendOTP);
 router.post("/verify-otp", verifyOTP);
 router.get("/states", getAllStates);
 router.get("/cities", getCitiesByState);
+router.get("/doctor/:email", oneDoctor);
+router.get("/updatedoctor/:email", updateDoctor);
 
 router.post("/adddisease", diseaseController.addDisease);
 router.get("/getdisease", diseaseController.getDiseases);

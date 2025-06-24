@@ -142,9 +142,28 @@ const deleteDoctor = async (req, res) => {
   }
 };
 
+const oneDoctor = async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    const doctor = await Doctor.findOne({ Email: email });
+
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    res.status(200).json(doctor);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: "Failed to fetch doctor", details: err.message });
+  }
+};
+
 module.exports = {
   addDoctors,
   getAllDoctors,
   updateDoctor,
   deleteDoctor,
+  oneDoctor,
 };
