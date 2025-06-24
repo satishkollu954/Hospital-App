@@ -38,7 +38,7 @@ router.post("/verify-otp", verifyOTP);
 router.get("/states", getAllStates);
 router.get("/cities", getCitiesByState);
 router.get("/doctor/:email", oneDoctor);
-router.get("/updatedoctor/:email", updateDoctor);
+router.put("/updatedoctor/:email", upload.single("image"), updateDoctor);
 
 router.post("/adddisease", diseaseController.addDisease);
 router.get("/getdisease", diseaseController.getDiseases);

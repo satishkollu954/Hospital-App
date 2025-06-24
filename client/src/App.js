@@ -13,9 +13,10 @@ import { AddLocation } from "./components/AddLocation";
 import { ProtectRoute } from "./components/protectroute";
 import { AddDoctors } from "./components/addDoctors";
 import { AllQueries } from "./components/AllQueries";
-import { DoctorDashboard } from "./components/doctorDashboard";
+import { DoctorProfile } from "./components/doctorProfile";
 import { ForgetPassword } from "./components/forgetPassword";
 import { AddDiseases } from "./components/AddDiseases";
+import { DoctorDashboard } from "./components/doctorDashboard";
 
 function App() {
   return (
@@ -95,13 +96,29 @@ function App() {
             <Route path="contact" element={<ContactUs />} />
             <Route path="doctors" element={<Doctors />} />
             <Route path="location" element={<Location />} />
-            <Route path="/login" element={<AdminLogin />} />
-            <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+            <Route path="login" element={<AdminLogin />} />
+            <Route
+              path="doctor-profile"
+              element={
+                <ProtectRoute>
+                  <DoctorProfile />
+                </ProtectRoute>
+              }
+            />
             <Route path="forgetPassword" element={<ForgetPassword />} />
             <Route path="add-disease" element={<AddDiseases />} />
 
             <Route
-              path="/admin-dashboard"
+              path="doctor-dashboard"
+              element={
+                <ProtectRoute>
+                  <DoctorDashboard />
+                </ProtectRoute>
+              }
+            />
+
+            <Route
+              path="admin-dashboard"
               element={
                 <ProtectRoute>
                   <AdminDashboard />
@@ -109,7 +126,7 @@ function App() {
               }
             />
             <Route
-              path="/add-location"
+              path="add-location"
               element={
                 <ProtectRoute>
                   <AddLocation />
@@ -117,7 +134,7 @@ function App() {
               }
             />
             <Route
-              path="/add-doctor"
+              path="add-doctor"
               element={
                 <ProtectRoute>
                   <AddDoctors />
@@ -125,7 +142,7 @@ function App() {
               }
             />
             <Route
-              path="/queries"
+              path="queries"
               element={
                 <ProtectRoute>
                   <AllQueries />

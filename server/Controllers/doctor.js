@@ -78,32 +78,23 @@ const getAllDoctors = async (req, res) => {
 const updateDoctor = async (req, res) => {
   try {
     const { email } = req.params;
-    const {
-      Name,
-      About,
-      Designation,
-      Specialization,
-      Age,
-      State,
-      City,
-      From,
-      To,
-      Availability,
-    } = req.body;
 
+    // Use FormData values sent from frontend
     const updatedFields = {
-      Name,
-      About,
-      Designation,
-      Specialization,
-      Age,
-      State,
-      City,
-      From,
-      To,
-      Availability,
+      Name: req.body.Name,
+      About: req.body.About,
+      Designation: req.body.Designation,
+      Specialization: req.body.Specialization,
+      Age: req.body.Age,
+      State: req.body.State,
+      City: req.body.City,
+      From: req.body.From,
+      To: req.body.To,
+      Availability:
+        req.body.Availability === "true" || req.body.Availability === true,
     };
 
+    // If image was uploaded, add it
     if (req.file?.filename) {
       updatedFields.image = req.file.filename;
     }
