@@ -6,7 +6,7 @@
   align-items: flex-start;
   background: url("/public/about-bg.jpg") no-repeat center center;
   background-size: cover;
-  color: gray;
+  color: grey;
   font-size: x-large;
 }
 
@@ -25,7 +25,7 @@
 
 .description {
   font-size: 1rem;
-  color: gray;
+  color: black;
 }
 
 .btm-title {

@@ -13,6 +13,8 @@ import { AddLocation } from "./components/AddLocation";
 import { ProtectRoute } from "./components/protectroute";
 import { AddDoctors } from "./components/addDoctors";
 import { AllQueries } from "./components/AllQueries";
+import { DoctorDashboard } from "./components/doctorDashboard";
+import { ForgetPassword } from "./components/forgetPassword";
 
 function App() {
   return (
@@ -92,7 +94,10 @@ function App() {
             <Route path="contact" element={<ContactUs />} />
             <Route path="doctors" element={<Doctors />} />
             <Route path="location" element={<Location />} />
-            <Route path="/adminlogin" element={<AdminLogin />} />
+            <Route path="/login" element={<AdminLogin />} />
+            <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+            <Route path="forgetPassword" element={<ForgetPassword />} />
+
             <Route
               path="/admin-dashboard"
               element={

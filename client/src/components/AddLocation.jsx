@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // ✅ Import this
+import { useNavigate } from "react-router-dom";
 import "./AddLocation.css";
 
 export const AddLocation = () => {
@@ -8,7 +8,7 @@ export const AddLocation = () => {
   const [branches, setBranches] = useState([{ name: "", mapUrl: "" }]);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // ✅ useNavigate hook
+  const navigate = useNavigate();
 
   const handleBranchChange = (index, field, value) => {
     const updatedBranches = [...branches];
