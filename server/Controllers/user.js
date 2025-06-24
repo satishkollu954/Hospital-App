@@ -80,9 +80,9 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   // Step 1: Check if admin login
-  if (email === "admin@gmail.com" && password === "admin123") {
-    return res.json({ success: true, role: "admin" });
-  }
+  // if (email === "admin@gmail.com" && password === "admin123") {
+  //   return res.json({ success: true, role: "admin" });
+  // }
 
   try {
     // Step 2: Find staff user
