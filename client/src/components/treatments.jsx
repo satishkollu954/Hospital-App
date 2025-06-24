@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export function Treatment() {
-  const [state, setState] = useState([{ title: "", description: "" }]);
+  const [state, setState] = useState([{ disease: "", description: "" }]);
 
   useEffect(() => {
     axios
-      .get("conditions.json")
+      .get("http://localhost:5000/admin/getdisease")
       .then((response) => {
         setState(response.data);
       })
@@ -65,7 +65,7 @@ export function Treatment() {
                 className="card-header fs-5 fw-bold"
                 style={{ color: "gray" }}
               >
-                {item.title}
+                {item.disease}
               </div>
               <div className="card-body fs-6" style={{ color: "grey" }}>
                 {item.description}

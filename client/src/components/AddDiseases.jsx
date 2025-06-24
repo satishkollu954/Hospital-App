@@ -3,7 +3,7 @@ import axios from "axios";
 
 export function AddDiseases() {
   const [formData, setFormData] = useState({
-    name: "",
+    disease: "",
     description: "",
   });
 
@@ -17,7 +17,7 @@ export function AddDiseases() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.description) {
+    if (!formData.disease || !formData.description) {
       setMessage("Please fill in all fields.");
       return;
     }
@@ -26,7 +26,7 @@ export function AddDiseases() {
       .post("http://localhost:5000/admin/adddisease", formData)
       .then(() => {
         setMessage("Treatment added successfully!");
-        setFormData({ name: "", description: "" });
+        setFormData({ disease: "", description: "" });
       })
       .catch((err) => {
         console.error(err);
@@ -43,11 +43,11 @@ export function AddDiseases() {
         <h3 className="mb-4 text-center">Add Treatment</h3>
 
         <div className="mb-3">
-          <label className="form-label fw-bold">Name of the Treatment</label>
+          <label className="form-label fw-bold">Name of the disease</label>
           <input
             type="text"
-            name="name"
-            value={formData.name}
+            name="disease"
+            value={formData.disease}
             onChange={handleChange}
             className="form-control"
             placeholder="e.g. Heart Surgery"
