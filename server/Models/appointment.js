@@ -14,8 +14,6 @@ const appointmentSchema = new mongoose.Schema({
       "Invalid email format. Only @gmail.com addresses allowed.",
     ],
   },
-
-  // ✅ new field
   phone: {
     type: String,
   },
@@ -30,7 +28,20 @@ const appointmentSchema = new mongoose.Schema({
     enum: ["Started", "In Progress", "Completed", "Pending"],
     default: "Pending",
   },
+  disease: {
+    type: String,
+  },
+  state: {
+    type: String,
+  },
+  city: {
+    type: String,
+  },
+  doctor: {
+    type: String,
+  },
 });
+
 const appointmentModel = mongoose.model("Appointments", appointmentSchema);
 
 module.exports = {
