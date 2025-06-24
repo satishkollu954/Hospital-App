@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import "./AdminLogin.css"; // Custom styles (optional)
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 
 export const AdminLogin = () => {
@@ -32,7 +31,11 @@ export const AdminLogin = () => {
       if (res.data.success) {
         setCookie("email", loginData.email, { path: "/" });
         // alert("Login successful!");
-        navigate("/admin-dashboard"); // or wherever your dashboard is
+        if (loginData.email === "admin@gmail.com") {
+          navigate("/admin-dashboard");
+        } else {
+          navigate("/doctor-dashboard");
+        }
       } else {
         setError("Invalid credentials");
       }
@@ -44,7 +47,7 @@ export const AdminLogin = () => {
   return (
     <div className="admin-login-bg d-flex justify-content-center align-items-center">
       <div className="card p-4 shadow-lg admin-login-card">
-        <h3 className="text-center mb-4">Admin Login</h3>
+        <h3 className="text-center mb-4">Login</h3>
         {error && <div className="alert alert-danger">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
@@ -59,7 +62,7 @@ export const AdminLogin = () => {
               value={loginData.email}
               onChange={handleChange}
               required
-              placeholder="Enter admin email"
+              placeholder="Enter Email"
             />
           </div>
           <div className="mb-3">
@@ -81,6 +84,9 @@ export const AdminLogin = () => {
             <button type="submit" className="btn btn-primary">
               Log In
             </button>
+          </div>
+          <div>
+            <Link to="/forgetPassword">Forget password</Link>
           </div>
         </form>
       </div>

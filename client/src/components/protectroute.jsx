@@ -6,5 +6,5 @@ export function ProtectRoute({ children }) {
   const [cookies] = useCookies(["email"]);
   const isAuthenticated = cookies.email !== undefined;
 
-  return isAuthenticated ? children : <Navigate to="/adminlogin" />;
+  return isAuthenticated ? children : <Navigate to="/login" />;
 }
