@@ -9,6 +9,8 @@ const {
   getAllLocations,
   getAllAppointment,
   DeleteAppointment,
+  getCitiesByState,
+  getAllStates,
 } = require("../Controllers/locationController");
 const { addDoctors, getAllDoctors } = require("../Controllers/doctor");
 
@@ -26,4 +28,7 @@ router.get("/alldoctors", getAllDoctors);
 router.get("/Allqueries", AllQueries);
 router.post("/send-otp", sendOTP);
 router.post("/verify-otp", verifyOTP);
+router.get("/states", getAllStates);
+router.get("/cities", getCitiesByState);
+
 module.exports = router;

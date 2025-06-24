@@ -91,9 +91,41 @@ const DeleteAppointment = async (req, res) => {
   }
 };
 
+// Get list of States and their branch names (cities)
+const getAllStates = async (req, res) => {
+  try {
+    const states = await HospitalLocation.find().select("State -_id");
+    const uniqueStates = [...new Set(states.map((loc) => loc.State))];
+    res.status(200).json(uniqueStates);
+  } catch (err) {
+    console.error("Error fetching states:", err);
+    res.status(500).json({ message: "Failed to fetch states" });
+  }
+};
+
+const getCitiesByState = async (req, res) => {
+  try {
+    const { state } = req.query;
+
+    const location = await HospitalLocation.findOne({ State: state });
+
+    if (!location) {
+      return res.status(404).json({ message: "State not found" });
+    }
+
+    const citys = location.branches.map((b) => b.name);
+    res.status(200).json(citys);
+  } catch (err) {
+    console.error("Error fetching cities:", err);
+    res.status(500).json({ message: "Failed to fetch cities" });
+  }
+};
+
 module.exports = {
   addLocation,
   getAllLocations,
   getAllAppointment,
   DeleteAppointment,
+  getAllStates,
+  getCitiesByState,
 };
