@@ -16,6 +16,7 @@ const addDoctors = async (req, res) => {
       From,
       To,
       Availability,
+      Learnmore,
     } = req.body;
 
     const image = req.file?.filename || null;
@@ -50,6 +51,7 @@ const addDoctors = async (req, res) => {
       From,
       To,
       Availability,
+      Learnmore,
     });
 
     await newDoctor.save();
@@ -90,6 +92,7 @@ const updateDoctor = async (req, res) => {
       From: req.body.From,
       To: req.body.To,
       Password: req.body.Password,
+      Learnmore: req.body.Learnmore,
       Availability:
         req.body.Availability === "true" || req.body.Availability === true,
     };

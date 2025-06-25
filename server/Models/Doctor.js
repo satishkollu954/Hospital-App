@@ -14,6 +14,7 @@ const doctorSchema = new mongoose.Schema({
   Availability: Boolean,
   From: String, // e.g., "10:00 AM"
   To: String, // e.g., "06:00 PM"
+  Learnmore: String,
 });
 
 module.exports = mongoose.model("Doctor", doctorSchema);
