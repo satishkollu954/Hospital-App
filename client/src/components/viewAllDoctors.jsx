@@ -11,8 +11,10 @@ export function ALLDoctors() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editDoctor, setEditDoctor] = useState(null);
+  const [originalDoctor, setOriginalDoctor] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const doctorsPerPage = 8;
+
   const indexOfLastDoctor = currentPage * doctorsPerPage;
   const indexOfFirstDoctor = indexOfLastDoctor - doctorsPerPage;
   const currentDoctors = filteredDoctors.slice(
@@ -40,6 +42,7 @@ export function ALLDoctors() {
     setShowModal(false);
     setIsEditing(false);
     setEditDoctor(null);
+    setOriginalDoctor(null);
   };
 
   const handleSearch = (e) => {
@@ -54,11 +57,16 @@ export function ALLDoctors() {
   const handleEditClick = () => {
     setIsEditing(true);
     setEditDoctor({ ...selectedDoctor });
+    setOriginalDoctor({ ...selectedDoctor });
   };
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
     setEditDoctor((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const isDoctorChanged = () => {
+    return JSON.stringify(editDoctor) !== JSON.stringify(originalDoctor);
   };
 
   const handleEditSave = () => {
@@ -76,6 +84,7 @@ export function ALLDoctors() {
         setFilteredDoctors(updatedList);
         setIsEditing(false);
         setEditDoctor(null);
+        setOriginalDoctor(null);
         setShowModal(false);
       })
       .catch(() => alert("Update failed"));
@@ -106,10 +115,9 @@ export function ALLDoctors() {
   return (
     <div className="container">
       <h3 className="mb-3">
-        {" "}
         <Link
           to="/admin-dashboard"
-          className="bi bi-arrow-left-circle"
+          className="bi bi-arrow-left-circle fs-3"
         ></Link>{" "}
         All Doctors
       </h3>
@@ -257,7 +265,11 @@ export function ALLDoctors() {
         <Modal.Footer>
           {isEditing ? (
             <>
-              <Button variant="success" onClick={handleEditSave}>
+              <Button
+                variant="success"
+                onClick={handleEditSave}
+                disabled={!isDoctorChanged()}
+              >
                 Save
               </Button>
               <Button
@@ -282,6 +294,7 @@ export function ALLDoctors() {
           )}
         </Modal.Footer>
       </Modal>
+
       <div className="d-flex justify-content-center mt-4">
         <Button
           variant="secondary"

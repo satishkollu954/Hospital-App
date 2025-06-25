@@ -38,7 +38,7 @@ export function AllQueries() {
   return (
     <div className="container my-4">
       <button className="btn btn-secondary mb-3" onClick={() => navigate(-1)}>
-        ← Back
+        Back
       </button>
 
       <h3 className="text-center mb-4">User Queries</h3>
