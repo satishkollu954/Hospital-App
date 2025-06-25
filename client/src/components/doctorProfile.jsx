@@ -78,8 +78,7 @@ export function DoctorProfile() {
   }
 
   return (
-    <div className="container mt-4">
-      <h2 className="mb-4 text-center">Hello Doctor</h2>
+    <div className="container mt-1">
       <div className="card shadow p-4">
         <div className="row">
           {/* Image Section */}
@@ -253,6 +252,7 @@ export function DoctorProfile() {
                 </tr>
               </tbody>
             </table>
+
             {!isEditing ? (
               <button
                 className="btn btn-primary"
