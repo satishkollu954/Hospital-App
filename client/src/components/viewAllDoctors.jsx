@@ -86,7 +86,7 @@ export function ALLDoctors() {
   };
 
   return (
-    <div className="container" style={{ marginLeft: "12rem" }}>
+    <div className="container">
       <h3 className="mb-3">All Doctors</h3>
       <div>
         <Form.Control
