@@ -34,11 +34,6 @@ export function Doctors() {
                   {item.Name}
                 </p>
                 <p className="doc-label">{item.About}</p>
-                <p className="doc-label">
-                  <a href="https://www.northshore.org/apps/findadoctor/physicians/jaime-beth-alexander">
-                    Learn More
-                  </a>
-                </p>
               </div>
             ))}
           </div>
