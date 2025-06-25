@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Card, Button, Modal, Form } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 export function ALLDoctors() {
   const [doctors, setDoctors] = useState([]);
@@ -10,6 +11,15 @@ export function ALLDoctors() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editDoctor, setEditDoctor] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const doctorsPerPage = 8;
+  const indexOfLastDoctor = currentPage * doctorsPerPage;
+  const indexOfFirstDoctor = indexOfLastDoctor - doctorsPerPage;
+  const currentDoctors = filteredDoctors.slice(
+    indexOfFirstDoctor,
+    indexOfLastDoctor
+  );
+  const totalPages = Math.ceil(filteredDoctors.length / doctorsPerPage);
 
   useEffect(() => {
     axios
@@ -85,9 +95,24 @@ export function ALLDoctors() {
       .catch(() => alert("Failed to delete doctor"));
   };
 
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
   return (
     <div className="container">
-      <h3 className="mb-3">All Doctors</h3>
+      <h3 className="mb-3">
+        {" "}
+        <Link
+          to="/admin-dashboard"
+          className="bi bi-arrow-left-circle"
+        ></Link>{" "}
+        All Doctors
+      </h3>
       <div>
         <Form.Control
           type="text"
@@ -99,7 +124,7 @@ export function ALLDoctors() {
       </div>
       <div className="container-fluid">
         <div className="row g-4">
-          {filteredDoctors.map((doctor, index) => (
+          {currentDoctors.map((doctor, index) => (
             <div className="col-lg-3 col-md-4 col-sm-6" key={index}>
               <Card className="h-100 shadow-sm">
                 <Card.Img
@@ -127,7 +152,7 @@ export function ALLDoctors() {
 
       <Modal show={showModal} onHide={handleClose} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Doctor Details</Modal.Title>
+          <Modal.Title>{selectedDoctor?.Name}'s Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {isEditing && editDoctor ? (
@@ -257,6 +282,27 @@ export function ALLDoctors() {
           )}
         </Modal.Footer>
       </Modal>
+      <div className="d-flex justify-content-center mt-4">
+        <Button
+          variant="secondary"
+          className="me-2"
+          onClick={handlePrevPage}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <span className="align-self-center">
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button
+          variant="secondary"
+          className="ms-2"
+          onClick={handleNextPage}
+          disabled={currentPage >= totalPages}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 }
