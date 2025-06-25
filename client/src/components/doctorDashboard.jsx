@@ -48,7 +48,7 @@ export function DoctorDashboard() {
             <h2>--</h2> {/* Replace with actual count if available */}
           </div>
         </div>
-        <div className="col-md-4 mb-3">
+        <div className="col-md-3 mb-3">
           <div className="card shadow text-center p-3">
             <h5>Availability</h5>
             <span
@@ -72,7 +72,6 @@ export function DoctorDashboard() {
 
       {/* Info Section */}
       <div className="mt-4 p-4 bg-light rounded shadow-sm">
-        <h4>Doctor Dashboard</h4>
         <p>
           This is your personal space to manage appointments, view and update
           your profile, and check your working schedule. Stay connected with
