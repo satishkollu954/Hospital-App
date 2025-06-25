@@ -1,13 +1,16 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export function AddDiseases() {
   const [formData, setFormData] = useState({
     disease: "",
     description: "",
+    learnmore: "",
   });
 
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,7 +20,7 @@ export function AddDiseases() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!formData.disease || !formData.description) {
+    if (!formData.disease || !formData.description || !formData.learnmore) {
       setMessage("Please fill in all fields.");
       return;
     }
@@ -26,7 +29,7 @@ export function AddDiseases() {
       .post("http://localhost:5000/admin/adddisease", formData)
       .then(() => {
         setMessage("Treatment added successfully!");
-        setFormData({ disease: "", description: "" });
+        setFormData({ disease: "", description: "", learnmore: "" });
       })
       .catch((err) => {
         console.error(err);
@@ -40,6 +43,15 @@ export function AddDiseases() {
         onSubmit={handleSubmit}
         className="w-50 border p-4 shadow rounded bg-light"
       >
+        {/* Back Button */}
+        <button
+          type="button"
+          className="btn btn-secondary mb-3"
+          onClick={() => navigate(-1)}
+        >
+          ← Back
+        </button>
+
         <h3 className="mb-4 text-center">Add Treatment</h3>
 
         <div className="mb-3">
@@ -64,6 +76,18 @@ export function AddDiseases() {
             className="form-control"
             placeholder="Enter description of the treatment"
           ></textarea>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label fw-bold">Learn More URL</label>
+          <input
+            type="url"
+            name="learnmore"
+            value={formData.learnmore}
+            onChange={handleChange}
+            className="form-control"
+            placeholder="https://example.com/learn-more"
+          />
         </div>
 
         <button type="submit" className="btn btn-primary w-100">
