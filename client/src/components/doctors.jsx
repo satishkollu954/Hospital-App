@@ -3,7 +3,9 @@ import "./doctors.css";
 import { useEffect, useState } from "react";
 
 export function Doctors() {
-  const [state, setState] = useState([{ image: "", Name: "", About: "" }]);
+  const [state, setState] = useState([
+    { image: "", Name: "", Specialization: "" },
+  ]);
 
   useEffect(() => {
     axios
@@ -33,7 +35,10 @@ export function Doctors() {
                 <p className="doc-label" style={{ color: "blue" }}>
                   {item.Name}
                 </p>
-                <p className="doc-label">{item.About}</p>
+                <p className="doc-label text-dark">
+                  <strong className="text-dark">Specialization:</strong>{" "}
+                  {item.Specialization}
+                </p>
               </div>
             ))}
           </div>
