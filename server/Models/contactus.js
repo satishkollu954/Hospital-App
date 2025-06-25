@@ -9,10 +9,6 @@ const contactSchema = new mongoose.Schema({
     required: true,
     trim: true,
     lowercase: true,
-    match: [
-      /^[a-zA-Z0-9._%+-]+@gmail\.com$/,
-      "Invalid email format. Only @gmail.com addresses allowed.",
-    ],
   },
 
   // ✅ new field

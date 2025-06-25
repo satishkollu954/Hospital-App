@@ -16,7 +16,11 @@ const {
   deleteDoctor,
 } = require("../Controllers/doctor");
 
-const { appointmentChange, AllQueries } = require("../Controllers/user");
+const {
+  appointmentChange,
+  AllQueries,
+  deleteQuery,
+} = require("../Controllers/user");
 
 const {
   addLocation,
@@ -59,12 +63,14 @@ router.post("/adddisease", diseaseController.addDisease);
 router.get("/getdisease", diseaseController.getDiseases);
 router.delete("/deletedisease/:id", diseaseController.deleteDisease);
 router.put("/updatedisease/:id", diseaseController.updateDisease);
+
 // -------------------------------------
 // User Queries
 // -------------------------------------
 router.get("/Allqueries", AllQueries);
-
+router.delete("/deletequery/:id", deleteQuery);
 // -------------------------------------
+
 // Hospital Location Management
 // -------------------------------------
 router.post("/locations", addLocation); // Add a new state with branches

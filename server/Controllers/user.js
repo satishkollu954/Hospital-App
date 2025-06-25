@@ -42,6 +42,24 @@ const AllQueries = async (req, res) => {
   }
 };
 
+// Delete a contact query by ID
+const deleteQuery = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deleted = await contactModel.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Query not found" });
+    }
+
+    res.status(200).json({ message: "Query deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting query:", err);
+    res.status(500).json({ message: "Failed to delete query" });
+  }
+};
+
 // Adding Appointments
 const appointment = async (req, res) => {
   try {
@@ -153,4 +171,5 @@ module.exports = {
   login,
   appointmentChange,
   AllQueries,
+  deleteQuery,
 };
