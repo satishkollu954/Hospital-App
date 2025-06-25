@@ -23,7 +23,7 @@ export function ForgetPassword() {
         alert("OTP sent to email.");
       })
       .catch(() => alert("Failed to send OTP."));
-    alert("OTP sent to email.");
+
     setOtpSent(true);
   };
 
