@@ -39,6 +39,18 @@ export function Doctors() {
                   <strong className="text-dark">Specialization:</strong>{" "}
                   {item.Specialization}
                 </p>
+                {item.Learnmore ? (
+                  <a
+                    href={item.Learnmore}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-dark"
+                  >
+                    Learn More
+                  </a>
+                ) : (
+                  <span className="text-muted"></span>
+                )}
               </div>
             ))}
           </div>

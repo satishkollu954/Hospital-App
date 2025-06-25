@@ -250,6 +250,20 @@ export function DoctorProfile() {
                     />
                   </td>
                 </tr>
+
+                <tr>
+                  <th>Learn More</th>
+                  <td>
+                    {" "}
+                    <input
+                      name="Learnmore"
+                      className="form-control"
+                      disabled={!isEditing}
+                      value={docData.Learnmore}
+                      onChange={handleInputChange}
+                    />
+                  </td>
+                </tr>
               </tbody>
             </table>
 

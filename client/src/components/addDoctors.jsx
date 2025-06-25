@@ -20,6 +20,7 @@ export function AddDoctors() {
     To: "",
     ToPeriod: "PM",
     Availability: true,
+    Learnmore: "",
   });
 
   const [image, setImage] = useState(null);
@@ -60,9 +61,15 @@ export function AddDoctors() {
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleFileChange = (e) => {
     setImage(e.target.files[0]);
   };
+
   const formatTime = (time) => {
     if (!time.includes(":")) {
       return `${time.padStart(2, "0")}:00`;
@@ -285,6 +292,17 @@ export function AddDoctors() {
               onChange={handleFileChange}
               className="form-control"
               required
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label fw-bold">Learn More URL</label>
+            <input
+              type="url"
+              name="Learnmore"
+              value={formData.Learnmore}
+              onChange={handleChange}
+              className="form-control"
+              placeholder="https://example.com/learn-more"
             />
           </div>
         </div>
