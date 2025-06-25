@@ -1,8 +1,11 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 
 export function DoctorProfile() {
+  const navigate = useNavigate();
+
   const [docData, setDocData] = useState(null);
   const [originalData, setOriginalData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -268,12 +271,21 @@ export function DoctorProfile() {
             </table>
 
             {!isEditing ? (
-              <button
-                className="btn btn-primary"
-                onClick={() => setIsEditing(true)}
-              >
-                Edit Profile
-              </button>
+              <>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setIsEditing(true)}
+                >
+                  Edit Profile
+                </button>
+
+                <button
+                  className="btn btn-primary ms-2 mb-0"
+                  onClick={() => navigate(-1)}
+                >
+                  Back
+                </button>
+              </>
             ) : (
               <>
                 <button
