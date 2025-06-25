@@ -138,6 +138,18 @@ export function DoctorProfile() {
                   </td>
                 </tr>
                 <tr>
+                  <th>Password:</th>
+                  <td>
+                    <input
+                      name="Password"
+                      className="form-control"
+                      disabled={!isEditing}
+                      value={docData.Password}
+                      onChange={handleInputChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
                   <th>Age:</th>
                   <td>
                     <input

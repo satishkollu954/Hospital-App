@@ -17,6 +17,9 @@ import { DoctorProfile } from "./components/doctorProfile";
 import { ForgetPassword } from "./components/forgetPassword";
 import { AddDiseases } from "./components/AddDiseases";
 import { DoctorDashboard } from "./components/doctorDashboard";
+import { ALLDoctors } from "./components/viewAllDoctors";
+import { ALLDiseases } from "./components/viewAllDiseases";
+import { ALLLocations } from "./components/viewAllLocations";
 
 function App() {
   return (
@@ -35,10 +38,10 @@ function App() {
                 />
               </a>
             </div>
-            <h1 className="text-center fs-1 flex-grow-1 d-none d-md-block">
+            <h1 className="text-center me-5 fs-1 flex-grow-1 d-none d-md-block">
               RaagviCare
             </h1>
-            <nav className="d-flex justify-content-end">
+            {/* <nav className="d-flex justify-content-end">
               <Link
                 to="appointment"
                 className="text-white fw-bold px-3 py-2 rounded mt-2 d-inline-block text-decoration-none boxshadow border-0"
@@ -46,10 +49,10 @@ function App() {
               >
                 Book an Appointment <span className="ms-2">&rarr;</span>
               </Link>
-            </nav>
+            </nav> */}
           </div>
           <div className="container-fluid pb-0 px-4">
-            <nav className="d-flex me-4 justify-content-center">
+            <nav className="d-flex ms-4 justify-content-center">
               <ul className="nav">
                 <li className="nav-item">
                   <Link to="/" className="nav-link text-white">
@@ -98,6 +101,30 @@ function App() {
             <Route path="location" element={<Location />} />
             <Route path="login" element={<AdminLogin />} />
             <Route
+              path="all-locations"
+              element={
+                <ProtectRoute>
+                  <ALLLocations />
+                </ProtectRoute>
+              }
+            />
+            <Route
+              path="all-diseases"
+              element={
+                <ProtectRoute>
+                  <ALLDiseases />
+                </ProtectRoute>
+              }
+            />
+            <Route
+              path="all-doctors"
+              element={
+                <ProtectRoute>
+                  <ALLDoctors />
+                </ProtectRoute>
+              }
+            />
+            <Route
               path="doctor-profile"
               element={
                 <ProtectRoute>
@@ -106,7 +133,14 @@ function App() {
               }
             />
             <Route path="forgetPassword" element={<ForgetPassword />} />
-            <Route path="add-disease" element={<AddDiseases />} />
+            <Route
+              path="add-disease"
+              element={
+                <ProtectRoute>
+                  <AddDiseases />
+                </ProtectRoute>
+              }
+            />
 
             <Route
               path="doctor-dashboard"
