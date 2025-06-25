@@ -90,6 +90,7 @@ const updateDoctor = async (req, res) => {
       City: req.body.City,
       From: req.body.From,
       To: req.body.To,
+      Password: req.body.Password,
       Availability:
         req.body.Availability === "true" || req.body.Availability === true,
     };
@@ -103,6 +104,10 @@ const updateDoctor = async (req, res) => {
       { Email: email },
       updatedFields,
       { new: true }
+    );
+    await Staff.findOneAndUpdate(
+      { Email: email },
+      { Password: req.body.Password }
     );
 
     if (!updatedDoctor) {
