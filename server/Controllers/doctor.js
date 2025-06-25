@@ -1,7 +1,6 @@
 const Doctor = require("../Models/Doctor");
 const Staff = require("../Models/staffs");
 
-//Adding doctors
 // Add a new doctor
 const addDoctors = async (req, res) => {
   try {
@@ -105,10 +104,6 @@ const updateDoctor = async (req, res) => {
       updatedFields,
       { new: true }
     );
-    await Staff.findOneAndUpdate(
-      { Email: email },
-      { Password: req.body.Password }
-    );
 
     await Staff.findOneAndUpdate(
       { Email: email },
@@ -127,22 +122,30 @@ const updateDoctor = async (req, res) => {
   }
 };
 
+//Delete the doctor from DoctorAnd Staff COllection
 const deleteDoctor = async (req, res) => {
   try {
     const { email } = req.params;
 
+    // ❌ Delete doctor from Doctor collection
     const deletedDoctor = await Doctor.findOneAndDelete({ Email: email });
 
     if (!deletedDoctor) {
       return res.status(404).json({ message: "Doctor not found" });
     }
 
-    res.status(200).json({ message: "Doctor deleted successfully" });
+    // ❌ Also delete from Staff collection
+    await Staff.findOneAndDelete({ Email: email });
+
+    res
+      .status(200)
+      .json({ message: "Doctor and associated staff deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
+//Fetch One Doctor Based On the Email
 const oneDoctor = async (req, res) => {
   try {
     const { email } = req.params;

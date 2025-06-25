@@ -121,6 +121,76 @@ const getCitiesByState = async (req, res) => {
   }
 };
 
+//Update a  Branch Based on State
+// Update a branch by branchId
+const updateBranchDetails = async (req, res) => {
+  try {
+    const { state, branchId, newName, newMapUrl } = req.body;
+
+    const location = await HospitalLocation.findOneAndUpdate(
+      { State: state, "branches._id": branchId },
+      {
+        $set: {
+          "branches.$.name": newName,
+          "branches.$.mapUrl": newMapUrl,
+        },
+      },
+      { new: true }
+    );
+
+    if (!location) {
+      return res.status(404).json({ message: "Branch or state not found" });
+    }
+
+    res.status(200).json({ message: "Branch updated successfully", location });
+  } catch (error) {
+    console.error("Error updating branch:", error);
+    res.status(500).json({ message: "Failed to update branch" });
+  }
+};
+
+//Delete a  Branch in a State
+// Delete a branch by branchId
+const deleteBranch = async (req, res) => {
+  try {
+    const { state, branchId } = req.body;
+
+    const location = await HospitalLocation.findOneAndUpdate(
+      { State: state },
+      { $pull: { branches: { _id: branchId } } },
+      { new: true }
+    );
+
+    if (!location) {
+      return res.status(404).json({ message: "State or branch not found" });
+    }
+
+    res.status(200).json({ message: "Branch deleted successfully", location });
+  } catch (error) {
+    console.error("Error deleting branch:", error);
+    res.status(500).json({ message: "Failed to delete branch" });
+  }
+};
+
+//Delete a State with Branch
+const deleteState = async (req, res) => {
+  try {
+    const { state } = req.params;
+
+    const deleted = await HospitalLocation.findOneAndDelete({ State: state });
+    if (!deleted) {
+      return res.status(404).json({ message: "State not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "State and all branches deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting state:", err);
+    res.status(500).json({ message: "Failed to delete state" });
+  }
+};
+
 module.exports = {
   addLocation,
   getAllLocations,
@@ -128,4 +198,7 @@ module.exports = {
   DeleteAppointment,
   getAllStates,
   getCitiesByState,
+  deleteState,
+  deleteBranch,
+  updateBranchDetails,
 };

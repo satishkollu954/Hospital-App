@@ -1,46 +1,80 @@
 const express = require("express");
 const router = express.Router();
+
 const Doctor = require("../Models/Doctor");
-const sendOTP = require("../Controllers/sendotp");
 const upload = require("../middlewares/upload");
+
+const sendOTP = require("../Controllers/sendotp");
 const verifyOTP = require("../Controllers/verifyOTP");
 const diseaseController = require("../Controllers/diseaseController");
+
+const {
+  addDoctors,
+  getAllDoctors,
+  oneDoctor,
+  updateDoctor,
+  deleteDoctor,
+} = require("../Controllers/doctor");
+
+const { appointmentChange, AllQueries } = require("../Controllers/user");
 
 const {
   addLocation,
   getAllLocations,
   getAllAppointment,
   DeleteAppointment,
-  getCitiesByState,
   getAllStates,
+  getCitiesByState,
+  deleteState,
+  deleteBranch,
+  updateBranchDetails,
 } = require("../Controllers/locationController");
-const {
-  addDoctors,
-  getAllDoctors,
-  oneDoctor,
-  updateDoctor,
-} = require("../Controllers/doctor");
 
-const { appointmentChange, AllQueries } = require("../Controllers/user");
-
-router.post("/locations", addLocation); // to add manually via Postman
-router.get("/locations", getAllLocations); // fetch to show in UI
-
-// To Update status
-router.patch("/appointments/:id", appointmentChange);
-router.get("/appointments", getAllAppointment);
-router.delete("/appointments/:id", DeleteAppointment);
+// -------------------------------------
+// Doctor Management
+// -------------------------------------
 router.post("/adddoctors", upload.single("image"), addDoctors);
 router.get("/alldoctors", getAllDoctors);
-router.get("/Allqueries", AllQueries);
-router.post("/send-otp", sendOTP);
-router.post("/verify-otp", verifyOTP);
-router.get("/states", getAllStates);
-router.get("/cities", getCitiesByState);
 router.get("/doctor/:email", oneDoctor);
 router.put("/updatedoctor/:email", upload.single("image"), updateDoctor);
+router.delete("/deletedoctor/:email", deleteDoctor);
 
+// -------------------------------------
+// Appointment Management
+// -------------------------------------
+router.get("/appointments", getAllAppointment);
+router.patch("/appointments/:id", appointmentChange);
+router.delete("/appointments/:id", DeleteAppointment);
+
+// -------------------------------------
+// OTP Handling
+// -------------------------------------
+router.post("/send-otp", sendOTP);
+router.post("/verify-otp", verifyOTP);
+
+// -------------------------------------
+// Disease Management
+// -------------------------------------
 router.post("/adddisease", diseaseController.addDisease);
 router.get("/getdisease", diseaseController.getDiseases);
+router.delete("/deletedisease/:id", diseaseController.deleteDisease);
+router.put("/updatedisease/:id", diseaseController.updateDisease);
+// -------------------------------------
+// User Queries
+// -------------------------------------
+router.get("/Allqueries", AllQueries);
+
+// -------------------------------------
+// Hospital Location Management
+// -------------------------------------
+router.post("/locations", addLocation); // Add a new state with branches
+router.get("/locations", getAllLocations); // Get all states and branches
+router.get("/states", getAllStates); // Get only state names
+router.get("/cities", getCitiesByState); // Get cities by state
+
+// Branch and State Management
+router.put("/update-branch", updateBranchDetails); // Update name/mapUrl of branch
+router.delete("/delete-branch", deleteBranch); // Delete a specific branch
+router.delete("/delete-state", deleteState); // Delete entire state with all branches
 
 module.exports = router;

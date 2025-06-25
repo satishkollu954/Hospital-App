@@ -71,10 +71,7 @@ export function Treatment() {
                 {item.description}
               </div>
               <div className="ms-3">
-                <a
-                  href="https://en.wikipedia.org/wiki/Skin_condition"
-                  style={{ color: "grey" }}
-                >
+                <a href={item.learnmore} style={{ color: "grey" }}>
                   Learn More
                 </a>
               </div>
