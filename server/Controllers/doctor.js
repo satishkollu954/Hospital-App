@@ -105,6 +105,10 @@ const updateDoctor = async (req, res) => {
       updatedFields,
       { new: true }
     );
+    await Staff.findOneAndUpdate(
+      { Email: email },
+      { Password: req.body.Password }
+    );
 
     await Staff.findOneAndUpdate(
       { Email: email },
