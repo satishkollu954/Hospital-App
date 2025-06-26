@@ -176,7 +176,6 @@ export function Appointment() {
 
       {/* Form Below Image */}
       <div className="px-4">
-        <h3 className="text-center mb-4">Book an Appointment</h3>
         <form onSubmit={formik.handleSubmit}>
           <div className="row g-3">
             {/* Full Name */}
