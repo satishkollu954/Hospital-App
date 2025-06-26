@@ -1,6 +1,6 @@
 const Disease = require("../Models/Disease");
 
-// ➕ Add a new disease
+//  Add a new disease
 exports.addDisease = async (req, res) => {
   try {
     const { disease, description, learnmore } = req.body;
@@ -14,7 +14,7 @@ exports.addDisease = async (req, res) => {
   }
 };
 
-// 📄 Get all diseases
+//  Get all diseases
 exports.getDiseases = async (req, res) => {
   try {
     const diseases = await Disease.find();
@@ -24,7 +24,7 @@ exports.getDiseases = async (req, res) => {
   }
 };
 
-// ❌ Delete disease by ID
+//  Delete disease by ID
 exports.deleteDisease = async (req, res) => {
   try {
     const { id } = req.params;

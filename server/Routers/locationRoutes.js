@@ -16,6 +16,12 @@ const {
   updateDoctor,
   deleteDoctor,
 } = require("../Controllers/doctor");
+const {
+  getFAQs,
+  addFAQ,
+  updateFAQ,
+  deleteFAQ,
+} = require("../Controllers/faqController");
 
 const {
   appointmentChange,
@@ -36,6 +42,14 @@ const {
   getAppointmentsByDoctorEmail,
   getAppointmentsCountByDoctorEmail,
 } = require("../Controllers/locationController");
+
+// Faq Management
+//-----------------------
+
+router.post("/faq", addFAQ); // Admin adds FAQ
+router.get("/faq", getFAQs); //get All FAQ
+router.put("/faq/:id", updateFAQ); // Route: PUT (update) FAQ
+router.delete("/faq/:id", deleteFAQ); // Route: DELETE FAQ
 
 // -------------------------------------
 // Doctor Management
