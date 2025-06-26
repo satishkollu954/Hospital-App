@@ -40,6 +40,10 @@ const appointmentSchema = new mongoose.Schema({
   doctor: {
     type: String,
   },
+  doctorEmail: {
+    type: String,
+    required: true,
+  },
 });
 
 const appointmentModel = mongoose.model("Appointments", appointmentSchema);

@@ -21,8 +21,15 @@ export function AddDoctors() {
     ToPeriod: "PM",
     Availability: true,
     Learnmore: "",
+    Qualification: "",
+    Experience: "",
+    BriefProfile: "",
+    Address: "",
+    Education: [],
+    Languages: [],
   });
 
+  const [languageInput, setLanguageInput] = useState("");
   const [image, setImage] = useState(null);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -61,11 +68,6 @@ export function AddDoctors() {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleFileChange = (e) => {
     setImage(e.target.files[0]);
   };
@@ -77,10 +79,47 @@ export function AddDoctors() {
     return time;
   };
 
+  const addEducation = () => {
+    setFormData((prev) => ({
+      ...prev,
+      Education: [...prev.Education, { degree: "", institution: "", year: "" }],
+    }));
+  };
+
+  const removeEducation = (index) => {
+    const updated = [...formData.Education];
+    updated.splice(index, 1);
+    setFormData((prev) => ({ ...prev, Education: updated }));
+  };
+
+  const handleEducationChange = (index, key, value) => {
+    const updated = [...formData.Education];
+    updated[index][key] = value;
+    setFormData((prev) => ({ ...prev, Education: updated }));
+  };
+
+  const handleLanguageAdd = () => {
+    if (languageInput.trim() !== "") {
+      setFormData((prev) => ({
+        ...prev,
+        Languages: [...prev.Languages, languageInput.trim()],
+      }));
+      setLanguageInput("");
+    }
+  };
+
+  const removeLanguage = (lang) => {
+    setFormData((prev) => ({
+      ...prev,
+      Languages: prev.Languages.filter((l) => l !== lang),
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const data = new FormData();
+
       const finalFormData = {
         ...formData,
         From: `${formatTime(formData.From)} ${formData.FromPeriod}`,
@@ -91,12 +130,21 @@ export function AddDoctors() {
       delete finalFormData.ToPeriod;
 
       data.append("image", image);
+
       for (const key in finalFormData) {
-        data.append(key, finalFormData[key]);
+        const value = finalFormData[key];
+
+        if (Array.isArray(value) || typeof value === "object") {
+          data.append(key, JSON.stringify(value));
+        } else {
+          data.append(key, value);
+        }
       }
 
+      console.log("Submitting Doctor Data =>", finalFormData);
+
       const res = await axios.post(
-        "http://localhost:5000/admin/addDoctors",
+        "http://localhost:5000/admin/adddoctors",
         data,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -106,7 +154,7 @@ export function AddDoctors() {
       alert(res.data.message);
       navigate("/admin-dashboard");
     } catch (err) {
-      console.error(err);
+      console.error("Doctor Add Error:", err);
       alert(
         err.response?.data?.message ||
           "Something went wrong while adding doctor."
@@ -119,74 +167,66 @@ export function AddDoctors() {
       <h2 className="text-center mb-4">Add Doctor</h2>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="row">
+          {[
+            "Name",
+            "Email",
+            "Designation",
+            "Specialization",
+            "Age",
+            "About",
+            "Qualification",
+            "Experience",
+            "BriefProfile",
+            "Address",
+          ].map((field, idx) => (
+            <div key={idx} className="col-md-4 form-group">
+              <label>{field.replace(/([A-Z])/g, " $1").trim()}:</label>
+              <input
+                type="text"
+                name={field}
+                value={formData[field]}
+                onChange={handleTextChange}
+                className="form-control"
+                required
+              />
+            </div>
+          ))}
+
+          {/* Languages */}
           <div className="col-md-4 form-group">
-            <label>Name:</label>
-            <input
-              type="text"
-              name="Name"
-              value={formData.Name}
-              onChange={handleTextChange}
-              className="form-control"
-              required
-            />
-          </div>
-          <div className="col-md-4 form-group">
-            <label>Email:</label>
-            <input
-              type="email"
-              name="Email"
-              value={formData.Email}
-              onChange={handleTextChange}
-              className="form-control"
-              required
-            />
-          </div>
-          <div className="col-md-4 form-group">
-            <label>Designation:</label>
-            <input
-              type="text"
-              name="Designation"
-              value={formData.Designation}
-              onChange={handleTextChange}
-              className="form-control"
-              required
-            />
+            <label>Languages:</label>
+            <div className="d-flex">
+              <input
+                type="text"
+                value={languageInput}
+                onChange={(e) => setLanguageInput(e.target.value)}
+                className="form-control me-2"
+                placeholder="Add Language"
+              />
+              <button
+                type="button"
+                className="btn btn-outline-success"
+                onClick={handleLanguageAdd}
+              >
+                +
+              </button>
+            </div>
+            <div className="mt-2">
+              {formData.Languages.map((lang, i) => (
+                <span key={i} className="badge bg-primary me-2">
+                  {lang}{" "}
+                  <span
+                    style={{ cursor: "pointer" }}
+                    onClick={() => removeLanguage(lang)}
+                  >
+                    ×
+                  </span>
+                </span>
+              ))}
+            </div>
           </div>
 
-          <div className="col-md-4 form-group">
-            <label>Specialization:</label>
-            <input
-              type="text"
-              name="Specialization"
-              value={formData.Specialization}
-              onChange={handleTextChange}
-              className="form-control"
-              required
-            />
-          </div>
-          <div className="col-md-4 form-group">
-            <label>Age:</label>
-            <input
-              type="number"
-              name="Age"
-              value={formData.Age}
-              onChange={handleTextChange}
-              className="form-control"
-              required
-            />
-          </div>
-          <div className="col-md-4 form-group">
-            <label>About:</label>
-            <input
-              type="text"
-              name="About"
-              value={formData.About}
-              onChange={handleTextChange}
-              className="form-control"
-              required
-            />
-          </div>
-
+          {/* State & City */}
           <div className="col-md-4 form-group">
             <label>State:</label>
             <select
@@ -223,7 +263,8 @@ export function AddDoctors() {
             </select>
           </div>
 
-          <div className="col-md-4 form-group time-input-wrapper">
+          {/* Timing */}
+          <div className="col-md-4 form-group">
             <label>From:</label>
             <div className="d-flex">
               <input
@@ -231,9 +272,8 @@ export function AddDoctors() {
                 name="From"
                 value={formData.From}
                 onChange={handleTextChange}
-                placeholder="e.g. 10:00"
                 className="form-control me-2"
-                required
+                placeholder="HH:MM"
               />
               <select
                 name="FromPeriod"
@@ -247,7 +287,7 @@ export function AddDoctors() {
             </div>
           </div>
 
-          <div className="col-md-4 form-group time-input-wrapper">
+          <div className="col-md-4 form-group">
             <label>To:</label>
             <div className="d-flex">
               <input
@@ -255,9 +295,8 @@ export function AddDoctors() {
                 name="To"
                 value={formData.To}
                 onChange={handleTextChange}
-                placeholder="e.g. 05:00"
                 className="form-control me-2"
-                required
+                placeholder="HH:MM"
               />
               <select
                 name="ToPeriod"
@@ -271,6 +310,7 @@ export function AddDoctors() {
             </div>
           </div>
 
+          {/* Availability */}
           <div className="col-md-4 form-group">
             <label>Availability:</label>
             <select
@@ -284,6 +324,7 @@ export function AddDoctors() {
             </select>
           </div>
 
+          {/* Image */}
           <div className="col-md-4 form-group">
             <label>Upload Image:</label>
             <input
@@ -294,16 +335,87 @@ export function AddDoctors() {
               required
             />
           </div>
-          <div className="mb-3">
+
+          {/* Learn More */}
+          <div className="col-12 mb-3">
             <label className="form-label fw-bold">Learn More URL</label>
             <input
               type="url"
               name="Learnmore"
               value={formData.Learnmore}
-              onChange={handleChange}
+              onChange={handleTextChange}
               className="form-control"
               placeholder="https://example.com/learn-more"
             />
+          </div>
+
+          {/* Education */}
+          <div className="col-12 mb-4">
+            <label className="form-label fw-bold">Education:</label>
+            <br />
+            {formData.Education.map((edu, index) => (
+              <div
+                key={index}
+                className="row g-2 align-items-center mb-2 border rounded p-2"
+              >
+                <div className="col-md-4">
+                  <input
+                    type="text"
+                    value={edu.degree}
+                    onChange={(e) =>
+                      handleEducationChange(index, "degree", e.target.value)
+                    }
+                    className="form-control"
+                    placeholder="Degree (e.g. MBBS)"
+                    required
+                  />
+                </div>
+                <div className="col-md-4">
+                  <input
+                    type="text"
+                    value={edu.institution}
+                    onChange={(e) =>
+                      handleEducationChange(
+                        index,
+                        "institution",
+                        e.target.value
+                      )
+                    }
+                    className="form-control"
+                    placeholder="Institution"
+                    required
+                  />
+                </div>
+                <div className="col-md-3">
+                  <input
+                    type="text"
+                    value={edu.year}
+                    onChange={(e) =>
+                      handleEducationChange(index, "year", e.target.value)
+                    }
+                    className="form-control"
+                    placeholder="Year"
+                    required
+                  />
+                </div>
+                <div className="col-md-1 text-end">
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm"
+                    onClick={() => removeEducation(index)}
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+            ))}
+            <button
+              type="button"
+              className="btn btn-outline-primary btn-sm mt-2"
+              onClick={addEducation}
+            >
+              + Add Education
+            </button>
           </div>
         </div>
 
