@@ -135,7 +135,8 @@ const appointment = async (req, res) => {
 
       <ul style="line-height: 1.8; font-size: 16px;">
         <li><strong>Doctor:</strong> Dr. ${doctor}</li>
-        <li><strong>Date:</strong> ${formattedDate}</li>
+        <li><strong>Date:</strong> ${formattedDate.toDateString()}</li>
+        <li><strong>Slot Time:</strong> ${time}</li>
         <li><strong>Status:</strong> <span style="color: #ffc107;">Pending</span></li>
       </ul>
 
