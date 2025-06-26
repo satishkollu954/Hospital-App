@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./addDoctors.css";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 export function AddDoctors() {
   const navigate = useNavigate();
@@ -150,20 +151,26 @@ export function AddDoctors() {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-
-      alert(res.data.message);
-      navigate("/admin-dashboard");
+      toast.success("Doctor added successfully");
+      setTimeout(() => {
+        navigate("/admin-dashboard");
+      }, 800);
     } catch (err) {
       console.error("Doctor Add Error:", err);
-      alert(
+      toast.error(
         err.response?.data?.message ||
           "Something went wrong while adding doctor."
       );
+      // alert(
+      //   err.response?.data?.message ||
+      //     "Something went wrong while adding doctor."
+      // );
     }
   };
 
   return (
     <div className="add-doc-container">
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <h2 className="text-center mb-4">Add Doctor</h2>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="row">
@@ -180,14 +187,25 @@ export function AddDoctors() {
             "Address",
           ].map((field, idx) => (
             <div key={idx} className="col-md-4 form-group">
-              <label>{field.replace(/([A-Z])/g, " $1").trim()}:</label>
+              <label>
+                {field.replace(/([A-Z])/g, " $1").trim()}
+                {["Name", "Email", "Designation", "Specialization"].includes(
+                  field
+                ) && <span className="text-danger"> *</span>}
+                :
+              </label>
               <input
                 type="text"
                 name={field}
                 value={formData[field]}
                 onChange={handleTextChange}
                 className="form-control"
-                required
+                required={[
+                  "Name",
+                  "Email",
+                  "Designation",
+                  "Specialization",
+                ].includes(field)}
               />
             </div>
           ))}
@@ -332,7 +350,6 @@ export function AddDoctors() {
               name="image"
               onChange={handleFileChange}
               className="form-control"
-              required
             />
           </div>
 
@@ -367,7 +384,6 @@ export function AddDoctors() {
                     }
                     className="form-control"
                     placeholder="Degree (e.g. MBBS)"
-                    required
                   />
                 </div>
                 <div className="col-md-4">
@@ -383,7 +399,6 @@ export function AddDoctors() {
                     }
                     className="form-control"
                     placeholder="Institution"
-                    required
                   />
                 </div>
                 <div className="col-md-3">
@@ -395,7 +410,6 @@ export function AddDoctors() {
                     }
                     className="form-control"
                     placeholder="Year"
-                    required
                   />
                 </div>
                 <div className="col-md-1 text-end">

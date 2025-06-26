@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Modal, Button } from "react-bootstrap";
+import { ToastContainer, toast } from "react-toastify";
 
 export function ALLLocations() {
   const [locations, setLocations] = useState([]);
   const [editBranch, setEditBranch] = useState({});
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null); // { type: "state" | "branch", state: ..., branchId?: ... }
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,34 +19,42 @@ export function ALLLocations() {
     axios
       .get("http://localhost:5000/admin/locations")
       .then((res) => setLocations(res.data))
-      .catch((err) => console.error("Error fetching locations:", err));
+      .catch((err) => toast.error("Error fetching locations"));
   };
 
-  const handleDeleteState = (state) => {
-    if (window.confirm(`Are you sure you want to delete ${state}?`)) {
+  const confirmDelete = (target) => {
+    setDeleteTarget(target);
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmedDelete = () => {
+    if (!deleteTarget) return;
+
+    if (deleteTarget.type === "state") {
       axios
         .delete("http://localhost:5000/admin/delete-state", {
-          data: { state },
+          data: { state: deleteTarget.state },
         })
         .then(() => {
-          alert("State deleted successfully");
+          toast.success("State deleted successfully");
           fetchLocations();
         })
-        .catch((err) => console.error("Error deleting state:", err));
-    }
-  };
-
-  const handleDeleteBranch = (state, branchId) => {
-    if (window.confirm("Are you sure you want to delete this branch?")) {
+        .catch(() => toast.error("Error deleting state"))
+        .finally(() => setShowConfirmModal(false));
+    } else if (deleteTarget.type === "branch") {
       axios
         .delete("http://localhost:5000/admin/delete-branch", {
-          data: { state, branchId },
+          data: {
+            state: deleteTarget.state,
+            branchId: deleteTarget.branchId,
+          },
         })
         .then(() => {
-          alert("Branch deleted successfully");
+          toast.success("Branch deleted successfully");
           fetchLocations();
         })
-        .catch((err) => console.error("Error deleting branch:", err));
+        .catch(() => toast.error("Error deleting branch"))
+        .finally(() => setShowConfirmModal(false));
     }
   };
 
@@ -57,15 +69,13 @@ export function ALLLocations() {
           .find((b) => b._id === branchId)?.mapUrl,
       };
 
-      const updated = {
-        ...prev[branchId],
-        original,
-        [key]: value,
-      };
-
       return {
         ...prev,
-        [branchId]: updated,
+        [branchId]: {
+          ...prev[branchId],
+          original,
+          [key]: value,
+        },
       };
     });
   };
@@ -73,7 +83,7 @@ export function ALLLocations() {
   const handleUpdateBranch = (state, branch) => {
     const updated = editBranch[branch._id];
     if (!updated?.name || !updated?.mapUrl) {
-      alert("Both name and map URL are required");
+      toast.error("Both name and map URL are required");
       return;
     }
 
@@ -85,19 +95,16 @@ export function ALLLocations() {
         newMapUrl: updated.mapUrl,
       })
       .then(() => {
-        alert("Branch updated successfully");
+        toast.success("Branch updated successfully");
         setEditBranch((prev) => ({ ...prev, [branch._id]: null }));
         fetchLocations();
       })
-      .catch((err) => {
-        console.error("Update failed:", err);
-        alert("Update failed");
-      });
+      .catch(() => toast.error("Update failed"));
   };
 
   return (
     <div className="container my-4">
-      {/* Back Button */}
+      <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
       <button
         onClick={() => navigate(-1)}
         className="btn btn-outline-secondary mb-4"
@@ -113,7 +120,7 @@ export function ALLLocations() {
             <h5 className="mb-0">{loc.State}</h5>
             <button
               className="btn btn-sm btn-danger"
-              onClick={() => handleDeleteState(loc.State)}
+              onClick={() => confirmDelete({ type: "state", state: loc.State })}
             >
               Delete State
             </button>
@@ -135,45 +142,32 @@ export function ALLLocations() {
                 <div key={branch._id} className="border rounded p-3 mb-3">
                   {isEditing ? (
                     <>
-                      <div className="mb-2">
-                        <label className="form-label">Branch Name:</label>
-                        <input
-                          type="text"
-                          value={edited.name}
-                          onChange={(e) =>
-                            handleEditChange(branch._id, "name", e.target.value)
-                          }
-                          className="form-control"
-                          placeholder="Branch name"
-                        />
-                      </div>
-                      <div className="mb-2">
-                        <label className="form-label">Map URL:</label>
-                        <input
-                          type="text"
-                          value={edited.mapUrl}
-                          onChange={(e) =>
-                            handleEditChange(
-                              branch._id,
-                              "mapUrl",
-                              e.target.value
-                            )
-                          }
-                          className="form-control"
-                          placeholder="Map URL"
-                        />
-                      </div>
-                      <div className="d-flex justify-content-center gap-3 mt-3">
+                      <input
+                        className="form-control mb-2"
+                        value={edited.name}
+                        placeholder="Branch name"
+                        onChange={(e) =>
+                          handleEditChange(branch._id, "name", e.target.value)
+                        }
+                      />
+                      <input
+                        className="form-control mb-2"
+                        value={edited.mapUrl}
+                        placeholder="Map URL"
+                        onChange={(e) =>
+                          handleEditChange(branch._id, "mapUrl", e.target.value)
+                        }
+                      />
+                      <div className="d-flex gap-2 justify-content-center">
                         <button
-                          className="btn btn-sm btn-success"
+                          className="btn btn-sm btn-secondary"
                           onClick={() => handleUpdateBranch(loc.State, branch)}
                           disabled={!hasChanges}
                         >
                           Save
                         </button>
-
                         <button
-                          className="btn btn-sm btn-success"
+                          className="btn btn-sm btn-secondary"
                           onClick={() =>
                             setEditBranch((prev) => ({
                               ...prev,
@@ -188,10 +182,10 @@ export function ALLLocations() {
                   ) : (
                     <div className="d-flex justify-content-between align-items-center">
                       <div>
-                        <p className="mb-1">
+                        <p>
                           <strong>Name:</strong> {branch.name}
                         </p>
-                        <p className="mb-1">
+                        <p>
                           <strong>Map:</strong>{" "}
                           <a
                             href={branch.mapUrl}
@@ -224,7 +218,11 @@ export function ALLLocations() {
                         <button
                           className="btn btn-sm btn-primary"
                           onClick={() =>
-                            handleDeleteBranch(loc.State, branch._id)
+                            confirmDelete({
+                              type: "branch",
+                              state: loc.State,
+                              branchId: branch._id,
+                            })
                           }
                         >
                           Delete
@@ -238,6 +236,31 @@ export function ALLLocations() {
           </div>
         </div>
       ))}
+
+      {/* Confirmation Modal */}
+      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete{" "}
+          {deleteTarget?.type === "state"
+            ? `the state "${deleteTarget.state}"`
+            : "this branch"}
+          ?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowConfirmModal(false)}
+          >
+            Cancel
+          </Button>
+          <Button variant="danger mt-3" onClick={handleConfirmedDelete}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

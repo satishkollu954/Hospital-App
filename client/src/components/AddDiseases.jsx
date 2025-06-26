@@ -51,6 +51,11 @@ export function AddDiseases() {
         >
           ← Back
         </button>
+        {message && (
+          <div className="alert alert-info mt-3" role="alert">
+            {message}
+          </div>
+        )}
 
         <h3 className="mb-4 text-center">Add Treatment</h3>
 
@@ -93,12 +98,6 @@ export function AddDiseases() {
         <button type="submit" className="btn btn-primary w-100">
           Add Treatment
         </button>
-
-        {message && (
-          <div className="alert alert-info mt-3" role="alert">
-            {message}
-          </div>
-        )}
       </form>
     </div>
   );
