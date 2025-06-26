@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 export function DoctorProfile() {
   const navigate = useNavigate();
@@ -92,14 +93,16 @@ export function DoctorProfile() {
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      alert("Profile updated successfully");
+      toast.success("Profile updated successfully");
+      // alert("Profile updated successfully");
       setIsEditing(false);
       setDocData(res.data.updatedDoctor);
       setOriginalData(res.data.updatedDoctor);
       setSelectedFile(null);
     } catch (error) {
       console.error("Error updating profile:", error);
-      alert("Failed to update profile");
+      toast.error("Failed to update profile");
+      // alert("Failed to update profile");
     }
   };
 
@@ -114,6 +117,7 @@ export function DoctorProfile() {
 
   return (
     <div className="container mt-3">
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <div className="card shadow p-4">
         <div className="row">
           <div className="col-md-4 text-center mb-3">
