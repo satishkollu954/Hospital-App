@@ -22,6 +22,7 @@ import { ALLDiseases } from "./components/viewAllDiseases";
 import { ALLLocations } from "./components/viewAllLocations";
 import { ViewAppointments } from "./components/viewappointments";
 import { DoctorInformation } from "./components/doctorInformation";
+import { AddFAQ } from "./components/addFAQ";
 
 function App() {
   return (
@@ -103,6 +104,7 @@ function App() {
             <Route path="/doctor/:email" element={<DoctorInformation />} />
             <Route path="location" element={<Location />} />
             <Route path="login" element={<AdminLogin />} />
+            <Route path="faq" element={<AddFAQ />} />
 
             <Route
               path="all-locations"
