@@ -16,7 +16,7 @@ export function AddFAQ() {
 
   const fetchFaqs = () => {
     axios
-      .get("http://localhost:5000/admin/faqs")
+      .get("http://localhost:5000/admin/faq")
       .then((res) => setFaqs(res.data))
       .catch(() => toast.error("Failed to load FAQs"));
   };
@@ -28,7 +28,7 @@ export function AddFAQ() {
     }
 
     axios
-      .post("http://localhost:5000/admin/faqs", newFaq)
+      .post("http://localhost:5000/admin/faq", newFaq)
       .then(() => {
         toast.success("FAQ added");
         setNewFaq({ question: "", answer: "" });
@@ -45,7 +45,7 @@ export function AddFAQ() {
 
   const handleUpdate = (id) => {
     axios
-      .put(`http://localhost:5000/admin/faqs/${id}`, editedFaq)
+      .put(`http://localhost:5000/admin/faq/${id}`, editedFaq)
       .then(() => {
         toast.success("FAQ updated");
         setEditingId(null);
@@ -56,7 +56,7 @@ export function AddFAQ() {
 
   const handleDelete = (id) => {
     axios
-      .delete(`http://localhost:5000/admin/faqs/${id}`)
+      .delete(`http://localhost:5000/admin/faq/${id}`)
       .then(() => {
         toast.success("FAQ deleted");
         fetchFaqs();
