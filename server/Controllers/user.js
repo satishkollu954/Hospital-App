@@ -2,6 +2,7 @@ const { contactModel } = require("../Models/contactus");
 const { appointmentModel } = require("../Models/appointment");
 const Staff = require("../Models/staffs");
 const Doctor = require("../Models/Doctor");
+const sendEmail = require("./email");
 // inserting new queries
 const contactus = async (req, res) => {
   try {
@@ -112,6 +113,45 @@ const appointment = async (req, res) => {
     // Save to database
     await newAppointment.save();
 
+    await sendEmail(
+      email,
+      "Appointment Confirmation - RaagviCare",
+      `
+  <div style="
+    font-family: Arial, sans-serif;
+    background: url('https://cdn.pixabay.com/photo/2016/03/31/20/11/doctor-1295581_1280.png') no-repeat center;
+    background-size: cover;
+    padding: 40px;
+    color: #ffffff;
+    text-shadow: 1px 1px 2px #000;
+    border-radius: 12px;
+  ">
+    <div style="background-color: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 10px;">
+      <h2 style="color: #4fd1c5;">Hello ${fullName},</h2>
+
+      <p style="font-size: 16px;">
+        Thank you for scheduling your appointment with us! Below are your appointment details:
+      </p>
+
+      <ul style="line-height: 1.8; font-size: 16px;">
+        <li><strong>Doctor:</strong> Dr. ${doctor}</li>
+        <li><strong>Date:</strong> ${formattedDate}</li>
+        <li><strong>Status:</strong> <span style="color: #ffc107;">Pending</span></li>
+      </ul>
+
+      <p>
+        Please arrive 10-15 minutes early and carry any necessary documents. If you need assistance, our team is just a call away.
+      </p>
+
+      <p style="font-style: italic;">We're here to care for you every step of the way.</p>
+
+      <br />
+      <p>Warm regards,<br/><strong>RaagviCare Team</strong></p>
+    </div>
+  </div>
+  `
+    );
+
     console.log("✅ Appointment saved");
     res.status(201).json({ message: "Appointment booked successfully." });
   } catch (error) {
@@ -162,9 +202,54 @@ const appointmentChange = async (req, res) => {
   const { status } = req.body;
 
   try {
-    await appointmentModel.findByIdAndUpdate(id, { status });
-    res.json({ message: "Status updated" });
+    // 1. Find the appointment by ID
+    const appointment = await appointmentModel.findById(id);
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+
+    // 2. Update the status
+    appointment.status = status;
+    await appointment.save();
+    console.log("Appointment status ", status);
+    // 3. Send email ONLY if status is "Completed"
+    if (status == "Completed") {
+      const { fullName, email, doctor, date } = appointment;
+      const formattedDate = new Date(date).toLocaleDateString();
+      console.log("email in appointmentchange ", email);
+      await sendEmail(
+        email,
+        "Thank You for Visiting - RaagviCare",
+        `
+        <div style="
+          font-family: Arial, sans-serif;
+          background: url('https://cdn.pixabay.com/photo/2017/08/06/00/04/medical-2585039_1280.jpg') no-repeat center;
+          background-size: cover;
+          padding: 40px;
+          color: #ffffff;
+          text-shadow: 1px 1px 2px #000;
+          border-radius: 12px;
+        ">
+          <div style="background-color: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 10px;">
+            <h2 style="color: #4fd1c5;">Hello ${fullName},</h2>
+            <p style="font-size: 16px;">
+              Your appointment with <strong>Dr. ${doctor}</strong> on <strong>${formattedDate}</strong> has been successfully completed.
+            </p>
+            <p>We truly appreciate your trust in our care.</p>
+            <p style="font-weight: bold;">Thank you for visiting RaagviCare. We hope to serve you again!</p>
+            <br />
+            <p>Warm regards,<br/><strong>HospitalCare Team</strong></p>
+          </div>
+        </div>
+        `
+      );
+    }
+
+    // 4. Respond with success
+    res.json({ message: "Status updated successfully." });
   } catch (err) {
+    console.error("Error updating appointment status:", err);
     res.status(500).json({ message: "Failed to update status" });
   }
 };

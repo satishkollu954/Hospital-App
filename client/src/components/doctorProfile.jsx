@@ -225,7 +225,7 @@ export function DoctorProfile() {
                     <th>Languages:</th>
                     <td>
                       {!isEditing ? (
-                        <div className="form-control bg-light">
+                        <div className="form-control bg-light w-50 ">
                           {(docData.Languages || []).join(", ")}
                         </div>
                       ) : (
@@ -263,7 +263,7 @@ export function DoctorProfile() {
                     <th>Education:</th>
                     <td>
                       {!isEditing ? (
-                        <div className="form-control bg-light">
+                        <div className="form-control bg-light w-50">
                           {(docData.Education || [])
                             .map(
                               (edu) =>
@@ -355,7 +355,7 @@ export function DoctorProfile() {
                     Edit Profile
                   </button>
                   <button
-                    className="btn btn-secondary ms-2"
+                    className="btn btn-primary ms-2"
                     onClick={() => navigate(-1)}
                   >
                     Back
@@ -364,7 +364,7 @@ export function DoctorProfile() {
               ) : (
                 <>
                   <button
-                    className="btn btn-success me-2"
+                    className="btn btn-success me-2 mt-3"
                     onClick={handleSave}
                     disabled={!hasChanges}
                   >

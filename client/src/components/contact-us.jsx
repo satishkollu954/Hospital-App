@@ -5,6 +5,39 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export function ContactUs() {
+  const faqList = [
+    {
+      question: "What medicine should I take for fever?",
+      answer:
+        "You can take Paracetamol (e.g., Crocin, Dolo 650) every 6 hours. Stay hydrated and rest.",
+    },
+    {
+      question: "How do I treat a common cold?",
+      answer:
+        "For cold, use Cetirizine for runny nose and steam inhalation. Drink warm fluids.",
+    },
+    {
+      question: "What to take for headache?",
+      answer:
+        "Paracetamol or ibuprofen helps relieve headache. If persistent, consult a doctor.",
+    },
+    {
+      question: "What to do in case of stomach ache?",
+      answer:
+        "Take antacids or pain relief like Meftal-Spas. Avoid spicy foods.",
+    },
+    {
+      question: "How to manage body pain?",
+      answer:
+        "Painkillers like Dolo 650 or Ibuprofen are helpful. Warm compress can also reduce pain.",
+    },
+    {
+      question: "What medicine helps in cough?",
+      answer:
+        "Cough syrups like Benadryl or Ascoril can be used. Drink warm honey-lemon water.",
+    },
+  ];
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -132,6 +165,36 @@ export function ContactUs() {
             </button>
           </div>
         </form>
+
+        <div className="mt-5">
+          <h4 className="text-primary mb-3">Frequently Asked Questions</h4>
+          <div className="accordion" id="faqAccordion">
+            {faqList.map((faq, index) => (
+              <div className="accordion-item" key={index}>
+                <h2 className="accordion-header" id={`heading${index}`}>
+                  <button
+                    className="accordion-button collapsed"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target={`#collapse${index}`}
+                    aria-expanded="false"
+                    aria-controls={`collapse${index}`}
+                  >
+                    {faq.question}
+                  </button>
+                </h2>
+                <div
+                  id={`collapse${index}`}
+                  className="accordion-collapse collapse"
+                  aria-labelledby={`heading${index}`}
+                  data-bs-parent="#faqAccordion"
+                >
+                  <div className="accordion-body">{faq.answer}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
