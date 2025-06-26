@@ -7,6 +7,7 @@ const upload = require("../middlewares/upload");
 const sendOTP = require("../Controllers/sendotp");
 const verifyOTP = require("../Controllers/verifyOTP");
 const diseaseController = require("../Controllers/diseaseController");
+const { getSlotsForDoctor } = require("../Controllers/slotsController");
 
 const {
   addDoctors,
@@ -51,7 +52,7 @@ router.get("/appointments", getAllAppointment);
 router.patch("/appointments/:id", appointmentChange);
 router.delete("/appointments/:id", DeleteAppointment);
 router.get("/appointments/doctor-email/:email", getAppointmentsByDoctorEmail);
-
+router.get("/slots", getSlotsForDoctor);
 // -------------------------------------
 // OTP Handling
 // -------------------------------------
