@@ -90,12 +90,18 @@ const getAppointmentsByDoctorEmail = async (req, res) => {
 const getAppointmentsCountByDoctorEmail = async (req, res) => {
   try {
     const doctorEmail = decodeURIComponent(req.params.doctorEmail);
-    const count = await appointmentModel.countDocuments({ doctorEmail });
-    //console.log("count is ", count);
-    res.json({ count });
+    const total = await appointmentModel.countDocuments({ doctorEmail });
+
+    const completed = await appointmentModel.countDocuments({
+      doctorEmail,
+      status: "Completed",
+    });
+    const pending = total - completed;
+
+    res.json({ total, pending, completed });
   } catch (err) {
-    console.error("Error fetching appointment count:", err);
-    res.status(500).json({ message: "Error fetching appointment count" });
+    console.error("Count error:", err);
+    res.status(500).json({ message: "Error fetching counts" });
   }
 };
 

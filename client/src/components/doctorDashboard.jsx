@@ -7,17 +7,20 @@ export function DoctorDashboard() {
   const [cookies, , removeCookies] = useCookies(["email"]);
   const navigate = useNavigate();
   const [doctor, setDoctor] = useState(null);
-  const [appointmentCount, setAppointmentCount] = useState(0);
+  const [appointmentStats, setAppointmentStats] = useState({
+    total: 0,
+    pending: 0,
+    completed: 0,
+  });
 
   const decodedEmail = decodeURIComponent(cookies.email);
-
   useEffect(() => {
     if (decodedEmail) {
       axios
         .get(`http://localhost:5000/admin/appointments/count/${decodedEmail}`)
-        .then((res) => setAppointmentCount(res.data.count))
+        .then((res) => setAppointmentStats(res.data))
         .catch((err) =>
-          console.error("Failed to fetch appointment count", err)
+          console.error("Failed to fetch appointment stats", err)
         );
     }
   }, [decodedEmail]);
@@ -55,17 +58,25 @@ export function DoctorDashboard() {
       {/* Overview Cards */}
       <div className="row">
         <div className="col-md-4 mb-3">
-          <div className="card shadow text-center p-3">
+          <div className="card shadow text-center p-4">
             <h5>Total Appointments</h5>
-            <h2>{appointmentCount}</h2>
+            <h2 className="text-primary">{appointmentStats.total}</h2>
+            <div className="mt-3">
+              <span className="badge bg-warning me-2">
+                Pending: {appointmentStats.pending}
+              </span>
+              <span className="badge bg-success">
+                Completed: {appointmentStats.completed}
+              </span>
+            </div>
           </div>
         </div>
 
-        <div className="col-md-3 mb-3">
-          <div className="card shadow text-center p-3">
+        <div className="col-md-4 mb-3">
+          <div className="card shadow text-center p-4">
             <h5>Availability</h5>
             <span
-              className={`badge ${
+              className={`badge fs-6 ${
                 doctor?.Availability ? "bg-success" : "bg-secondary"
               }`}
             >
@@ -73,10 +84,11 @@ export function DoctorDashboard() {
             </span>
           </div>
         </div>
+
         <div className="col-md-4 mb-3">
-          <div className="card shadow text-center p-3">
+          <div className="card shadow text-center p-4">
             <h5>Working Hours</h5>
-            <p>
+            <p className="fs-5">
               {doctor?.From || "--"} to {doctor?.To || "--"}
             </p>
           </div>
@@ -85,7 +97,7 @@ export function DoctorDashboard() {
 
       {/* Info Section */}
       <div className="mt-4 p-4 bg-light rounded shadow-sm">
-        <p>
+        <p className="mb-0">
           This is your personal space to manage appointments, view and update
           your profile, and check your working schedule. Stay connected with
           your patients and manage your availability.
