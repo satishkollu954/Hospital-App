@@ -3,6 +3,7 @@ import "./appointment.css";
 import axios from "axios";
 import * as yup from "yup";
 import { useEffect, useState } from "react";
+import SlotSelector from "./SlotSelector";
 
 export function Appointment() {
   const today = new Date();
@@ -17,6 +18,7 @@ export function Appointment() {
   const [city, setCities] = useState([]);
 
   const [diseases, setDiseases] = useState([]);
+  const [selectedSlot, setSelectedSlot] = useState("");
 
   const formik = useFormik({
     initialValues: {
@@ -53,14 +55,22 @@ export function Appointment() {
         return;
       }
 
+      if (!selectedSlot) {
+        alert("Please select a time slot.");
+        return;
+      }
+
+      const updatedUser = { ...user, time: selectedSlot };
+
       axios
-        .post("http://localhost:5000/api/appointment", user)
+        .post("http://localhost:5000/api/appointment", updatedUser)
         .then(() => {
           alert("Appointment successful...");
           resetForm();
           setEmailVerified(false);
           setOtpVisible(false);
           setOtp("");
+          setSelectedSlot("");
         })
         .catch(() => {
           alert("Appointment failed. Please try again.");
@@ -80,9 +90,7 @@ export function Appointment() {
         .then((res) => {
           const result = res.data.doctors || res.data || [];
           setDoctors(result);
-          console.log("entered inside", result);
         })
-
         .catch(() => setDoctors([]));
     } else {
       setDoctors([]);
@@ -90,59 +98,25 @@ export function Appointment() {
   }, [formik.values.city, formik.values.disease]);
 
   useEffect(() => {
-    if (formik.values.doctor) {
-      const selectedDoctor = doctors.find(
-        (doc) => doc.Name === formik.values.doctor
-      );
-      if (selectedDoctor) {
-        const from = selectedDoctor.From || "";
-        const to = selectedDoctor.To || "";
-        const timeRange = from && to ? `${from} - ${to}` : "";
-        if (selectedDoctor.Availability) {
-          formik.setFieldValue("time", timeRange);
-        } else {
-          console.log("inside else");
-          const timeRange = "The doctor is not available today";
-          formik.setFieldValue("time", timeRange);
-        }
-      }
-    }
-  }, [formik.values.doctor, doctors]);
-
-  useEffect(() => {
     axios
       .get("http://localhost:5000/admin/states")
-      .then((res) => {
-        console.log("response", res.data);
-        setStates(res.data); // assuming res.data is an array of state strings
-      })
-      .catch((err) => {
-        console.error("Failed to load states", err);
-        setStates([]);
-      });
+      .then((res) => setStates(res.data))
+      .catch(() => setStates([]));
   }, []);
 
   useEffect(() => {
     axios
       .get("http://localhost:5000/admin/getdisease")
-      .then((res) => {
-        console.log("response", res.data);
-        setDiseases(res.data); // assuming res.data is an array of state strings
-      })
-      .catch((err) => {
-        console.error("Failed to load states", err);
-        setDiseases([]);
-      });
+      .then((res) => setDiseases(res.data))
+      .catch(() => setDiseases([]));
   }, []);
 
   const handleOtpClick = () => {
     const Email = formik.values.email;
-
     if (!Email) {
       alert("Please enter an email before sending OTP.");
       return;
     }
-
     axios
       .post("http://localhost:5000/admin/send-otp", { Email })
       .then(() => {
@@ -365,16 +339,21 @@ export function Appointment() {
               )}
             </div>
 
-            {/* Availability */}
+            {/* Slots */}
             <div className="col-md-4">
-              <label className="form-label fw-bold">Availability</label>
-              <input
-                type="text"
-                name="time"
-                className="form-control"
-                readOnly
-                value={formik.values.time}
-              />
+              {formik.values.date && formik.values.doctor && (
+                <div className="col-md-12">
+                  <SlotSelector
+                    doctorEmail={
+                      doctors.find((d) => d.Name === formik.values.doctor)
+                        ?.Email || ""
+                    }
+                    selectedDate={formik.values.date}
+                    selectedSlot={selectedSlot}
+                    onSlotSelect={(slot) => setSelectedSlot(slot)}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Reason (full row) */}

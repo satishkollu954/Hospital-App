@@ -69,6 +69,7 @@ const appointment = async (req, res) => {
       email,
       phone,
       date,
+      time, // 👈 New field for slot time
       reason,
       disease,
       state,
@@ -76,49 +77,45 @@ const appointment = async (req, res) => {
       doctor,
     } = req.body;
 
-    console.log(
-      "disease ",
-      disease,
-      "state ",
-      state,
-      "city ",
-      city,
-      "doctor ",
-      doctor
-    );
-
+    // Parse and validate the date
     const parsedDate = new Date(date);
-    const formattedDate = new Date(parsedDate).toISOString().split("T")[0];
-
     if (isNaN(parsedDate)) {
       return res
         .status(400)
-        .json({ message: "Invalid date format. Use MM/DD/YYYY." });
+        .json({ message: "Invalid date format. Use YYYY-MM-DD." });
     }
 
+    const formattedDate = new Date(parsedDate.toISOString().split("T")[0]);
+
+    // Find doctor by name
     const foundDoctor = await Doctor.findOne({ Name: doctor });
     if (!foundDoctor) {
       return res.status(404).json({ message: "Doctor not found" });
     }
 
+    // Create new appointment document
     const newAppointment = new appointmentModel({
       fullName,
       email,
       phone,
       date: formattedDate,
+      time, // 👈 Store time string (like "11:00")
       reason,
       disease,
       state,
       city,
       doctor,
       doctorEmail: foundDoctor.Email,
+      status: "Pending", // default or custom
     });
 
+    // Save to database
     await newAppointment.save();
-    console.log("Appointment saved");
+
+    console.log("✅ Appointment saved");
     res.status(201).json({ message: "Appointment booked successfully." });
   } catch (error) {
-    console.error("Error saving appointment:", error);
+    console.error("❌ Error saving appointment:", error);
     res
       .status(500)
       .json({ message: "Server error while booking appointment." });
