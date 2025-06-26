@@ -1,6 +1,7 @@
 const { contactModel } = require("../Models/contactus");
 const { appointmentModel } = require("../Models/appointment");
 const Staff = require("../Models/staffs");
+const Doctor = require("../Models/Doctor");
 // inserting new queries
 const contactus = async (req, res) => {
   try {
@@ -95,6 +96,11 @@ const appointment = async (req, res) => {
         .json({ message: "Invalid date format. Use MM/DD/YYYY." });
     }
 
+    const foundDoctor = await Doctor.findOne({ Name: doctor });
+    if (!foundDoctor) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
     const newAppointment = new appointmentModel({
       fullName,
       email,
@@ -105,6 +111,7 @@ const appointment = async (req, res) => {
       state,
       city,
       doctor,
+      doctorEmail: foundDoctor.Email,
     });
 
     await newAppointment.save();

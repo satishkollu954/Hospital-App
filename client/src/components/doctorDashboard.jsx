@@ -26,7 +26,7 @@ export function DoctorDashboard() {
     <div className="container mt-4">
       {/* Top Buttons */}
       <div className="d-flex justify-content-end mb-3">
-        <Link className="btn btn-primary" to="/doctor/appointments">
+        <Link className="btn btn-primary" to="/doctor-appointments">
           View Appointments
         </Link>
         <Link className="btn btn-primary ms-3" to="/doctor-profile">

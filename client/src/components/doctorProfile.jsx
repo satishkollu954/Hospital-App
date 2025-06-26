@@ -5,13 +5,13 @@ import { useNavigate } from "react-router-dom";
 
 export function DoctorProfile() {
   const navigate = useNavigate();
+  const [cookies] = useCookies(["email"]);
+  const decodedEmail = decodeURIComponent(cookies.email);
 
   const [docData, setDocData] = useState(null);
   const [originalData, setOriginalData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [cookies] = useCookies(["email"]);
   const [selectedFile, setSelectedFile] = useState(null);
-  const decodedEmail = decodeURIComponent(cookies.email);
 
   useEffect(() => {
     axios
@@ -33,6 +33,47 @@ export function DoctorProfile() {
     setSelectedFile(e.target.files[0]);
   };
 
+  const handleLanguagesChange = (index, value) => {
+    const updated = [...docData.Languages];
+    updated[index] = value;
+    setDocData({ ...docData, Languages: updated });
+  };
+
+  const addLanguage = () => {
+    setDocData((prev) => ({
+      ...prev,
+      Languages: [...(prev.Languages || []), ""],
+    }));
+  };
+
+  const removeLanguage = (index) => {
+    const updated = [...docData.Languages];
+    updated.splice(index, 1);
+    setDocData({ ...docData, Languages: updated });
+  };
+
+  const handleEducationChange = (index, field, value) => {
+    const updated = [...docData.Education];
+    updated[index][field] = value;
+    setDocData({ ...docData, Education: updated });
+  };
+
+  const addEducation = () => {
+    setDocData((prev) => ({
+      ...prev,
+      Education: [
+        ...(prev.Education || []),
+        { degree: "", institution: "", year: "" },
+      ],
+    }));
+  };
+
+  const removeEducation = (index) => {
+    const updated = [...docData.Education];
+    updated.splice(index, 1);
+    setDocData({ ...docData, Education: updated });
+  };
+
   const hasChanges =
     JSON.stringify({ ...docData, image: undefined }) !==
       JSON.stringify({ ...originalData, image: undefined }) ||
@@ -41,7 +82,9 @@ export function DoctorProfile() {
   const handleSave = async () => {
     const formData = new FormData();
     Object.entries(docData).forEach(([key, value]) => {
-      if (key !== "Email") {
+      if (key === "Languages" || key === "Education") {
+        formData.append(key, JSON.stringify(value));
+      } else if (key !== "Email") {
         formData.append(key, value);
       }
     });
@@ -54,9 +97,7 @@ export function DoctorProfile() {
         `http://localhost:5000/admin/updatedoctor/${decodedEmail}`,
         formData,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
       alert("Profile updated successfully");
@@ -76,15 +117,13 @@ export function DoctorProfile() {
     setIsEditing(false);
   };
 
-  if (!docData) {
+  if (!docData)
     return <div className="text-center mt-5">Loading Doctor Profile...</div>;
-  }
 
   return (
-    <div className="container mt-1">
+    <div className="container mt-3">
       <div className="card shadow p-4">
         <div className="row">
-          {/* Image Section */}
           <div className="col-md-4 text-center mb-3">
             {docData.image ? (
               <img
@@ -102,128 +141,79 @@ export function DoctorProfile() {
               </div>
             )}
             {isEditing && (
-              <div className="mt-2">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="form-control"
-                />
-              </div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="form-control mt-2"
+              />
             )}
           </div>
 
-          {/* Details Section */}
           <div className="col-md-8">
             <table className="table table-borderless">
               <tbody>
+                {[
+                  "Name",
+                  "Email",
+                  "Password",
+                  "Age",
+                  "Designation",
+                  "Specialization",
+                  "State",
+                  "City",
+                  "From",
+                  "To",
+                  "Learnmore",
+                  "Qualification",
+                  "Experience",
+                ].map((field) => (
+                  <tr key={field}>
+                    <th>{field}:</th>
+                    <td>
+                      <input
+                        name={field}
+                        className="form-control"
+                        disabled={field === "Email" || !isEditing}
+                        value={docData[field] || ""}
+                        onChange={handleInputChange}
+                      />
+                    </td>
+                  </tr>
+                ))}
+
                 <tr>
-                  <th>Name:</th>
-                  <td>
-                    <input
-                      name="Name"
-                      className="form-control"
-                      disabled={!isEditing}
-                      value={docData.Name}
-                      onChange={handleInputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Email:</th>
-                  <td>
-                    <input
-                      className="form-control"
-                      disabled
-                      value={docData.Email}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Password:</th>
-                  <td>
-                    <input
-                      name="Password"
-                      className="form-control"
-                      disabled={!isEditing}
-                      value={docData.Password}
-                      onChange={handleInputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Age:</th>
-                  <td>
-                    <input
-                      name="Age"
-                      className="form-control"
-                      disabled={!isEditing}
-                      value={docData.Age}
-                      onChange={handleInputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Designation:</th>
-                  <td>
-                    <input
-                      name="Designation"
-                      className="form-control"
-                      disabled={!isEditing}
-                      value={docData.Designation}
-                      onChange={handleInputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Specialization:</th>
-                  <td>
-                    <input
-                      name="Specialization"
-                      className="form-control"
-                      disabled={!isEditing}
-                      value={docData.Specialization}
-                      onChange={handleInputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>Location:</th>
-                  <td>
-                    <input
-                      name="City"
-                      className="form-control mb-2"
-                      disabled={!isEditing}
-                      value={docData.City}
-                      onChange={handleInputChange}
-                    />
-                    <input
-                      name="State"
-                      className="form-control"
-                      disabled={!isEditing}
-                      value={docData.State}
-                      onChange={handleInputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>About:</th>
+                  <th>BriefProfile:</th>
                   <td>
                     <textarea
-                      name="About"
+                      name="BriefProfile"
                       className="form-control"
                       disabled={!isEditing}
-                      value={docData.About}
+                      value={docData.BriefProfile || ""}
                       onChange={handleInputChange}
-                    ></textarea>
+                    />
                   </td>
                 </tr>
+
+                <tr>
+                  <th>Address:</th>
+                  <td>
+                    <textarea
+                      name="Address"
+                      className="form-control"
+                      disabled={!isEditing}
+                      value={docData.Address || ""}
+                      onChange={handleInputChange}
+                    />
+                  </td>
+                </tr>
+
                 <tr>
                   <th>Availability:</th>
                   <td>
                     <input
-                      name="Availability"
                       type="checkbox"
+                      name="Availability"
                       className="form-check-input"
                       disabled={!isEditing}
                       checked={docData.Availability}
@@ -234,53 +224,152 @@ export function DoctorProfile() {
                     </label>
                   </td>
                 </tr>
+
+                {/* Languages */}
                 <tr>
-                  <th>Working Hours:</th>
+                  <th>Languages:</th>
                   <td>
-                    <input
-                      name="From"
-                      className="form-control mb-2"
-                      disabled={!isEditing}
-                      value={docData.From}
-                      onChange={handleInputChange}
-                    />
-                    <input
-                      name="To"
-                      className="form-control"
-                      disabled={!isEditing}
-                      value={docData.To}
-                      onChange={handleInputChange}
-                    />
+                    {!isEditing ? (
+                      <div
+                        className="form-control bg-light"
+                        style={{ whiteSpace: "pre-line" }}
+                      >
+                        {(docData.Languages || []).join(", ")}
+                      </div>
+                    ) : (
+                      <>
+                        {(docData.Languages || []).map((lang, i) => (
+                          <div key={i} className="input-group mb-2">
+                            <input
+                              className="form-control"
+                              disabled={!isEditing}
+                              value={lang}
+                              onChange={(e) =>
+                                handleLanguagesChange(i, e.target.value)
+                              }
+                            />
+                            {isEditing && (
+                              <button
+                                className="btn btn-danger"
+                                onClick={() => removeLanguage(i)}
+                              >
+                                &times;
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                        <button
+                          className="btn btn-sm btn-outline-primary"
+                          onClick={addLanguage}
+                        >
+                          + Add Language
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
 
+                {/* Education */}
                 <tr>
-                  <th>Learn More</th>
+                  <th>Education:</th>
                   <td>
-                    {" "}
-                    <input
-                      name="Learnmore"
-                      className="form-control"
-                      disabled={!isEditing}
-                      value={docData.Learnmore}
-                      onChange={handleInputChange}
-                    />
+                    {!isEditing ? (
+                      <div
+                        className="form-control bg-light"
+                        style={{ whiteSpace: "pre-line" }}
+                      >
+                        {(docData.Education || [])
+                          .map(
+                            (edu) =>
+                              `${edu.degree || ""}, ${edu.institution || ""}, ${
+                                edu.year || ""
+                              }`
+                          )
+                          .join("\n")}
+                      </div>
+                    ) : (
+                      <>
+                        {(docData.Education || []).map((edu, i) => (
+                          <div key={i} className="row mb-2 align-items-center">
+                            <div className="col">
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Degree"
+                                value={edu.degree}
+                                onChange={(e) =>
+                                  handleEducationChange(
+                                    i,
+                                    "degree",
+                                    e.target.value
+                                  )
+                                }
+                              />
+                            </div>
+                            <div className="col">
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Institution"
+                                value={edu.institution}
+                                onChange={(e) =>
+                                  handleEducationChange(
+                                    i,
+                                    "institution",
+                                    e.target.value
+                                  )
+                                }
+                              />
+                            </div>
+                            <div className="col">
+                              <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Year"
+                                value={edu.year}
+                                onChange={(e) =>
+                                  handleEducationChange(
+                                    i,
+                                    "year",
+                                    e.target.value
+                                  )
+                                }
+                              />
+                            </div>
+                            <div className="col-auto">
+                              <button
+                                className="btn btn-danger"
+                                onClick={() => removeEducation(i)}
+                              >
+                                &times;
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                        <button
+                          className="btn btn-sm btn-outline-primary"
+                          onClick={addEducation}
+                        >
+                          + Add Education
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               </tbody>
             </table>
 
+            {/* Action Buttons */}
             {!isEditing ? (
               <>
                 <button
-                  className="btn btn-primary"
+                  className="btn btn-primary mb-2"
                   onClick={() => setIsEditing(true)}
                 >
                   Edit Profile
                 </button>
-
                 <button
-                  className="btn btn-primary ms-2 mb-0"
+                  className="btn btn-secondary ms-2"
                   onClick={() => navigate(-1)}
                 >
                   Back
@@ -289,16 +378,13 @@ export function DoctorProfile() {
             ) : (
               <>
                 <button
-                  className="btn btn-success me-2"
+                  className="btn btn-success me-2 mt-3"
                   onClick={handleSave}
                   disabled={!hasChanges}
                 >
                   Save Changes
                 </button>
-                <button
-                  className="btn btn-secondary mb-3"
-                  onClick={handleCancel}
-                >
+                <button className="btn btn-secondary" onClick={handleCancel}>
                   Cancel
                 </button>
               </>

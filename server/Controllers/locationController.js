@@ -71,9 +71,23 @@ const getAllAppointment = async (req, res) => {
       .json({ message: "Server error while fetching appointments" });
   }
 };
+// Get All Appointments Of a Doctor By Docotor Email
+const getAppointmentsByDoctorEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    const appointments = await appointmentModel
+      .find({ doctorEmail: email })
+      .sort({ date: -1 });
+
+    res.status(200).json(appointments);
+  } catch (err) {
+    console.error("Error fetching appointments for doctor:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 // Delete an Appointment
-
 const DeleteAppointment = async (req, res) => {
   const { id } = req.params;
 
@@ -201,4 +215,5 @@ module.exports = {
   deleteState,
   deleteBranch,
   updateBranchDetails,
+  getAppointmentsByDoctorEmail,
 };

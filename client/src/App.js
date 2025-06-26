@@ -20,6 +20,7 @@ import { DoctorDashboard } from "./components/doctorDashboard";
 import { ALLDoctors } from "./components/viewAllDoctors";
 import { ALLDiseases } from "./components/viewAllDiseases";
 import { ALLLocations } from "./components/viewAllLocations";
+import { ViewAppointments } from "./components/viewappointments";
 
 function App() {
   return (
@@ -129,6 +130,14 @@ function App() {
               element={
                 <ProtectRoute>
                   <DoctorProfile />
+                </ProtectRoute>
+              }
+            />
+            <Route
+              path="doctor-appointments"
+              element={
+                <ProtectRoute>
+                  <ViewAppointments />
                 </ProtectRoute>
               }
             />

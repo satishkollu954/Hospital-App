@@ -17,8 +17,13 @@ const addDoctors = async (req, res) => {
       To,
       Availability,
       Learnmore,
+      Qualification,
+      Experience,
+      BriefProfile,
+      Address,
     } = req.body;
-
+    const Languages = JSON.parse(req.body.Languages || "[]");
+    const Education = JSON.parse(req.body.Education || "[]");
     const image = req.file?.filename || null;
 
     // 🔍 Check if email already exists in Doctor collection
@@ -52,6 +57,12 @@ const addDoctors = async (req, res) => {
       To,
       Availability,
       Learnmore,
+      Qualification,
+      Experience,
+      BriefProfile,
+      Address,
+      Languages,
+      Education,
     });
 
     await newDoctor.save();
@@ -80,7 +91,21 @@ const updateDoctor = async (req, res) => {
   try {
     const { email } = req.params;
 
-    // Use FormData values sent from frontend
+    let parsedLanguages = [];
+    let parsedEducation = [];
+
+    try {
+      parsedLanguages = JSON.parse(req.body.Languages || "[]");
+    } catch (e) {
+      parsedLanguages = [];
+    }
+
+    try {
+      parsedEducation = JSON.parse(req.body.Education || "[]");
+    } catch (e) {
+      parsedEducation = [];
+    }
+
     const updatedFields = {
       Name: req.body.Name,
       About: req.body.About,
@@ -95,9 +120,14 @@ const updateDoctor = async (req, res) => {
       Learnmore: req.body.Learnmore,
       Availability:
         req.body.Availability === "true" || req.body.Availability === true,
+      Qualification: req.body.Qualification,
+      Experience: req.body.Experience,
+      BriefProfile: req.body.BriefProfile,
+      Address: req.body.Address,
+      Languages: parsedLanguages,
+      Education: parsedEducation,
     };
 
-    // If image was uploaded, add it
     if (req.file?.filename) {
       updatedFields.image = req.file.filename;
     }
@@ -117,9 +147,10 @@ const updateDoctor = async (req, res) => {
       return res.status(404).json({ message: "Doctor not found" });
     }
 
-    res
-      .status(200)
-      .json({ message: "Doctor updated successfully", updatedDoctor });
+    res.status(200).json({
+      message: "Doctor updated successfully",
+      updatedDoctor,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
