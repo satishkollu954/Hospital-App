@@ -16,6 +16,7 @@ export function ContactUs() {
   const [currentPage, setCurrentPage] = useState(1);
   const faqsPerPage = 5;
 
+  // Fetch FAQs from backend
   useEffect(() => {
     axios
       .get("http://localhost:5000/admin/faq")
@@ -54,10 +55,10 @@ export function ContactUs() {
   };
 
   // Pagination logic
+  const totalPages = Math.ceil(faqList.length / faqsPerPage);
   const indexOfLastFaq = currentPage * faqsPerPage;
   const indexOfFirstFaq = indexOfLastFaq - faqsPerPage;
   const currentFaqs = faqList.slice(indexOfFirstFaq, indexOfLastFaq);
-  const totalPages = Math.ceil(faqList.length / faqsPerPage);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
@@ -73,8 +74,89 @@ export function ContactUs() {
       <div className="contact-card card shadow-lg p-4">
         <h2 className="text-center mb-4 text-primary">Contact Us</h2>
         <form onSubmit={handleSubmit}>
-          {/* Form Fields */}
-          {/* ...Full Name, Email, Contact, Message fields (unchanged) */}
+          {/* Full Name */}
+          <div className="mb-3">
+            <label htmlFor="fullName" className="form-label">
+              Full Name
+            </label>
+            <div className="input-group">
+              <span className="input-group-text">
+                <i className="bi bi-person-fill"></i>
+              </span>
+              <input
+                type="text"
+                className="form-control"
+                id="fullName"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                required
+                placeholder="Enter your full name"
+              />
+            </div>
+          </div>
+
+          {/* Email */}
+          <div className="mb-3">
+            <label htmlFor="email" className="form-label">
+              Email Address
+            </label>
+            <div className="input-group">
+              <span className="input-group-text">
+                <i className="bi bi-envelope-fill"></i>
+              </span>
+              <input
+                type="email"
+                className="form-control"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                placeholder="Enter your email"
+              />
+            </div>
+          </div>
+
+          {/* Contact */}
+          <div className="mb-3">
+            <label htmlFor="contact" className="form-label">
+              Contact Number
+            </label>
+            <div className="input-group">
+              <span className="input-group-text">
+                <i className="bi bi-telephone-fill"></i>
+              </span>
+              <input
+                type="tel"
+                className="form-control"
+                id="contact"
+                name="contact"
+                value={formData.contact}
+                onChange={handleChange}
+                required
+                placeholder="Enter your contact number"
+              />
+            </div>
+          </div>
+
+          {/* Message */}
+          <div className="mb-4">
+            <label htmlFor="message" className="form-label">
+              Your Message
+            </label>
+            <textarea
+              className="form-control"
+              id="message"
+              name="message"
+              rows="4"
+              value={formData.message}
+              onChange={handleChange}
+              required
+              placeholder="Type your message here..."
+            ></textarea>
+          </div>
+
           {/* Submit */}
           <div className="d-grid">
             <button type="submit" className="btn btn-primary btn-lg">
@@ -114,14 +196,15 @@ export function ContactUs() {
                 </div>
               );
             })}
+
             {faqList.length === 0 && (
               <p className="text-muted">No FAQs available.</p>
             )}
           </div>
 
-          {/* Pagination Buttons */}
+          {/* Pagination Controls */}
           {faqList.length > faqsPerPage && (
-            <div className="d-flex justify-content-between mt-4">
+            <div className="d-flex justify-content-between align-items-center mt-4">
               <button
                 className="btn btn-outline-primary"
                 onClick={goToPrevPage}
@@ -129,7 +212,7 @@ export function ContactUs() {
               >
                 &laquo; Previous
               </button>
-              <span className="text-muted align-self-center">
+              <span className="text-muted">
                 Page {currentPage} of {totalPages}
               </span>
               <button
