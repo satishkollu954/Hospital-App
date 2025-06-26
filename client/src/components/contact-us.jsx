@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import "./contact-us.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export function ContactUs() {
   const [formData, setFormData] = useState({
@@ -19,29 +21,29 @@ export function ContactUs() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Your message has been submitted!");
-    console.log("Form submitted:", formData);
-    //store data in backend
+
+    toast.info("Submitting your message...");
+
     axios
       .post("http://localhost:5000/api/contactus", formData)
-      .then((res) => {
-        alert("Message submitted successfully!");
+      .then(() => {
+        toast.success("Message submitted successfully!");
+        setFormData({
+          fullName: "",
+          email: "",
+          contact: "",
+          message: "",
+        });
       })
       .catch((err) => {
-        alert("Something went wrong.");
+        toast.error("Something went wrong. Please try again.");
         console.error(err);
       });
-
-    setFormData({
-      fullName: "",
-      email: "",
-      contact: "",
-      message: "",
-    });
   };
 
   return (
     <div className="contact-bg d-flex align-items-center justify-content-center py-5">
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <div className="contact-card card shadow-lg p-4">
         <h2 className="text-center mb-4 text-primary">Contact Us</h2>
         <form onSubmit={handleSubmit}>

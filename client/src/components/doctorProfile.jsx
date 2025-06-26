@@ -29,9 +29,7 @@ export function DoctorProfile() {
     setDocData((prevData) => ({ ...prevData, [name]: val }));
   };
 
-  const handleImageChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-  };
+  const handleImageChange = (e) => setSelectedFile(e.target.files[0]);
 
   const handleLanguagesChange = (index, value) => {
     const updated = [...docData.Languages];
@@ -39,12 +37,11 @@ export function DoctorProfile() {
     setDocData({ ...docData, Languages: updated });
   };
 
-  const addLanguage = () => {
+  const addLanguage = () =>
     setDocData((prev) => ({
       ...prev,
       Languages: [...(prev.Languages || []), ""],
     }));
-  };
 
   const removeLanguage = (index) => {
     const updated = [...docData.Languages];
@@ -58,7 +55,7 @@ export function DoctorProfile() {
     setDocData({ ...docData, Education: updated });
   };
 
-  const addEducation = () => {
+  const addEducation = () =>
     setDocData((prev) => ({
       ...prev,
       Education: [
@@ -66,7 +63,6 @@ export function DoctorProfile() {
         { degree: "", institution: "", year: "" },
       ],
     }));
-  };
 
   const removeEducation = (index) => {
     const updated = [...docData.Education];
@@ -88,17 +84,13 @@ export function DoctorProfile() {
         formData.append(key, value);
       }
     });
-    if (selectedFile) {
-      formData.append("image", selectedFile);
-    }
+    if (selectedFile) formData.append("image", selectedFile);
 
     try {
       const res = await axios.put(
         `http://localhost:5000/admin/updatedoctor/${decodedEmail}`,
         formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
       alert("Profile updated successfully");
       setIsEditing(false);
@@ -151,244 +143,239 @@ export function DoctorProfile() {
           </div>
 
           <div className="col-md-8">
-            <table className="table table-borderless">
-              <tbody>
-                {[
-                  "Name",
-                  "Email",
-                  "Password",
-                  "Age",
-                  "Designation",
-                  "Specialization",
-                  "State",
-                  "City",
-                  "From",
-                  "To",
-                  "Learnmore",
-                  "Qualification",
-                  "Experience",
-                ].map((field) => (
-                  <tr key={field}>
-                    <th>{field}:</th>
+            <div className="table-responsive">
+              <table className="table table-borderless align-middle">
+                <tbody>
+                  {[
+                    "Name",
+                    "Email",
+                    "Password",
+                    "Age",
+                    "Designation",
+                    "Specialization",
+                    "State",
+                    "City",
+                    "From",
+                    "To",
+                    "Learnmore",
+                    "Qualification",
+                    "Experience",
+                  ].map((field) => (
+                    <tr key={field}>
+                      <th style={{ width: "30%" }}>{field}:</th>
+                      <td>
+                        <input
+                          name={field}
+                          className="form-control"
+                          disabled={field === "Email" || !isEditing}
+                          value={docData[field] || ""}
+                          onChange={handleInputChange}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+
+                  <tr>
+                    <th>BriefProfile:</th>
                     <td>
-                      <input
-                        name={field}
+                      <textarea
+                        name="BriefProfile"
                         className="form-control"
-                        disabled={field === "Email" || !isEditing}
-                        value={docData[field] || ""}
+                        disabled={!isEditing}
+                        value={docData.BriefProfile || ""}
                         onChange={handleInputChange}
                       />
                     </td>
                   </tr>
-                ))}
 
-                <tr>
-                  <th>BriefProfile:</th>
-                  <td>
-                    <textarea
-                      name="BriefProfile"
-                      className="form-control"
-                      disabled={!isEditing}
-                      value={docData.BriefProfile || ""}
-                      onChange={handleInputChange}
-                    />
-                  </td>
-                </tr>
+                  <tr>
+                    <th>Address:</th>
+                    <td>
+                      <textarea
+                        name="Address"
+                        className="form-control"
+                        disabled={!isEditing}
+                        value={docData.Address || ""}
+                        onChange={handleInputChange}
+                      />
+                    </td>
+                  </tr>
 
-                <tr>
-                  <th>Address:</th>
-                  <td>
-                    <textarea
-                      name="Address"
-                      className="form-control"
-                      disabled={!isEditing}
-                      value={docData.Address || ""}
-                      onChange={handleInputChange}
-                    />
-                  </td>
-                </tr>
-
-                <tr>
-                  <th>Availability:</th>
-                  <td>
-                    <input
-                      type="checkbox"
-                      name="Availability"
-                      className="form-check-input"
-                      disabled={!isEditing}
-                      checked={docData.Availability}
-                      onChange={handleInputChange}
-                    />
-                    <label className="form-check-label ms-2">
-                      {docData.Availability ? "Available" : "Not Available"}
-                    </label>
-                  </td>
-                </tr>
-
-                {/* Languages */}
-                <tr>
-                  <th>Languages:</th>
-                  <td>
-                    {!isEditing ? (
-                      <div
-                        className="form-control bg-light"
-                        style={{ whiteSpace: "pre-line" }}
-                      >
-                        {(docData.Languages || []).join(", ")}
+                  <tr>
+                    <th>Availability:</th>
+                    <td>
+                      <div className="form-check form-switch">
+                        <input
+                          type="checkbox"
+                          name="Availability"
+                          className="form-check-input"
+                          disabled={!isEditing}
+                          checked={docData.Availability}
+                          onChange={handleInputChange}
+                        />
+                        <label className="form-check-label ms-2">
+                          {docData.Availability ? "Available" : "Not Available"}
+                        </label>
                       </div>
-                    ) : (
-                      <>
-                        {(docData.Languages || []).map((lang, i) => (
-                          <div key={i} className="input-group mb-2">
-                            <input
-                              className="form-control"
-                              disabled={!isEditing}
-                              value={lang}
-                              onChange={(e) =>
-                                handleLanguagesChange(i, e.target.value)
-                              }
-                            />
-                            {isEditing && (
+                    </td>
+                  </tr>
+
+                  {/* Languages */}
+                  <tr>
+                    <th>Languages:</th>
+                    <td>
+                      {!isEditing ? (
+                        <div className="form-control bg-light">
+                          {(docData.Languages || []).join(", ")}
+                        </div>
+                      ) : (
+                        <>
+                          {(docData.Languages || []).map((lang, i) => (
+                            <div key={i} className="input-group mb-2">
+                              <input
+                                className="form-control"
+                                value={lang}
+                                onChange={(e) =>
+                                  handleLanguagesChange(i, e.target.value)
+                                }
+                              />
                               <button
                                 className="btn btn-danger"
                                 onClick={() => removeLanguage(i)}
                               >
                                 &times;
                               </button>
-                            )}
-                          </div>
-                        ))}
-                        <button
-                          className="btn btn-sm btn-outline-primary"
-                          onClick={addLanguage}
-                        >
-                          + Add Language
-                        </button>
-                      </>
-                    )}
-                  </td>
-                </tr>
+                            </div>
+                          ))}
+                          <button
+                            className="btn btn-sm btn-outline-primary"
+                            onClick={addLanguage}
+                          >
+                            + Add Language
+                          </button>
+                        </>
+                      )}
+                    </td>
+                  </tr>
 
-                {/* Education */}
-                <tr>
-                  <th>Education:</th>
-                  <td>
-                    {!isEditing ? (
-                      <div
-                        className="form-control bg-light"
-                        style={{ whiteSpace: "pre-line" }}
-                      >
-                        {(docData.Education || [])
-                          .map(
-                            (edu) =>
-                              `${edu.degree || ""}, ${edu.institution || ""}, ${
-                                edu.year || ""
-                              }`
-                          )
-                          .join("\n")}
-                      </div>
-                    ) : (
-                      <>
-                        {(docData.Education || []).map((edu, i) => (
-                          <div key={i} className="row mb-2 align-items-center">
-                            <div className="col">
-                              <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Degree"
-                                value={edu.degree}
-                                onChange={(e) =>
-                                  handleEducationChange(
-                                    i,
-                                    "degree",
-                                    e.target.value
-                                  )
-                                }
-                              />
+                  {/* Education */}
+                  <tr>
+                    <th>Education:</th>
+                    <td>
+                      {!isEditing ? (
+                        <div className="form-control bg-light">
+                          {(docData.Education || [])
+                            .map(
+                              (edu) =>
+                                `${edu.degree}, ${edu.institution}, ${edu.year}`
+                            )
+                            .join("\n")}
+                        </div>
+                      ) : (
+                        <>
+                          {(docData.Education || []).map((edu, i) => (
+                            <div key={i} className="row mb-2">
+                              <div className="col">
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  placeholder="Degree"
+                                  value={edu.degree}
+                                  onChange={(e) =>
+                                    handleEducationChange(
+                                      i,
+                                      "degree",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </div>
+                              <div className="col">
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  placeholder="Institution"
+                                  value={edu.institution}
+                                  onChange={(e) =>
+                                    handleEducationChange(
+                                      i,
+                                      "institution",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </div>
+                              <div className="col">
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  placeholder="Year"
+                                  value={edu.year}
+                                  onChange={(e) =>
+                                    handleEducationChange(
+                                      i,
+                                      "year",
+                                      e.target.value
+                                    )
+                                  }
+                                />
+                              </div>
+                              <div className="col-auto">
+                                <button
+                                  className="btn btn-danger"
+                                  onClick={() => removeEducation(i)}
+                                >
+                                  &times;
+                                </button>
+                              </div>
                             </div>
-                            <div className="col">
-                              <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Institution"
-                                value={edu.institution}
-                                onChange={(e) =>
-                                  handleEducationChange(
-                                    i,
-                                    "institution",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </div>
-                            <div className="col">
-                              <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Year"
-                                value={edu.year}
-                                onChange={(e) =>
-                                  handleEducationChange(
-                                    i,
-                                    "year",
-                                    e.target.value
-                                  )
-                                }
-                              />
-                            </div>
-                            <div className="col-auto">
-                              <button
-                                className="btn btn-danger"
-                                onClick={() => removeEducation(i)}
-                              >
-                                &times;
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                        <button
-                          className="btn btn-sm btn-outline-primary"
-                          onClick={addEducation}
-                        >
-                          + Add Education
-                        </button>
-                      </>
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                          ))}
+                          <button
+                            className="btn btn-sm btn-outline-primary"
+                            onClick={addEducation}
+                          >
+                            + Add Education
+                          </button>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
             {/* Action Buttons */}
-            {!isEditing ? (
-              <>
-                <button
-                  className="btn btn-primary mb-2"
-                  onClick={() => setIsEditing(true)}
-                >
-                  Edit Profile
-                </button>
-                <button
-                  className="btn btn-secondary ms-2"
-                  onClick={() => navigate(-1)}
-                >
-                  Back
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  className="btn btn-success me-2 mt-3"
-                  onClick={handleSave}
-                  disabled={!hasChanges}
-                >
-                  Save Changes
-                </button>
-                <button className="btn btn-secondary" onClick={handleCancel}>
-                  Cancel
-                </button>
-              </>
-            )}
+            <div className="mt-3">
+              {!isEditing ? (
+                <>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    Edit Profile
+                  </button>
+                  <button
+                    className="btn btn-secondary ms-2"
+                    onClick={() => navigate(-1)}
+                  >
+                    Back
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    className="btn btn-success me-2"
+                    onClick={handleSave}
+                    disabled={!hasChanges}
+                  >
+                    Save Changes
+                  </button>
+                  <button className="btn btn-secondary" onClick={handleCancel}>
+                    Cancel
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
