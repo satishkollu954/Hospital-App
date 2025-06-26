@@ -34,6 +34,7 @@ const {
   deleteBranch,
   updateBranchDetails,
   getAppointmentsByDoctorEmail,
+  getAppointmentsCountByDoctorEmail,
 } = require("../Controllers/locationController");
 
 // -------------------------------------
@@ -53,6 +54,10 @@ router.patch("/appointments/:id", appointmentChange);
 router.delete("/appointments/:id", DeleteAppointment);
 router.get("/appointments/doctor-email/:email", getAppointmentsByDoctorEmail);
 router.get("/slots", getSlotsForDoctor);
+router.get(
+  "/appointments/count/:doctorEmail",
+  getAppointmentsCountByDoctorEmail
+);
 // -------------------------------------
 // OTP Handling
 // -------------------------------------

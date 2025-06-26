@@ -87,6 +87,18 @@ const getAppointmentsByDoctorEmail = async (req, res) => {
   }
 };
 
+const getAppointmentsCountByDoctorEmail = async (req, res) => {
+  try {
+    const doctorEmail = decodeURIComponent(req.params.doctorEmail);
+    const count = await appointmentModel.countDocuments({ doctorEmail });
+    //console.log("count is ", count);
+    res.json({ count });
+  } catch (err) {
+    console.error("Error fetching appointment count:", err);
+    res.status(500).json({ message: "Error fetching appointment count" });
+  }
+};
+
 // Delete an Appointment
 const DeleteAppointment = async (req, res) => {
   const { id } = req.params;
@@ -216,4 +228,5 @@ module.exports = {
   deleteBranch,
   updateBranchDetails,
   getAppointmentsByDoctorEmail,
+  getAppointmentsCountByDoctorEmail,
 };

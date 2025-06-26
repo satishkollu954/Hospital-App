@@ -51,6 +51,7 @@ export function ViewAppointments() {
               <th>Patient Email</th>
               <th>Phone</th>
               <th>Date</th>
+              <th>Time</th>
               <th>Reason</th>
               <th>Disease</th>
               <th>Status</th>
@@ -72,7 +73,16 @@ export function ViewAppointments() {
                   {appt.email}
                 </td>
                 <td>{appt.phone}</td>
-                <td>{new Date(appt.date).toLocaleDateString()}</td>
+                <td
+                  style={{
+                    whiteSpace: "normal",
+                    wordBreak: "break-word",
+                    minWidth: "100px",
+                  }}
+                >
+                  {new Date(appt.date).toLocaleDateString()}
+                </td>
+                <td>{appt.time}</td>
                 <td
                   style={{
                     whiteSpace: "normal",

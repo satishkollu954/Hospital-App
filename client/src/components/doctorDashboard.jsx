@@ -7,8 +7,20 @@ export function DoctorDashboard() {
   const [cookies, , removeCookies] = useCookies(["email"]);
   const navigate = useNavigate();
   const [doctor, setDoctor] = useState(null);
+  const [appointmentCount, setAppointmentCount] = useState(0);
 
   const decodedEmail = decodeURIComponent(cookies.email);
+
+  useEffect(() => {
+    if (decodedEmail) {
+      axios
+        .get(`http://localhost:5000/admin/appointments/count/${decodedEmail}`)
+        .then((res) => setAppointmentCount(res.data.count))
+        .catch((err) =>
+          console.error("Failed to fetch appointment count", err)
+        );
+    }
+  }, [decodedEmail]);
 
   useEffect(() => {
     axios
@@ -45,9 +57,10 @@ export function DoctorDashboard() {
         <div className="col-md-4 mb-3">
           <div className="card shadow text-center p-3">
             <h5>Total Appointments</h5>
-            <h2>--</h2> {/* Replace with actual count if available */}
+            <h2>{appointmentCount}</h2>
           </div>
         </div>
+
         <div className="col-md-3 mb-3">
           <div className="card shadow text-center p-3">
             <h5>Availability</h5>
