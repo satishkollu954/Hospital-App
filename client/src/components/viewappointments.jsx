@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import { Link } from "react-router-dom";
 
 export function ViewAppointments() {
   const [cookies] = useCookies(["email"]);
@@ -37,7 +38,14 @@ export function ViewAppointments() {
 
   return (
     <div className="container mt-4">
-      <h3 className="mb-3">Your Appointments</h3>
+      <h3 className="mb-3">
+        {" "}
+        <Link
+          className="bi bi-arrow-left-circle"
+          to="/doctor-dashboard"
+        ></Link>{" "}
+        Your Appointments
+      </h3>
 
       <div style={{ overflowX: "auto" }}>
         <table

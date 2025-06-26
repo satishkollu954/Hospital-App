@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./AddLocation.css";
+import { ToastContainer, toast } from "react-toastify";
 
 export const AddLocation = () => {
   const [State, setState] = useState("");
@@ -53,6 +54,7 @@ export const AddLocation = () => {
 
   return (
     <div className="container mt-5">
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <h2 className="text-center text-primary mb-4">Add Hospital Location</h2>
 
       {message && <div className="alert alert-success">{message}</div>}

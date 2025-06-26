@@ -5,13 +5,18 @@ import { useCookies } from "react-cookie";
 import { Dropdown, DropdownButton, ButtonGroup } from "react-bootstrap";
 import ReactPaginate from "react-paginate";
 import "./AdminDashboard.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const AdminDashboard = () => {
   const [appointments, setAppointments] = useState([]);
   const navigate = useNavigate();
   const [cookie, , removeCookie] = useCookies(["email"]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [appointmentToDelete, setAppointmentToDelete] = useState(null);
+
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 6;
+  const itemsPerPage = 5;
 
   useEffect(() => {
     axios
@@ -33,25 +38,37 @@ export const AdminDashboard = () => {
       .catch((err) => console.error("Error updating status:", err));
   };
 
-  const deleteAppointment = (id) => {
-    if (window.confirm("Are you sure you want to delete this appointment?")) {
-      axios
-        .delete(`http://localhost:5000/admin/appointments/${id}`)
-        .then(() => {
-          alert("Deleted successfully.");
-          setAppointments((prev) => prev.filter((a) => a._id !== id));
-        })
-        .catch((err) => {
-          console.error("Error deleting:", err);
-          alert("Failed to delete.");
-        });
-    }
+  const confirmDelete = (id) => {
+    setAppointmentToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirmed = () => {
+    axios
+      .delete(`http://localhost:5000/admin/appointments/${appointmentToDelete}`)
+      .then(() => {
+        toast.success("Deleted successfully.");
+        setAppointments((prev) =>
+          prev.filter((a) => a._id !== appointmentToDelete)
+        );
+      })
+      .catch((err) => {
+        console.error("Error deleting:", err);
+        toast.error("Failed to delete.");
+      })
+      .finally(() => {
+        setShowDeleteModal(false);
+        setAppointmentToDelete(null);
+      });
   };
 
   const handleSignOutClick = () => {
-    removeCookie("email", { path: "/" });
-    alert("Signed out successfully");
-    navigate("/adminlogin");
+    toast.success("Signed out successfully");
+    setTimeout(() => {
+      removeCookie("email", { path: "/" });
+      navigate("/login");
+    }, 800);
+    // navigate("/adminlogin");
   };
 
   const offset = currentPage * itemsPerPage;
@@ -63,6 +80,8 @@ export const AdminDashboard = () => {
 
   return (
     <div className="admin-dashboard mt-1 px-3">
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="text-primary">Admin Dashboard</h2>
         <div className="d-flex justify-content-end mb-3 flex-wrap gap-2">
@@ -177,7 +196,7 @@ export const AdminDashboard = () => {
                         </button>
                         <button
                           className="btn btn-outline-danger btn-sm"
-                          onClick={() => deleteAppointment(appt._id)}
+                          onClick={() => confirmDelete(appt._id)}
                         >
                           Delete
                         </button>
@@ -211,6 +230,44 @@ export const AdminDashboard = () => {
         nextLinkClassName={"page-link"}
         activeClassName={"active"}
       />
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div
+          className="modal fade show"
+          style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirm Delete</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowDeleteModal(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <p>Are you sure you want to delete this appointment?</p>
+              </div>
+              <div className="modal-footer">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowDeleteModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn btn-danger mt-3"
+                  onClick={handleDeleteConfirmed}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

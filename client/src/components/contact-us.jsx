@@ -22,7 +22,7 @@ export function ContactUs() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    toast.info("Submitting your message...");
+    //toast.info("Submitting your message...");
 
     axios
       .post("http://localhost:5000/api/contactus", formData)

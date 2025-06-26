@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Card, Button, Modal, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 export function ALLDoctors() {
   const [doctors, setDoctors] = useState([]);
@@ -13,6 +14,8 @@ export function ALLDoctors() {
   const [editDoctor, setEditDoctor] = useState(null);
   const [originalDoctor, setOriginalDoctor] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedDoctorEmail, setSelectedDoctorEmail] = useState(null);
   const doctorsPerPage = 8;
 
   const indexOfLastDoctor = currentPage * doctorsPerPage;
@@ -76,7 +79,8 @@ export function ALLDoctors() {
         editDoctor
       )
       .then(() => {
-        alert("Doctor updated successfully");
+        toast.success("Doctor updated successfully");
+
         const updatedList = doctors.map((doc) =>
           doc.Email === editDoctor.Email ? editDoctor : doc
         );
@@ -90,18 +94,28 @@ export function ALLDoctors() {
       .catch(() => alert("Update failed"));
   };
 
-  const handleDelete = (email) => {
-    if (!window.confirm("Are you sure you want to delete this doctor?")) return;
+  const confirmDeleteDoctor = (email) => {
+    setShowModal(false); // 👈 Close the existing view/edit modal
+    setSelectedDoctorEmail(email);
+    setShowConfirmModal(true); // Then open the delete confirmation modal
+  };
+
+  const handleDelete = () => {
     axios
-      .delete(`http://localhost:5000/admin/deletedoctor/${email}`)
+      .delete(`http://localhost:5000/admin/deletedoctor/${selectedDoctorEmail}`)
       .then(() => {
-        const updatedList = doctors.filter((doc) => doc.Email !== email);
+        const updatedList = doctors.filter(
+          (doc) => doc.Email !== selectedDoctorEmail
+        );
         setDoctors(updatedList);
         setFilteredDoctors(updatedList);
-        setShowModal(false);
-        alert("Doctor deleted successfully");
+        toast.success("Doctor deleted successfully");
       })
-      .catch(() => alert("Failed to delete doctor"));
+      .catch(() => toast.error("Failed to delete doctor"))
+      .finally(() => {
+        setShowConfirmModal(false);
+        setSelectedDoctorEmail(null);
+      });
   };
 
   const handleNextPage = () => {
@@ -114,6 +128,7 @@ export function ALLDoctors() {
 
   return (
     <div className="container">
+      <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
       <h3 className="mb-3">
         <Link
           to="/admin-dashboard"
@@ -286,7 +301,7 @@ export function ALLDoctors() {
               </Button>
               <Button
                 variant="danger"
-                onClick={() => handleDelete(selectedDoctor.Email)}
+                onClick={() => confirmDeleteDoctor(selectedDoctor.Email)}
               >
                 Remove
               </Button>
@@ -316,6 +331,39 @@ export function ALLDoctors() {
           Next
         </Button>
       </div>
+      {showConfirmModal && (
+        <div
+          className="modal fade show"
+          style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirm Deletion</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowConfirmModal(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                Are you sure you want to delete this doctor?
+              </div>
+              <div className="modal-footer">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowConfirmModal(false)}
+                >
+                  Cancel
+                </button>
+                <button className="btn btn-danger mt-3" onClick={handleDelete}>
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

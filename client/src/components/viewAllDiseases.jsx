@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Card, Button, Form, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 export function ALLDiseases() {
   const [diseases, setDiseases] = useState([]);
@@ -58,9 +59,9 @@ export function ALLDiseases() {
         setDiseases(updatedList);
         setEditIndex(null);
         setOriginalData(null);
-        alert("Treatment updated successfully");
+        toast.success("Treatment updated successfully");
       })
-      .catch(() => alert("Failed to update"));
+      .catch(() => toast.error("Treatment updation failed"));
   };
 
   const confirmDelete = (id) => {
@@ -74,13 +75,14 @@ export function ALLDiseases() {
       .then(() => {
         setDiseases(diseases.filter((d) => d._id !== deleteId));
         setShowConfirmDelete(false);
-        alert("Deleted successfully");
+        toast.success("Deleted successfully");
       })
-      .catch(() => alert("Delete failed"));
+      .catch(() => toast.error("Delete failed"));
   };
 
   return (
     <div className="container mt-4">
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <h2 className="mb-4">
         {" "}
         <Link

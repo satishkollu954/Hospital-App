@@ -4,6 +4,8 @@ import axios from "axios";
 import * as yup from "yup";
 import { useEffect, useState } from "react";
 import SlotSelector from "./SlotSelector";
+import { ToastContainer, toast } from "react-toastify";
+import { Spinner } from "react-bootstrap";
 
 export function Appointment() {
   const today = new Date();
@@ -19,6 +21,8 @@ export function Appointment() {
 
   const [diseases, setDiseases] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState("");
+
+  const [isOtpLoading, setIsOtpLoading] = useState(false); // ✅ Spinner state
 
   const formik = useFormik({
     initialValues: {
@@ -51,12 +55,12 @@ export function Appointment() {
     }),
     onSubmit: (user, { resetForm }) => {
       if (!emailVerified) {
-        alert("Please verify your email before submitting.");
+        toast.error("Please verify your email before submitting.");
         return;
       }
 
       if (!selectedSlot) {
-        alert("Please select a time slot.");
+        toast.error("Please select a time slot.");
         return;
       }
 
@@ -65,7 +69,7 @@ export function Appointment() {
       axios
         .post("http://localhost:5000/api/appointment", updatedUser)
         .then(() => {
-          alert("Appointment successful...");
+          toast.success("Appointment successful...");
           resetForm();
           setEmailVerified(false);
           setOtpVisible(false);
@@ -73,7 +77,7 @@ export function Appointment() {
           setSelectedSlot("");
         })
         .catch(() => {
-          alert("Appointment failed. Please try again.");
+          toast.error("Appointment failed. Please try again.");
         });
     },
   });
@@ -114,16 +118,20 @@ export function Appointment() {
   const handleOtpClick = () => {
     const Email = formik.values.email;
     if (!Email) {
-      alert("Please enter an email before sending OTP.");
+      toast.error("Please enter an email before sending OTP.");
       return;
     }
+
+    setIsOtpLoading(true); // ⏳ Start spinner
+
     axios
       .post("http://localhost:5000/admin/send-otp", { Email })
       .then(() => {
-        alert("OTP sent to email.");
+        toast.success("OTP sent to email");
         setOtpVisible(true);
       })
-      .catch(() => alert("Failed to send OTP."));
+      .catch(() => toast.error("Failed to send OTP"))
+      .finally(() => setIsOtpLoading(false)); // ✅ Stop spinner
   };
 
   const handleVerifyOtp = () => {
@@ -134,21 +142,20 @@ export function Appointment() {
       })
       .then((res) => {
         if (res.data.success) {
-          alert("Email verified successfully!");
+          toast.success("Email verified successfully!");
           setEmailVerified(true);
         } else {
-          alert("Invalid OTP. Try again.");
+          toast.error("Invalid OTP. Try again.");
         }
       })
-      .catch(() => alert("OTP verification failed."));
+      .catch(() => toast.error("OTP verification failed."));
   };
 
   return (
     <div className="container-fluid px-0">
-      {/* Image at Top */}
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <div className="app-img mb-4"></div>
 
-      {/* Form Below Image */}
       <div className="px-4">
         <form onSubmit={formik.handleSubmit}>
           <div className="row g-3">
@@ -167,7 +174,6 @@ export function Appointment() {
                 <p className="text-danger">{formik.errors.fullName}</p>
               )}
             </div>
-
             {/* Email */}
             <div className="col-md-4">
               <label className="form-label fw-bold">Email</label>
@@ -186,9 +192,18 @@ export function Appointment() {
               {!emailVerified && (
                 <button
                   type="button"
-                  className="btn btn-warning mt-1 w-25"
+                  className="btn btn-warning mt-1 d-flex align-items-center gap-2"
                   onClick={handleOtpClick}
+                  disabled={isOtpLoading}
                 >
+                  {isOtpLoading && (
+                    <Spinner
+                      animation="border"
+                      size="sm"
+                      role="status"
+                      className="me-1"
+                    />
+                  )}
                   Send OTP
                 </button>
               )}
@@ -198,7 +213,6 @@ export function Appointment() {
                 </span>
               )}
             </div>
-
             {/* Phone */}
             <div className="col-md-4">
               <label className="form-label fw-bold">Mobile</label>
@@ -214,7 +228,6 @@ export function Appointment() {
                 <p className="text-danger">{formik.errors.phone}</p>
               )}
             </div>
-
             {/* OTP Field */}
             {otpVisible && !emailVerified && (
               <div className="col-md-4">
@@ -234,7 +247,6 @@ export function Appointment() {
                 </button>
               </div>
             )}
-
             {/* State */}
             <div className="col-md-4">
               <label className="form-label fw-bold">State</label>
@@ -262,7 +274,6 @@ export function Appointment() {
                 ))}
               </select>
             </div>
-
             {/* City */}
             <div className="col-md-4">
               <label className="form-label fw-bold">City</label>
@@ -281,7 +292,6 @@ export function Appointment() {
                 ))}
               </select>
             </div>
-
             {/* Disease */}
             <div className="col-md-4">
               <label className="form-label fw-bold">Disease</label>
@@ -299,7 +309,6 @@ export function Appointment() {
                 ))}
               </select>
             </div>
-
             {/* Date */}
             <div className="col-md-4">
               <label className="form-label fw-bold">Date</label>
@@ -316,7 +325,6 @@ export function Appointment() {
                 <p className="text-danger">{formik.errors.date}</p>
               )}
             </div>
-
             {/* Doctor */}
             <div className="col-md-4">
               <label className="form-label fw-bold">Doctor</label>
@@ -337,25 +345,37 @@ export function Appointment() {
               {formik.touched.doctor && formik.errors.doctor && (
                 <p className="text-danger">{formik.errors.doctor}</p>
               )}
-            </div>
-
+            </div>{" "}
+            <br />
             {/* Slots */}
-            <div className="col-md-4">
+            <div className="col-md-12">
               {formik.values.date && formik.values.doctor && (
                 <div className="col-md-12">
-                  <SlotSelector
-                    doctorEmail={
-                      doctors.find((d) => d.Name === formik.values.doctor)
-                        ?.Email || ""
+                  {(() => {
+                    const selectedDoctor = doctors.find(
+                      (d) => d.Name === formik.values.doctor
+                    );
+
+                    if (!selectedDoctor?.Availability) {
+                      return (
+                        <p className="text-danger fw-bold">
+                          The selected Doctor is not available today.
+                        </p>
+                      );
                     }
-                    selectedDate={formik.values.date}
-                    selectedSlot={selectedSlot}
-                    onSlotSelect={(slot) => setSelectedSlot(slot)}
-                  />
+
+                    return (
+                      <SlotSelector
+                        doctorEmail={selectedDoctor.Email}
+                        selectedDate={formik.values.date}
+                        selectedSlot={selectedSlot}
+                        onSlotSelect={(slot) => setSelectedSlot(slot)}
+                      />
+                    );
+                  })()}
                 </div>
               )}
             </div>
-
             {/* Reason (full row) */}
             <div className="col-md-12">
               <label className="form-label fw-bold">Reason</label>
@@ -369,7 +389,6 @@ export function Appointment() {
                 value={formik.values.reason}
               ></textarea>
             </div>
-
             {/* Submit */}
             <div className="col-md-12">
               <button type="submit" className="btn btn-primary w-50">
