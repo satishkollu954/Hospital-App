@@ -1,7 +1,6 @@
-// controllers/slotsController.js
-
 const Doctor = require("../Models/Doctor");
 const { appointmentModel } = require("../Models/appointment");
+const DoctorLeave = require("../Models/DoctorLeave"); // ✅ Import leave model
 
 function generateSlots(
   workStart,
@@ -41,7 +40,7 @@ function generateSlots(
     const slotStart = cursor;
     const slotEnd = cursor + slotLength;
 
-    // Skip lunch slots, but include everything else
+    // Skip lunch time
     if (slotStart < breakEnd && slotEnd > lunchMin) {
       cursor += slotLength;
       continue;
@@ -50,7 +49,7 @@ function generateSlots(
     slots.push({
       start: toHHMM(slotStart),
       end: toHHMM(slotEnd),
-      booked: false, // default
+      booked: false,
     });
 
     cursor += slotLength;
@@ -68,28 +67,51 @@ exports.getSlotsForDoctor = async (req, res) => {
         .json({ message: "doctorEmail & date are required" });
     }
 
-    const doc = await Doctor.findOne({ Email: doctorEmail });
-    if (!doc) return res.status(404).json({ message: "Doctor not found" });
+    const doctor = await Doctor.findOne({ Email: doctorEmail });
+    if (!doctor) return res.status(404).json({ message: "Doctor not found" });
 
-    const appointments = await appointmentModel.find({ doctorEmail, date });
+    const queryDate = new Date(date);
 
-    // ✅ Extract directly from saved appointment time field
-    const bookedTimes = appointments.map((app) => app.time);
+    // ✅ Check if the doctor is on approved leave for the date
+    const onLeave = await DoctorLeave.findOne({
+      doctorEmail,
+      status: "Approved",
+      fromDate: { $lte: queryDate },
+      toDate: { $gte: queryDate },
+    });
 
-    const slots = generateSlots(doc.From, doc.To, 15, "13:00", 45);
+    if (onLeave) {
+      return res.status(200).json({
+        date,
+        doctorEmail,
+        availableSlots: [],
+        message: "Doctor is unavailable on this date due to approved leave.",
+      });
+    }
+
+    // 🔍 Fetch existing booked appointments
+    const appointments = await appointmentModel.find({
+      doctorEmail,
+      date: new Date(date),
+    });
+
+    const bookedTimes = appointments.map((a) => a.time);
+
+    // 🕒 Generate all working slots
+    const slots = generateSlots(doctor.From, doctor.To, 15, "13:00", 45);
 
     const updatedSlots = slots.map((slot) => ({
       ...slot,
       booked: bookedTimes.includes(slot.start),
     }));
 
-    return res.json({
+    return res.status(200).json({
       date,
       doctorEmail,
       availableSlots: updatedSlots,
     });
   } catch (err) {
-    console.error(err);
+    console.error("Slot generation error:", err);
     res.status(500).json({
       message: "Failed to generate slots",
       error: err.message,

@@ -30,6 +30,11 @@ const {
 } = require("../Controllers/user");
 
 const {
+  getAllLeaves,
+  updateLeaveStatus,
+} = require("../Controllers/leaveController");
+
+const {
   addLocation,
   getAllLocations,
   getAllAppointment,
@@ -104,5 +109,9 @@ router.get("/cities", getCitiesByState); // Get cities by state
 router.put("/update-branch", updateBranchDetails); // Update name/mapUrl of branch
 router.delete("/delete-branch", deleteBranch); // Delete a specific branch
 router.delete("/delete-state", deleteState); // Delete entire state with all branches
+
+//Leave Management
+router.get("/leave", getAllLeaves);
+router.put("/leave/:leaveId", updateLeaveStatus);
 
 module.exports = router;

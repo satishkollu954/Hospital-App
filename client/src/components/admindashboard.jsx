@@ -104,6 +104,9 @@ export const AdminDashboard = () => {
             <Dropdown.Item onClick={() => navigate("/queries")}>
               View All Queries
             </Dropdown.Item>
+            <Dropdown.Item onClick={() => navigate("/leaves")}>
+              View All Leaves
+            </Dropdown.Item>
           </DropdownButton>
 
           <DropdownButton

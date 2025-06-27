@@ -23,6 +23,7 @@ import { ALLLocations } from "./components/viewAllLocations";
 import { ViewAppointments } from "./components/viewappointments";
 import { DoctorInformation } from "./components/doctorInformation";
 import { AddFAQ } from "./components/addFAQ";
+import ViewLeaves from "./components/viewleaves";
 
 function App() {
   return (
@@ -170,6 +171,14 @@ function App() {
               element={
                 <ProtectRoute>
                   <AdminDashboard />
+                </ProtectRoute>
+              }
+            />
+            <Route
+              path="leaves"
+              element={
+                <ProtectRoute>
+                  <ViewLeaves />
                 </ProtectRoute>
               }
             />
