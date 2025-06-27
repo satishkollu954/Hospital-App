@@ -3,12 +3,13 @@ import "./AdminLogin.css"; // Custom styles (optional)
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import { ToastContainer, toast } from "react-toastify";
 
 export const AdminLogin = () => {
   const [loginData, setLoginData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const [cookie, setCookie] = useCookies(["email"]);
+  const [cookie, setCookie] = useCookies(["email", "role"]);
 
   const handleChange = (e) => {
     setLoginData((prev) => ({
@@ -30,12 +31,20 @@ export const AdminLogin = () => {
       // console.log(loginData.email);
       if (res.data.success) {
         setCookie("email", loginData.email, { path: "/" });
-        // alert("Login successful!");
-        if (loginData.email === "admin@gmail.com") {
-          navigate("/admin-dashboard");
-        } else {
-          navigate("/doctor-dashboard");
-        }
+
+        // 👇 Set the role based on the email
+        const role = loginData.email === "admin@gmail.com" ? "admin" : "doctor";
+        setCookie("role", role, { path: "/" });
+
+        toast.success("Login succesfull");
+
+        setTimeout(() => {
+          if (role === "admin") {
+            navigate("/admin-dashboard");
+          } else {
+            navigate("/doctor-dashboard");
+          }
+        }, 1000);
       } else {
         setError("Invalid credentials");
       }
@@ -46,6 +55,7 @@ export const AdminLogin = () => {
 
   return (
     <div className="admin-login-bg d-flex justify-content-center align-items-center">
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <div className="card p-4 shadow-lg admin-login-card">
         <h3 className="text-center mb-4">Login</h3>
         {error && <div className="alert alert-danger">{error}</div>}

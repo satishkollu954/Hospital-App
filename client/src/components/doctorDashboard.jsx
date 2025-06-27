@@ -2,9 +2,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 
 export function DoctorDashboard() {
-  const [cookies, , removeCookies] = useCookies(["email"]);
+  const [cookies, , removeCookie] = useCookies(["email", "role"]); // ✅ Correct syntax
   const navigate = useNavigate();
   const [doctor, setDoctor] = useState(null);
   const [appointmentStats, setAppointmentStats] = useState({
@@ -14,6 +15,7 @@ export function DoctorDashboard() {
   });
 
   const decodedEmail = decodeURIComponent(cookies.email);
+
   useEffect(() => {
     if (decodedEmail) {
       axios
@@ -33,13 +35,21 @@ export function DoctorDashboard() {
   }, [decodedEmail]);
 
   function handleLogoutClick() {
-    removeCookies("email");
-    navigate("/login");
+    toast.success("Signed out successfully", {
+      onClose: () => {
+        removeCookie("email", { path: "/" });
+        removeCookie("role", { path: "/" });
+        navigate("/login");
+      },
+      autoClose: 1000, // optional, default is 5000ms
+    });
   }
 
   return (
     <div className="container mt-4">
-      {/* Top Buttons */}
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+
+      {/* Buttons */}
       <div className="d-flex justify-content-end mb-3">
         <Link className="btn btn-primary" to="/doctor-appointments">
           View Appointments
@@ -52,10 +62,9 @@ export function DoctorDashboard() {
         </button>
       </div>
 
-      {/* Greeting */}
       <h2 className="mb-4">Welcome, {doctor?.Name || "Doctor"}!</h2>
 
-      {/* Overview Cards */}
+      {/* Cards */}
       <div className="row">
         <div className="col-md-4 mb-3">
           <div className="card shadow text-center p-4">
@@ -95,7 +104,6 @@ export function DoctorDashboard() {
         </div>
       </div>
 
-      {/* Info Section */}
       <div className="mt-4 p-4 bg-light rounded shadow-sm">
         <p className="mb-0">
           This is your personal space to manage appointments, view and update

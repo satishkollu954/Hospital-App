@@ -23,6 +23,7 @@ import { ALLLocations } from "./components/viewAllLocations";
 import { ViewAppointments } from "./components/viewappointments";
 import { DoctorInformation } from "./components/doctorInformation";
 import { AddFAQ } from "./components/addFAQ";
+import { Unauthorized } from "./components/unauthorized";
 
 function App() {
   return (
@@ -55,7 +56,7 @@ function App() {
             </nav> */}
           </div>
           <div className="container-fluid pb-0 px-4">
-            <nav className="d-flex ms-4 justify-content-center">
+            <nav className="d-flex ms-5 justify-content-center">
               <ul className="nav">
                 <li className="nav-item">
                   <Link to="/" className="nav-link text-white">
@@ -92,7 +93,7 @@ function App() {
           </div>
         </header>
 
-        {/* Main content */}
+        {/* Main content user routes*/}
         <main className="flex-grow-1 container-fluid py-4 px-4">
           <Routes>
             <Route path="/" element={<Home />} />
@@ -105,35 +106,14 @@ function App() {
             <Route path="location" element={<Location />} />
             <Route path="login" element={<AdminLogin />} />
             <Route path="faq" element={<AddFAQ />} />
+            <Route path="forgetPassword" element={<ForgetPassword />} />
+            <Route path="/unauthorized" element={<Unauthorized />} />
 
-            <Route
-              path="all-locations"
-              element={
-                <ProtectRoute>
-                  <ALLLocations />
-                </ProtectRoute>
-              }
-            />
-            <Route
-              path="all-diseases"
-              element={
-                <ProtectRoute>
-                  <ALLDiseases />
-                </ProtectRoute>
-              }
-            />
-            <Route
-              path="all-doctors"
-              element={
-                <ProtectRoute>
-                  <ALLDoctors />
-                </ProtectRoute>
-              }
-            />
+            {/* Doctor related routes */}
             <Route
               path="doctor-profile"
               element={
-                <ProtectRoute>
+                <ProtectRoute allowedRole="doctor">
                   <DoctorProfile />
                 </ProtectRoute>
               }
@@ -141,17 +121,8 @@ function App() {
             <Route
               path="doctor-appointments"
               element={
-                <ProtectRoute>
+                <ProtectRoute allowedRole="doctor">
                   <ViewAppointments />
-                </ProtectRoute>
-              }
-            />
-            <Route path="forgetPassword" element={<ForgetPassword />} />
-            <Route
-              path="add-disease"
-              element={
-                <ProtectRoute>
-                  <AddDiseases />
                 </ProtectRoute>
               }
             />
@@ -159,24 +130,58 @@ function App() {
             <Route
               path="doctor-dashboard"
               element={
-                <ProtectRoute>
+                <ProtectRoute allowedRole="doctor">
                   <DoctorDashboard />
                 </ProtectRoute>
               }
             />
 
+            {/* Admin related routes*/}
             <Route
               path="admin-dashboard"
               element={
-                <ProtectRoute>
+                <ProtectRoute allowedRole="admin">
                   <AdminDashboard />
+                </ProtectRoute>
+              }
+            />
+            <Route
+              path="all-locations"
+              element={
+                <ProtectRoute allowedRole="admin">
+                  <ALLLocations />
+                </ProtectRoute>
+              }
+            />
+
+            <Route
+              path="all-diseases"
+              element={
+                <ProtectRoute allowedRole="admin">
+                  <ALLDiseases />
+                </ProtectRoute>
+              }
+            />
+            <Route
+              path="all-doctors"
+              element={
+                <ProtectRoute allowedRole="admin">
+                  <ALLDoctors />
+                </ProtectRoute>
+              }
+            />
+            <Route
+              path="add-disease"
+              element={
+                <ProtectRoute allowedRole="admin">
+                  <AddDiseases />
                 </ProtectRoute>
               }
             />
             <Route
               path="add-location"
               element={
-                <ProtectRoute>
+                <ProtectRoute allowedRole="admin">
                   <AddLocation />
                 </ProtectRoute>
               }
@@ -184,7 +189,7 @@ function App() {
             <Route
               path="add-doctor"
               element={
-                <ProtectRoute>
+                <ProtectRoute allowedRole="admin">
                   <AddDoctors />
                 </ProtectRoute>
               }
@@ -192,11 +197,13 @@ function App() {
             <Route
               path="queries"
               element={
-                <ProtectRoute>
+                <ProtectRoute allowedRole="admin">
                   <AllQueries />
                 </ProtectRoute>
               }
             />
+
+            {/* unspecified route*/}
             <Route
               path="*"
               element={
