@@ -147,7 +147,7 @@ export default function ViewLeaves() {
                 <th>From</th>
                 <th>To</th>
                 <th>Status</th>
-                <th>Action</th>
+                {/* <th>Action</th> */}
               </tr>
             </thead>
             <tbody>
