@@ -24,6 +24,7 @@ import { ViewAppointments } from "./components/viewappointments";
 import { DoctorInformation } from "./components/doctorInformation";
 import { AddFAQ } from "./components/addFAQ";
 import { Unauthorized } from "./components/unauthorized";
+import ViewLeaves from "./components/viewleaves";
 
 function App() {
   return (
@@ -167,6 +168,14 @@ function App() {
               element={
                 <ProtectRoute allowedRole="admin">
                   <ALLDoctors />
+                </ProtectRoute>
+              }
+            />
+            <Route
+              path="leaves"
+              element={
+                <ProtectRoute>
+                  <ViewLeaves />
                 </ProtectRoute>
               }
             />

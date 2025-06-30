@@ -11,7 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 export const AdminDashboard = () => {
   const [appointments, setAppointments] = useState([]);
   const navigate = useNavigate();
-  const [cookie, , removeCookie] = useCookies(["email", "role"]);
+  const [cookie, , removeCookie] = useCookies(["email"]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [appointmentToDelete, setAppointmentToDelete] = useState(null);
 
@@ -66,7 +66,6 @@ export const AdminDashboard = () => {
     toast.success("Signed out successfully");
     setTimeout(() => {
       removeCookie("email", { path: "/" });
-      removeCookie("role", { path: "/" });
       navigate("/login");
     }, 800);
     // navigate("/adminlogin");
@@ -104,6 +103,9 @@ export const AdminDashboard = () => {
             </Dropdown.Item>
             <Dropdown.Item onClick={() => navigate("/queries")}>
               View All Queries
+            </Dropdown.Item>
+            <Dropdown.Item onClick={() => navigate("/leaves")}>
+              View All Leaves
             </Dropdown.Item>
           </DropdownButton>
 
