@@ -93,7 +93,6 @@ const appointment = async (req, res) => {
     if (!foundDoctor) {
       return res.status(404).json({ message: "Doctor not found" });
     }
-
     // Create new appointment document
     const newAppointment = new appointmentModel({
       fullName,
@@ -132,7 +131,6 @@ const appointment = async (req, res) => {
       <p style="font-size: 16px;">
         Thank you for scheduling your appointment with us! Below are your appointment details:
       </p>
-
       <ul style="line-height: 1.8; font-size: 16px;">
         <li><strong>Doctor:</strong> Dr. ${doctor}</li>
         <li><strong>Date:</strong> ${formattedDate.toDateString()}</li>
