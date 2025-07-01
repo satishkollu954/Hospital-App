@@ -73,3 +73,43 @@
   color: rgb(119, 118, 118);
   font-size: 2.1rem;
 }
+
+@media (max-width: 768px) {
+  .home-top {
+    height: auto;
+    padding: 40px 20px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .home-top div:first-child {
+    font-size: 1.3rem;
+  }
+
+  .home-bottom {
+    flex-direction: column;
+    height: auto;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .home-bottom-left,
+  .home-bottom-right {
+    width: 100%;
+  }
+
+  .home-bottom-right img {
+    max-width: 95%;
+  }
+
+  .bg-text {
+    font-size: 1.5rem;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .dotted-image {
+    height: auto;
+    padding: 20px;
+  }
+}

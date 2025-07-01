@@ -8,7 +8,7 @@ export function About() {
         <div className="title">
           RaagviCare : <span className="inner-titile">About Us</span>{" "}
         </div>
-        <span className="sub-title">
+        <span className="sub-title ms-2">
           Advanced Treatment. Expert Care. Extraordinary Results.
         </span>
       </div>{" "}

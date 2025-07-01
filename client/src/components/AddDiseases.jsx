@@ -38,67 +38,72 @@ export function AddDiseases() {
   };
 
   return (
-    <div className="container mt-5 d-flex justify-content-center">
-      <form
-        onSubmit={handleSubmit}
-        className="w-50 border p-4 shadow rounded bg-light"
-      >
-        {/* Back Button */}
-        <button
-          type="button"
-          className="btn btn-secondary mb-3"
-          onClick={() => navigate(-1)}
-        >
-          ← Back
-        </button>
-        {message && (
-          <div className="alert alert-info mt-3" role="alert">
-            {message}
-          </div>
-        )}
+    <div className="container mt-5">
+      <div className="row justify-content-center">
+        <div className="col-12 col-md-8 col-lg-6">
+          <form
+            onSubmit={handleSubmit}
+            className="border p-4 shadow rounded bg-light"
+          >
+            {/* Back Button */}
+            <button
+              type="button"
+              className="btn btn-secondary mb-3"
+              onClick={() => navigate(-1)}
+            >
+              ← Back
+            </button>
 
-        <h3 className="mb-4 text-center">Add Treatment</h3>
+            {message && (
+              <div className="alert alert-info mt-3" role="alert">
+                {message}
+              </div>
+            )}
 
-        <div className="mb-3">
-          <label className="form-label fw-bold">Name of the disease</label>
-          <input
-            type="text"
-            name="disease"
-            value={formData.disease}
-            onChange={handleChange}
-            className="form-control"
-            placeholder="e.g. Heart Surgery"
-          />
+            <h3 className="mb-4 text-center">Add Treatment</h3>
+
+            <div className="mb-3">
+              <label className="form-label fw-bold">Name of the disease</label>
+              <input
+                type="text"
+                name="disease"
+                value={formData.disease}
+                onChange={handleChange}
+                className="form-control"
+                placeholder="e.g. Heart Surgery"
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label fw-bold">Description</label>
+              <textarea
+                name="description"
+                rows="4"
+                value={formData.description}
+                onChange={handleChange}
+                className="form-control"
+                placeholder="Enter description of the treatment"
+              ></textarea>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label fw-bold">Learn More URL</label>
+              <input
+                type="url"
+                name="learnmore"
+                value={formData.learnmore}
+                onChange={handleChange}
+                className="form-control"
+                placeholder="https://example.com/learn-more"
+              />
+            </div>
+
+            <button type="submit" className="btn btn-primary w-100">
+              Add Treatment
+            </button>
+          </form>
         </div>
-
-        <div className="mb-3">
-          <label className="form-label fw-bold">Description</label>
-          <textarea
-            name="description"
-            rows="4"
-            value={formData.description}
-            onChange={handleChange}
-            className="form-control"
-            placeholder="Enter description of the treatment"
-          ></textarea>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label fw-bold">Learn More URL</label>
-          <input
-            type="url"
-            name="learnmore"
-            value={formData.learnmore}
-            onChange={handleChange}
-            className="form-control"
-            placeholder="https://example.com/learn-more"
-          />
-        </div>
-
-        <button type="submit" className="btn btn-primary w-100">
-          Add Treatment
-        </button>
-      </form>
+      </div>
     </div>
   );
 }

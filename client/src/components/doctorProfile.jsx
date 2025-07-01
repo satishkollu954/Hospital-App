@@ -3,17 +3,14 @@ import { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-
 export function DoctorProfile() {
   const navigate = useNavigate();
   const [cookies] = useCookies(["email"]);
   const decodedEmail = decodeURIComponent(cookies.email);
-
   const [docData, setDocData] = useState(null);
   const [originalData, setOriginalData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-
   useEffect(() => {
     axios
       .get(`http://localhost:5000/admin/doctor/${decodedEmail}`)
@@ -23,39 +20,32 @@ export function DoctorProfile() {
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, [decodedEmail]);
-
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     const val = type === "checkbox" ? checked : value;
     setDocData((prevData) => ({ ...prevData, [name]: val }));
   };
-
   const handleImageChange = (e) => setSelectedFile(e.target.files[0]);
-
   const handleLanguagesChange = (index, value) => {
     const updated = [...docData.Languages];
     updated[index] = value;
     setDocData({ ...docData, Languages: updated });
   };
-
   const addLanguage = () =>
     setDocData((prev) => ({
       ...prev,
       Languages: [...(prev.Languages || []), ""],
     }));
-
   const removeLanguage = (index) => {
     const updated = [...docData.Languages];
     updated.splice(index, 1);
     setDocData({ ...docData, Languages: updated });
   };
-
   const handleEducationChange = (index, field, value) => {
     const updated = [...docData.Education];
     updated[index][field] = value;
     setDocData({ ...docData, Education: updated });
   };
-
   const addEducation = () =>
     setDocData((prev) => ({
       ...prev,
@@ -64,18 +54,15 @@ export function DoctorProfile() {
         { degree: "", institution: "", year: "" },
       ],
     }));
-
   const removeEducation = (index) => {
     const updated = [...docData.Education];
     updated.splice(index, 1);
     setDocData({ ...docData, Education: updated });
   };
-
   const hasChanges =
     JSON.stringify({ ...docData, image: undefined }) !==
       JSON.stringify({ ...originalData, image: undefined }) ||
     selectedFile !== null;
-
   const handleSave = async () => {
     const formData = new FormData();
     Object.entries(docData).forEach(([key, value]) => {
@@ -86,7 +73,6 @@ export function DoctorProfile() {
       }
     });
     if (selectedFile) formData.append("image", selectedFile);
-
     try {
       const res = await axios.put(
         `http://localhost:5000/admin/updatedoctor/${decodedEmail}`,
@@ -105,16 +91,13 @@ export function DoctorProfile() {
       // alert("Failed to update profile");
     }
   };
-
   const handleCancel = () => {
     setDocData(originalData);
     setSelectedFile(null);
     setIsEditing(false);
   };
-
   if (!docData)
     return <div className="text-center mt-5">Loading Doctor Profile...</div>;
-
   return (
     <div className="container mt-3">
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
@@ -145,7 +128,6 @@ export function DoctorProfile() {
               />
             )}
           </div>
-
           <div className="col-md-8">
             <div className="table-responsive">
               <table className="table table-borderless align-middle">
@@ -178,7 +160,6 @@ export function DoctorProfile() {
                       </td>
                     </tr>
                   ))}
-
                   <tr>
                     <th>BriefProfile:</th>
                     <td>
@@ -191,7 +172,6 @@ export function DoctorProfile() {
                       />
                     </td>
                   </tr>
-
                   <tr>
                     <th>Address:</th>
                     <td>
@@ -204,7 +184,6 @@ export function DoctorProfile() {
                       />
                     </td>
                   </tr>
-
                   <tr>
                     <th>Availability:</th>
                     <td>
@@ -223,7 +202,6 @@ export function DoctorProfile() {
                       </div>
                     </td>
                   </tr>
-
                   {/* Languages */}
                   <tr>
                     <th>Languages:</th>
@@ -261,7 +239,6 @@ export function DoctorProfile() {
                       )}
                     </td>
                   </tr>
-
                   {/* Education */}
                   <tr>
                     <th>Education:</th>
@@ -347,7 +324,6 @@ export function DoctorProfile() {
                 </tbody>
               </table>
             </div>
-
             {/* Action Buttons */}
             <div className="mt-3">
               {!isEditing ? (

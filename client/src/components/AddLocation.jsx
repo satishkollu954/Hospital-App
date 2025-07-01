@@ -130,7 +130,7 @@ export const AddLocation = () => {
         <div className="d-flex justify-content-between align-items-center mt-4">
           <button
             type="button"
-            className="btn btn-outline-primary px-4 py-2"
+            className="btn btn-outline-primary px-4 py-2 mt-4 me-4"
             onClick={() => navigate(-1)}
           >
             Back to Home

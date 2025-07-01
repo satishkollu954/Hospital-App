@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button, Form, Table } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 
 export function AddFAQ() {
@@ -70,6 +71,9 @@ export function AddFAQ() {
 
   return (
     <div className="container mt-5">
+      <Link to="/admin-dashboard" className="btn btn-primary me-4">
+        Back
+      </Link>
       <ToastContainer />
       <h3 className="mb-4">Manage FAQs</h3>
 
@@ -87,6 +91,7 @@ export function AddFAQ() {
           value={newFaq.answer}
           onChange={(e) => setNewFaq({ ...newFaq, answer: e.target.value })}
         />
+
         <Button variant="success" onClick={handleAdd}>
           Add FAQ
         </Button>
@@ -153,6 +158,7 @@ export function AddFAQ() {
                   variant="danger"
                   size="sm"
                   onClick={() => handleDelete(faq._id)}
+                  className="mb-2"
                 >
                   Delete
                 </Button>

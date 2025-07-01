@@ -31,34 +31,35 @@ function App() {
     <BrowserRouter>
       <div className="d-flex flex-column min-vh-100">
         {/* Header */}
-        <header className="bg-color text-white py-1 shadow-sm">
-          <div className="container-fluid d-flex justify-content-between align-items-center px-4">
-            <div className="d-flex align-items-start">
-              <a href="https://raagvitech.com/">
-                {" "}
-                <img
-                  src="/logo3.webp"
-                  alt="Hospital Logo"
-                  style={{ height: "70px", marginRight: "50px" }}
-                />
-              </a>
-            </div>
-            <h1 className="text-center me-5 fs-1 flex-grow-1 d-none d-md-block">
+        <header className="bg-color text-white shadow-sm">
+          <nav className="navbar navbar-expand-md navbar-light container-fluid px-4">
+            <a className="navbar-brand" href="https://raagvitech.com/">
+              <img
+                src="/logo3.webp"
+                alt="Hospital Logo"
+                style={{ height: "60px", marginRight: "10px" }}
+              />
+            </a>
+            <Link to="/" className="navbar-brand text-white fs-5 fw-bold">
               RaagviCare
-            </h1>
-            {/* <nav className="d-flex justify-content-end">
-              <Link
-                to="appointment"
-                className="text-white fw-bold px-3 py-2 rounded mt-2 d-inline-block text-decoration-none boxshadow border-0"
-                style={{ cursor: "pointer" }}
-              >
-                Book an Appointment <span className="ms-2">&rarr;</span>
-              </Link>
-            </nav> */}
-          </div>
-          <div className="container-fluid pb-0 px-4">
-            <nav className="d-flex ms-5 justify-content-center">
-              <ul className="nav">
+            </Link>
+            <button
+              className="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarNav"
+              aria-controls="navbarNav"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span className="navbar-toggler-icon"></span>
+            </button>
+
+            <div
+              className="collapse navbar-collapse justify-content-end"
+              id="navbarNav"
+            >
+              <ul className="navbar-nav text-center">
                 <li className="nav-item">
                   <Link to="/" className="nav-link text-white">
                     Home
@@ -90,8 +91,8 @@ function App() {
                   </Link>
                 </li>
               </ul>
-            </nav>
-          </div>
+            </div>
+          </nav>
         </header>
 
         {/* Main content user routes*/}
