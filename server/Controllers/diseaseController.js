@@ -1,6 +1,44 @@
+// controllers/diseaseController.js      (CommonJS + dynamic ESM import)
+
 const Disease = require("../Models/Disease");
 
-//  Add a new disease
+/* ───────────────────────── 1.  Lazy‑load translator (v8 & v9+) ─────────────────── */
+let translateFn;
+
+async function getTranslator() {
+  if (!translateFn) {
+    const mod = await import("@vitalets/google-translate-api");
+    translateFn = mod.translate || mod.default;
+    if (typeof translateFn !== "function") {
+      throw new Error(
+        "Unable to load translate() from @vitalets/google-translate-api"
+      );
+    }
+  }
+  return translateFn;
+}
+
+/* ───────────────────────── 2.  Tiny in‑memory cache ───────────────────────────── */
+const cache = new Map();
+
+async function translateText(text = "", lang = "en") {
+  if (!text || lang === "en") return text;
+
+  const key = `${text}|${lang}`;
+  if (cache.has(key)) return cache.get(key);
+
+  try {
+    const translate = await getTranslator();
+    const { text: out } = await translate(text, { from: "en", to: lang });
+    cache.set(key, out);
+    return out;
+  } catch (err) {
+    console.error("Translation error:", err);
+    return text; // fallback
+  }
+}
+
+/* ───────────────────────── 3.  Add a new disease ──────────────────────────────── */
 exports.addDisease = async (req, res) => {
   try {
     const { disease, description, learnmore } = req.body;
@@ -14,17 +52,33 @@ exports.addDisease = async (req, res) => {
   }
 };
 
-//  Get all diseases
+/* ───────────────────────── 4.  Get all diseases (with lang) ───────────────────── */
 exports.getDiseases = async (req, res) => {
+  const lang = (req.query.lang || "en").toLowerCase();
+
   try {
-    const diseases = await Disease.find();
-    res.status(200).json(diseases);
+    const diseases = await Disease.find(); // fetch all
+
+    if (lang === "en") return res.status(200).json(diseases);
+
+    // translate each document concurrently
+    const translated = await Promise.all(
+      diseases.map(async (d) => ({
+        _id: d._id,
+        disease: await translateText(d.disease, lang),
+        description: await translateText(d.description, lang),
+        learnmore: await translateText(d.learnmore, lang),
+      }))
+    );
+
+    res.status(200).json(translated);
   } catch (err) {
+    console.error("Failed to fetch/translate diseases:", err);
     res.status(500).json({ error: "Failed to fetch diseases" });
   }
 };
 
-//  Delete disease by ID
+/* ───────────────────────── 5.  Delete disease by ID ───────────────────────────── */
 exports.deleteDisease = async (req, res) => {
   try {
     const { id } = req.params;
@@ -40,7 +94,7 @@ exports.deleteDisease = async (req, res) => {
   }
 };
 
-// Update an existing disease by ID
+/* ───────────────────────── 6.  Update disease by ID ───────────────────────────── */
 exports.updateDisease = async (req, res) => {
   try {
     const { id } = req.params;

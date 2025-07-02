@@ -25,8 +25,12 @@ import { DoctorInformation } from "./components/doctorInformation";
 import { AddFAQ } from "./components/addFAQ";
 import { Unauthorized } from "./components/unauthorized";
 import ViewLeaves from "./components/viewleaves";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 
 function App() {
+  const { t } = useTranslation();
+
   return (
     <BrowserRouter>
       <div className="d-flex flex-column min-vh-100">
@@ -39,9 +43,9 @@ function App() {
                 alt="Hospital Logo"
                 style={{ height: "60px", marginRight: "10px" }}
               />
-            </a>
+            </a>{" "}
             <Link to="/" className="navbar-brand text-white fs-5 fw-bold">
-              RaagviCare
+              {t("brand")}
             </Link>
             <button
               className="navbar-toggler"
@@ -54,7 +58,6 @@ function App() {
             >
               <span className="navbar-toggler-icon"></span>
             </button>
-
             <div
               className="collapse navbar-collapse justify-content-end"
               id="navbarNav"
@@ -62,33 +65,67 @@ function App() {
               <ul className="navbar-nav text-center">
                 <li className="nav-item">
                   <Link to="/" className="nav-link text-white">
-                    Home
+                    {t("nav.home")}
                   </Link>
                 </li>
                 <li className="nav-item">
                   <Link to="/about" className="nav-link text-white">
-                    About Us
+                    {t("nav.about")}
                   </Link>
                 </li>
                 <li className="nav-item">
                   <Link to="/treatments" className="nav-link text-white">
-                    Treatments
+                    {t("nav.treatments")}
                   </Link>
                 </li>
                 <li className="nav-item">
                   <Link to="/doctors" className="nav-link text-white">
-                    Doctors
+                    {t("nav.doctors")}
                   </Link>
                 </li>
                 <li className="nav-item">
                   <Link to="/contact" className="nav-link text-white">
-                    Contact Us
+                    {t("nav.contact")}
                   </Link>
                 </li>
                 <li className="nav-item">
                   <Link to="/location" className="nav-link text-white">
-                    Location
+                    {t("nav.location")}
                   </Link>
+                </li>
+                <li className="nav-item dropdown">
+                  <button
+                    className="btn btn-sm btn-light dropdown-toggle mx-2 mt-1"
+                    data-bs-toggle="dropdown"
+                  >
+                    Languages
+                  </button>
+                  <ul className="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <button
+                        className="dropdown-item"
+                        onClick={() => i18n.changeLanguage("en")}
+                      >
+                        English
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        className="dropdown-item"
+                        onClick={() => i18n.changeLanguage("hi")}
+                      >
+                        हिन्दी
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        className="dropdown-item"
+                        onClick={() => i18n.changeLanguage("te")}
+                      >
+                        తెలుగు
+                      </button>
+                    </li>
+                  </ul>
                 </li>
               </ul>
             </div>
@@ -238,9 +275,7 @@ function App() {
             <p className="mb-1">
               &copy; {new Date().getFullYear()} RaagviCare. All rights reserved.
             </p>
-            <p className="mb-2">
-              Providing quality care for a healthier future.
-            </p>
+            <p className="mb-2">{t("footer.tagline")}</p>
             <div>
               <a href="https://raagvitech.com/" className="text-white mx-2">
                 <i className="bi bi-facebook"></i>

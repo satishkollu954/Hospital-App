@@ -2,57 +2,65 @@ import { Link } from "react-router-dom";
 import "./treatments.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 export function Treatment() {
   const [state, setState] = useState([{ disease: "", description: "" }]);
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
+    const controller = new AbortController();
+
     axios
-      .get("http://localhost:5000/admin/getdisease")
-      .then((response) => {
-        setState(response.data);
+      .get("http://localhost:5000/admin/getdisease", {
+        params: { lang: i18n.language },
+        signal: controller.signal,
       })
-      .catch((reason) => {
-        console.log(reason);
+      .then((res) => setState(res.data))
+      .catch((err) => {
+        if (err.name !== "CanceledError") {
+          console.error("Failed to fetch diseases:", err);
+          setState([]);
+        }
       });
-  }, []);
+
+    return () => controller.abort();
+  }, [i18n.language]);
 
   return (
     <div>
       <div className="trm-bg"></div>
       <br />
+
       <div className="fs-4 fw-bold trt-text">
-        {" "}
         <Link
           to="/"
           className="text-primary fw-normal pe-2 text-decoration-none"
         >
-          Home »
+          {t("common.home")} »
         </Link>
-        Conditions Treated
+        {t("treatments.pageTitle")}
       </div>
+
       <div className="trt-bottom">
         <div className="trt-bottom-left">
-          RaagviCare provides a comprehensive range of medical, cosmetic,
-          surgical, and aesthetic dermatology treatments and services. We also
-          offer state-of-the-art plastic and reconstructive surgery options to
-          rejuvenate the health and appearance of your skin. <br />
+          {t("treatments.description1")}
           <br />
-          The skin is the largest organ in the human body, requiring constant
-          attention, detailed examination and diagnosis, and expert care. We
-          treat your dermatology condition with a patient-first approach,
-          compassionate care, and advanced treatment methods, ensuring your mind
-          and body are at their healthiest. <br />
           <br />
-          To schedule an appointment, please give us a call today. To learn more
-          about the conditions we treat, simply select from our menu below.
+          {t("treatments.description2")}
+          <br />
+          <br />
+          {t("treatments.description3")}
         </div>
+
         <div className="trt-bottom-right">
-          <img src="/trt-img.jpg" alt="Hospital Care" />
+          <img src="/trt-img.jpg" alt={t("treatments.imageAlt")} />
         </div>
-      </div>{" "}
+      </div>
+
       <br />
       <br />
+
       <div className="card-bg">
         <div className="d-flex flex-wrap gap-3 justify-content-center">
           {state.map((item, index) => (
@@ -71,9 +79,11 @@ export function Treatment() {
                 {item.description}
               </div>
               <div className="ms-3">
-                <a href={item.learnmore} style={{ color: "grey" }}>
-                  Learn More
-                </a>
+                {item.learnmore && (
+                  <a href={item.learnmore} style={{ color: "grey" }}>
+                    {t("treatments.learnMore")}
+                  </a>
+                )}
               </div>
             </div>
           ))}

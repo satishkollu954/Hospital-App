@@ -77,12 +77,76 @@ const addDoctors = async (req, res) => {
 };
 
 // Get all doctors
+/* ───────────────────────── 1. Lazy‑load translator (v8 & v9+) ─────────────────── */
+let translateFn;
+
+async function getTranslator() {
+  if (!translateFn) {
+    const mod = await import("@vitalets/google-translate-api");
+    translateFn = mod.translate || mod.default;
+    if (typeof translateFn !== "function") {
+      throw new Error(
+        "Unable to load translate() from @vitalets/google-translate-api"
+      );
+    }
+  }
+  return translateFn;
+}
+
+/* ───────────────────────── 2. Tiny in‑memory cache ───────────────────────────── */
+const cache = new Map();
+async function tx(text = "", lang = "en") {
+  if (!text || lang === "en") return text;
+  const key = `${text}|${lang}`;
+  if (cache.has(key)) return cache.get(key);
+  const { text: out } = await (
+    await getTranslator()
+  )(text, { from: "en", to: lang });
+  cache.set(key, out);
+  return out;
+}
+
+/* ───────────────────────── 3. GET /admin/doctors?lang=xx ─────────────────────── */
 const getAllDoctors = async (req, res) => {
+  const lang = (req.query.lang || "en").toLowerCase();
+
   try {
     const doctors = await Doctor.find();
-    res.status(200).json(doctors);
+
+    // Return original English if no translation requested
+    if (lang === "en") return res.status(200).json(doctors);
+
+    // Translate selected fields in parallel
+    const translated = await Promise.all(
+      doctors.map(async (d) => ({
+        _id: d._id,
+        image: d.image,
+        Email: d.Email,
+        Availability: d.Availability,
+        Languages: d.Languages, // keep as‑is
+        Education: d.Education, // keep as‑is
+        Age: d.Age,
+        From: d.From,
+        To: d.To,
+        // textual fields translated:
+        Name: await tx(d.Name, lang),
+        About: await tx(d.About, lang),
+        Designation: await tx(d.Designation, lang),
+        Specialization: await tx(d.Specialization, lang),
+        State: await tx(d.State, lang),
+        City: await tx(d.City, lang),
+        Learnmore: d.Learnmore, // URL, leave as‑is
+        Qualification: await tx(d.Qualification, lang),
+        Experience: await tx(d.Experience, lang),
+        BriefProfile: await tx(d.BriefProfile, lang),
+        Address: await tx(d.Address, lang),
+      }))
+    );
+
+    res.status(200).json(translated);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Failed to fetch/translate doctors:", err);
+    res.status(500).json({ error: "Failed to fetch doctors" });
   }
 };
 

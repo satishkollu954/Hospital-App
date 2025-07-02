@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "./contact-us.css";
+import { useTranslation } from "react-i18next";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "./contact-us.css";
 
 export function ContactUs() {
+  const { t, i18n } = useTranslation();
+  console.log("ttt=> ", t, "i18n===> ", i18n);
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -16,68 +20,78 @@ export function ContactUs() {
   const [currentPage, setCurrentPage] = useState(1);
   const faqsPerPage = 5;
 
-  // Fetch FAQs from backend
+  /* ───────── Fetch FAQs ───────── */
+  // useEffect(() => {
+  //   axios
+  //     .get("http://localhost:5000/admin/faq")
+  //     .then((res) => setFaqList(res.data))
+  //     .catch((err) => {
+  //       console.error("Failed to fetch FAQs:", err);
+  //       setFaqList([]);
+  //     });
+  // }, []);
+
   useEffect(() => {
+    const controller = new AbortController(); // 👈 cleanup helper
+
     axios
-      .get("http://localhost:5000/admin/faq")
+      .get("http://localhost:5000/admin/faq", {
+        params: { lang: i18n.language }, // hi | te | en | …
+        signal: controller.signal,
+      })
       .then((res) => setFaqList(res.data))
       .catch((err) => {
-        console.error("Failed to fetch FAQs:", err);
-        setFaqList([]);
+        if (err.name !== "CanceledError") {
+          console.error("Failed to fetch FAQs:", err);
+          setFaqList([]);
+        }
       });
-  }, []);
 
+    return () => controller.abort(); // cancel if component unmounts
+  }, [i18n.language]);
+
+  /* ───────── Form handlers ───────── */
   const handleChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     axios
       .post("http://localhost:5000/api/contactus", formData)
       .then(() => {
-        toast.success("Message submitted successfully!");
-        setFormData({
-          fullName: "",
-          email: "",
-          contact: "",
-          message: "",
-        });
+        toast.success(t("contact.toastSuccess"));
+        setFormData({ fullName: "", email: "", contact: "", message: "" });
       })
       .catch((err) => {
-        toast.error("Something went wrong. Please try again.");
+        toast.error(t("contact.toastError"));
         console.error(err);
       });
   };
 
-  // Pagination logic
+  /* ───────── Pagination ───────── */
   const totalPages = Math.ceil(faqList.length / faqsPerPage);
   const indexOfLastFaq = currentPage * faqsPerPage;
   const indexOfFirstFaq = indexOfLastFaq - faqsPerPage;
   const currentFaqs = faqList.slice(indexOfFirstFaq, indexOfLastFaq);
 
-  const goToNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
-  };
+  const goToNextPage = () =>
+    currentPage < totalPages && setCurrentPage((p) => p + 1);
+  const goToPrevPage = () => currentPage > 1 && setCurrentPage((p) => p - 1);
 
-  const goToPrevPage = () => {
-    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
-  };
-
+  /* ───────── JSX ───────── */
   return (
     <div className="contact-bg d-flex align-items-center justify-content-center py-5">
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <div className="contact-card card shadow-lg p-4">
-        <h2 className="text-center mb-4 text-primary">Contact Us</h2>
+        <h2 className="text-center mb-4 text-primary">{t("contact.title")}</h2>
+
+        {/* ─── Contact Form ─── */}
         <form onSubmit={handleSubmit}>
           {/* Full Name */}
           <div className="mb-3">
             <label htmlFor="fullName" className="form-label">
-              Full Name
+              {t("contact.fullName")}
             </label>
             <div className="input-group">
               <span className="input-group-text">
@@ -91,7 +105,7 @@ export function ContactUs() {
                 value={formData.fullName}
                 onChange={handleChange}
                 required
-                placeholder="Enter your full name"
+                placeholder={t("contact.placeholderName")}
               />
             </div>
           </div>
@@ -99,7 +113,7 @@ export function ContactUs() {
           {/* Email */}
           <div className="mb-3">
             <label htmlFor="email" className="form-label">
-              Email Address
+              {t("contact.email")}
             </label>
             <div className="input-group">
               <span className="input-group-text">
@@ -113,7 +127,7 @@ export function ContactUs() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                placeholder="Enter your email"
+                placeholder={t("contact.placeholderEmail")}
               />
             </div>
           </div>
@@ -121,7 +135,7 @@ export function ContactUs() {
           {/* Contact */}
           <div className="mb-3">
             <label htmlFor="contact" className="form-label">
-              Contact Number
+              {t("contact.contactNumber")}
             </label>
             <div className="input-group">
               <span className="input-group-text">
@@ -135,7 +149,7 @@ export function ContactUs() {
                 value={formData.contact}
                 onChange={handleChange}
                 required
-                placeholder="Enter your contact number"
+                placeholder={t("contact.placeholderContact")}
               />
             </div>
           </div>
@@ -143,7 +157,7 @@ export function ContactUs() {
           {/* Message */}
           <div className="mb-4">
             <label htmlFor="message" className="form-label">
-              Your Message
+              {t("contact.message")}
             </label>
             <textarea
               className="form-control"
@@ -153,24 +167,26 @@ export function ContactUs() {
               value={formData.message}
               onChange={handleChange}
               required
-              placeholder="Type your message here..."
-            ></textarea>
+              placeholder={t("contact.placeholderMessage")}
+            />
           </div>
 
           {/* Submit */}
           <div className="d-grid">
             <button type="submit" className="btn btn-primary btn-lg">
-              <i className="bi bi-send-fill me-2"></i> Send Message
+              <i className="bi bi-send-fill me-2"></i>
+              {t("contact.send")}
             </button>
           </div>
         </form>
 
-        {/* FAQ Section */}
+        {/* ─── FAQ Section ─── */}
         <div className="mt-5">
-          <h4 className="text-primary mb-3">Frequently Asked Questions</h4>
+          <h4 className="text-primary mb-3">{t("contact.faq")}</h4>
+
           <div className="accordion" id="faqAccordion">
-            {currentFaqs.map((faq, index) => {
-              const globalIndex = indexOfFirstFaq + index;
+            {currentFaqs.map((faq, idx) => {
+              const globalIndex = indexOfFirstFaq + idx;
               return (
                 <div className="accordion-item" key={globalIndex}>
                   <h2 className="accordion-header" id={`heading${globalIndex}`}>
@@ -198,11 +214,11 @@ export function ContactUs() {
             })}
 
             {faqList.length === 0 && (
-              <p className="text-muted">No FAQs available.</p>
+              <p className="text-muted">{t("contact.noFaqs")}</p>
             )}
           </div>
 
-          {/* Pagination Controls */}
+          {/* Pagination */}
           {faqList.length > faqsPerPage && (
             <div className="d-flex justify-content-between align-items-center mt-4">
               <button
@@ -210,17 +226,17 @@ export function ContactUs() {
                 onClick={goToPrevPage}
                 disabled={currentPage === 1}
               >
-                &laquo; Previous
+                {t("contact.prev")}
               </button>
               <span className="text-muted">
-                Page {currentPage} of {totalPages}
+                {t("contact.page", { current: currentPage, total: totalPages })}
               </span>
               <button
                 className="btn btn-outline-primary"
                 onClick={goToNextPage}
                 disabled={currentPage === totalPages}
               >
-                Next &raquo;
+                {t("contact.next")}
               </button>
             </div>
           )}

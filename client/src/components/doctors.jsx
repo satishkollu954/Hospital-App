@@ -2,41 +2,56 @@ import axios from "axios";
 import "./doctors.css";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export function Doctors() {
-  const [state, setState] = useState([]);
+  const { t, i18n } = useTranslation();
+  const [doctors, setDoctors] = useState([]);
 
+  /* 🔄 refetch whenever language changes */
   useEffect(() => {
+    const controller = new AbortController();
+
     axios
-      .get("http://localhost:5000/admin/alldoctors")
-      .then((response) => {
-        setState(response.data);
+      .get("http://localhost:5000/admin/alldoctors", {
+        params: { lang: i18n.language }, // hi | te | en | …
+        signal: controller.signal,
       })
-      .catch((error) => {
-        console.error("Error fetching doctor data:", error);
+      .then((res) => setDoctors(res.data))
+      .catch((err) => {
+        if (err.name !== "CanceledError") {
+          console.error("Error fetching doctor data:", err);
+          setDoctors([]);
+        }
       });
-  }, []);
+
+    return () => controller.abort();
+  }, [i18n.language]);
 
   return (
     <div>
       <div className="fs-3 fw-bold" style={{ color: "grey" }}>
-        <u>Doctors</u>
+        <u>{t("doctors.title")}</u>
       </div>
+
       <section id="skills" className="doc-section">
         <div className="doc-grid">
-          {state.map((item, index) => (
-            <div className="doc-item" key={index}>
-              <Link to={`/doctor/${encodeURIComponent(item.Email)}`}>
+          {doctors.map((doc) => (
+            <div className="doc-item" key={doc._id}>
+              <Link to={`/doctor/${encodeURIComponent(doc.Email)}`}>
                 <img
-                  src={`http://localhost:5000/uploads/${item.image}`}
-                  alt="doc-img"
+                  src={`http://localhost:5000/uploads/${doc.image}`}
+                  alt={t("doctors.imageAlt", { name: doc.Name })}
                 />
               </Link>
+
               <p className="doc-label" style={{ color: "blue" }}>
-                {item.Name}
+                {doc.Name}
               </p>
+
               <p className="doc-label text-dark">
-                <strong>Specialization:</strong> {item.Specialization}
+                <strong>{t("doctors.specialization")}:</strong>{" "}
+                {doc.Specialization}
               </p>
             </div>
           ))}

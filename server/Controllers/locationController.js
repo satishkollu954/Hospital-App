@@ -45,14 +45,58 @@ const addLocation = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+/* ────────────────────── 1.  Lazy‑load translator (v9 & v8) ───────────────────── */
+let translateFn;
+async function getTranslator() {
+  if (!translateFn) {
+    const mod = await import("@vitalets/google-translate-api"); // dynamic ESM
+    translateFn = mod.translate || mod.default; // v9 | v8
+    if (typeof translateFn !== "function") {
+      throw new Error(
+        "Unable to load translate() from @vitalets/google-translate-api"
+      );
+    }
+  }
+  return translateFn;
+}
 
-// Fetch all locations
+/* ────────────────────── 2.  Tiny in‑memory cache ─────────────────────────────── */
+const cache = new Map();
+async function tx(text = "", lang = "en") {
+  if (!text || lang === "en") return text;
+  const key = `${text}|${lang}`;
+  if (cache.has(key)) return cache.get(key);
+  const { text: out } = await (
+    await getTranslator()
+  )(text, { from: "en", to: lang });
+  cache.set(key, out);
+  return out;
+}
+
+/* ────────────────────── 3.  GET /admin/locations?lang=xx ─────────────────────── */
 const getAllLocations = async (req, res) => {
-  console.log("Fetch the location ");
+  const lang = (req.query.lang || "en").toLowerCase();
+
   try {
-    const locations = await HospitalLocation.find();
-    console.log(locations);
-    res.status(200).json(locations);
+    const locations = await HospitalLocation.find(); // [{ State, branches: [] }]
+
+    if (lang === "en") return res.status(200).json(locations);
+
+    /* Translate State and each branch.name */
+    const translated = await Promise.all(
+      locations.map(async (loc) => ({
+        _id: loc._id,
+        State: await tx(loc.State, lang),
+        branches: await Promise.all(
+          (loc.branches || []).map(async (b) => ({
+            name: await tx(b.name, lang),
+            mapUrl: b.mapUrl, // leave URLs untouched
+          }))
+        ),
+      }))
+    );
+
+    res.status(200).json(translated);
   } catch (err) {
     console.error("Error fetching locations:", err);
     res.status(500).json({ message: "Server error" });
