@@ -9,7 +9,6 @@ const generateOtp = () =>
 // SEND OTP (Forgot Password)
 exports.sendOtp = async (req, res) => {
   const { Email } = req.body;
-
   try {
     const staff = await Staff.findOne({ Email });
     if (!staff) return res.status(404).json({ message: "User not found" });
