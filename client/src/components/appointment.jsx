@@ -15,14 +15,13 @@ export function Appointment() {
   const [otp, setOtp] = useState("");
   const [emailVerified, setEmailVerified] = useState(false);
   const [doctors, setDoctors] = useState([]);
-
   const [states, setStates] = useState([]);
   const [city, setCities] = useState([]);
-
   const [diseases, setDiseases] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState("");
 
-  const [isOtpLoading, setIsOtpLoading] = useState(false); // ✅ Spinner state
+  const [isOtpLoading, setIsOtpLoading] = useState(false); // Spinner for OTP
+  const [isBooking, setIsBooking] = useState(false); // Spinner for booking
 
   const formik = useFormik({
     initialValues: {
@@ -65,6 +64,7 @@ export function Appointment() {
       }
 
       const updatedUser = { ...user, time: selectedSlot };
+      setIsBooking(true); // Show spinner
 
       axios
         .post("http://localhost:5000/api/appointment", updatedUser)
@@ -78,7 +78,8 @@ export function Appointment() {
         })
         .catch(() => {
           toast.error("Appointment failed. Please try again.");
-        });
+        })
+        .finally(() => setIsBooking(false)); // Hide spinner
     },
   });
 
@@ -122,7 +123,7 @@ export function Appointment() {
       return;
     }
 
-    setIsOtpLoading(true); // ⏳ Start spinner
+    setIsOtpLoading(true);
 
     axios
       .post("http://localhost:5000/admin/send-otp", { Email })
@@ -131,7 +132,7 @@ export function Appointment() {
         setOtpVisible(true);
       })
       .catch(() => toast.error("Failed to send OTP"))
-      .finally(() => setIsOtpLoading(false)); // ✅ Stop spinner
+      .finally(() => setIsOtpLoading(false));
   };
 
   const handleVerifyOtp = () => {
@@ -197,12 +198,7 @@ export function Appointment() {
                   disabled={isOtpLoading}
                 >
                   {isOtpLoading && (
-                    <Spinner
-                      animation="border"
-                      size="sm"
-                      role="status"
-                      className="me-1"
-                    />
+                    <Spinner animation="border" size="sm" className="me-1" />
                   )}
                   Send OTP
                 </button>
@@ -247,6 +243,8 @@ export function Appointment() {
                 </button>
               </div>
             )}
+            {/* State, City, Disease, Date, Doctor */}
+            {/* [rest of your select and input fields as you already have them...] */}
             {/* State */}
             <div className="col-md-4">
               <label className="form-label fw-bold">State</label>
@@ -376,7 +374,7 @@ export function Appointment() {
                 </div>
               )}
             </div>
-            {/* Reason (full row) */}
+            {/* Reason */}
             <div className="col-md-12">
               <label className="form-label fw-bold">Reason</label>
               <textarea
@@ -389,10 +387,22 @@ export function Appointment() {
                 value={formik.values.reason}
               ></textarea>
             </div>
-            {/* Submit */}
+            {/* Submit Button */}
             <div className="col-md-12">
-              <button type="submit" className="btn btn-primary w-50">
-                Submit
+              <button
+                type="submit"
+                className="btn btn-primary w-50 d-flex justify-content-center align-items-center gap-2"
+                disabled={isBooking}
+              >
+                {isBooking && (
+                  <Spinner
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    className="me-1"
+                  />
+                )}
+                Book Appointment
               </button>
             </div>
           </div>
