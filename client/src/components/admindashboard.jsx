@@ -99,7 +99,7 @@ export const AdminDashboard = () => {
               View All Locations
             </Dropdown.Item>
             <Dropdown.Item onClick={() => navigate("/all-diseases")}>
-              View All Diseases
+              View All Treatments
             </Dropdown.Item>
             <Dropdown.Item onClick={() => navigate("/queries")}>
               View All Queries
