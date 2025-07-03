@@ -41,7 +41,7 @@ function App() {
               <img
                 src="/logo3.webp"
                 alt="Hospital Logo"
-                style={{ height: "60px", marginRight: "10px" }}
+                style={{ height: "60px", marginRight: "10px", color: "black" }}
               />
             </a>{" "}
             <Link to="/" className="navbar-brand text-white fs-5 fw-bold">
