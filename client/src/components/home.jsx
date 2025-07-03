@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "./home.css";
-
 export function Home() {
   const { t } = useTranslation();
-
   return (
     <div className="home-wrapper">
       <div className="home-top">
@@ -48,7 +46,6 @@ export function Home() {
             <b> » {t("home.point5.title")}</b> {t("home.point5.desc")}
           </p>
         </div>
-
         <div className="home-bottom-right">
           <img src="/home-bottom-img.jpg" alt="Hospital Care" />
         </div>
