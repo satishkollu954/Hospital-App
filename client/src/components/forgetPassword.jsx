@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { Spinner } from "react-bootstrap";
 
 export function ForgetPassword() {
   const [email, setEmail] = useState("");
@@ -9,30 +10,34 @@ export function ForgetPassword() {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const navigate = useNavigate();
+  const [isOtpLoading, setIsOtpLoading] = useState(false); // ✅ Spinner state
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
 
     if (!email) {
       toast.error("Please enter your email.");
-      // alert("Please enter your email.");
       return;
     }
 
-    await axios
-      .post("http://localhost:5000/doctor/send-otp", { Email: email })
-      .then(() => {
-        toast.success("OTP sent to your email.");
-        //  alert("OTP sent to email.");
-      })
-      .catch(() => alert("Failed to send OTP."));
+    setIsOtpLoading(true); // ✅ Start spinner
 
-    setOtpSent(true);
+    try {
+      await axios.post("http://localhost:5000/doctor/send-otp", {
+        Email: email,
+      });
+      toast.success("OTP sent to your email.");
+      setOtpSent(true);
+    } catch (error) {
+      toast.error("Failed to send OTP.");
+    } finally {
+      setIsOtpLoading(false); // ✅ Stop spinner
+    }
   };
 
-  function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    e.stopPropagation();
+
     if (!email) {
       toast.error("Please enter Email");
       return;
@@ -42,19 +47,28 @@ export function ForgetPassword() {
       return;
     }
 
-    axios
-      .post("http://localhost:5000/doctor/update-password", {
-        Email: email,
-        Otp: otp,
-        newPassword: newPassword,
-      })
-      .then((res) => {
-        if (res.data.success) {
-          console.log("updated successs");
-          navigate("/login");
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/doctor/update-password",
+        {
+          Email: email,
+          Otp: otp,
+          newPassword: newPassword,
         }
-      });
-  }
+      );
+
+      if (res.data.success) {
+        toast.success("Password updated successfully.");
+        setTimeout(() => {
+          navigate("/login");
+        }, 1000);
+      } else {
+        toast.error("Invalid OTP or something went wrong.");
+      }
+    } catch (error) {
+      toast.error("Failed to update password.");
+    }
+  };
 
   return (
     <div className="container-fluid vh-90 d-flex justify-content-center align-items-center">
@@ -77,8 +91,16 @@ export function ForgetPassword() {
             </dd>
 
             <dd>
-              <button className="btn btn-warning w-100" onClick={handleSendOtp}>
-                Send OTP
+              <button
+                className="btn btn-warning w-100"
+                onClick={handleSendOtp}
+                disabled={isOtpLoading}
+              >
+                {isOtpLoading ? (
+                  <Spinner animation="border" size="sm" />
+                ) : (
+                  "Send OTP"
+                )}
               </button>
             </dd>
 
