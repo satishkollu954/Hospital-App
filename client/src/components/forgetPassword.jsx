@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 export function ForgetPassword() {
   const [email, setEmail] = useState("");
@@ -13,14 +14,16 @@ export function ForgetPassword() {
     e.preventDefault();
 
     if (!email) {
-      alert("Please enter your email.");
+      toast.error("Please enter your email.");
+      // alert("Please enter your email.");
       return;
     }
 
     await axios
       .post("http://localhost:5000/doctor/send-otp", { Email: email })
       .then(() => {
-        alert("OTP sent to email.");
+        toast.success("OTP sent to your email.");
+        //  alert("OTP sent to email.");
       })
       .catch(() => alert("Failed to send OTP."));
 
@@ -29,6 +32,15 @@ export function ForgetPassword() {
 
   function handleSubmit(e) {
     e.preventDefault();
+    e.stopPropagation();
+    if (!email) {
+      toast.error("Please enter Email");
+      return;
+    }
+    if (!otp || !newPassword) {
+      toast.error("Please enter OTP and new password");
+      return;
+    }
 
     axios
       .post("http://localhost:5000/doctor/update-password", {
@@ -46,6 +58,7 @@ export function ForgetPassword() {
 
   return (
     <div className="container-fluid vh-90 d-flex justify-content-center align-items-center">
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <div
         className="border p-4 rounded shadow w-100"
         style={{ maxWidth: "400px" }}

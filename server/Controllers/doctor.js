@@ -247,15 +247,16 @@ const deleteDoctor = async (req, res) => {
 const oneDoctor = async (req, res) => {
   try {
     const { email } = req.params;
-    console.log("Email from doctor ", email);
-    const doctor = await Doctor.findOne({ Email: email });
+    console.log("Fetching doctor with email:", email);
 
-    if (!doctor) {
+    const doctor = await Doctor.findOne({ Email: email });
+    console.log("Doctor found:", doctor);
+    if (!doctor || doctor === null) {
       return res.status(404).json({ message: "Doctor not found" });
     }
-
+    // console.log("Doctor found:", doctor);
     res.status(200).json(doctor);
-    console.log("Email fetch successfully ");
+    console.log("Doctor fetched successfully");
   } catch (err) {
     res
       .status(500)
