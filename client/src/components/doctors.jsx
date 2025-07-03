@@ -31,7 +31,7 @@ export function Doctors() {
   return (
     <div>
       <div className="fs-3 fw-bold" style={{ color: "grey" }}>
-        <u>{t("doctors.title")}</u>
+        {t("doctors.title")}
       </div>
 
       <section id="skills" className="doc-section">

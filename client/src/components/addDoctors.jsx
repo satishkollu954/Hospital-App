@@ -21,7 +21,6 @@ export function AddDoctors() {
     To: "",
     ToPeriod: "PM",
     Availability: true,
-    Learnmore: "",
     Qualification: "",
     Experience: "",
     BriefProfile: "",
@@ -192,7 +191,6 @@ export function AddDoctors() {
                 {["Name", "Email", "Designation", "Specialization"].includes(
                   field
                 ) && <span className="text-danger"> *</span>}
-                :
               </label>
               <input
                 type="text"
@@ -212,7 +210,7 @@ export function AddDoctors() {
 
           {/* Languages */}
           <div className="col-md-4 form-group">
-            <label>Languages:</label>
+            <label>Languages</label>
             <div className="d-flex">
               <input
                 type="text"
@@ -246,7 +244,7 @@ export function AddDoctors() {
 
           {/* State & City */}
           <div className="col-md-4 form-group">
-            <label>State:</label>
+            <label>State</label>
             <select
               name="State"
               className="form-control"
@@ -264,7 +262,7 @@ export function AddDoctors() {
           </div>
 
           <div className="col-md-4 form-group">
-            <label>City:</label>
+            <label>City</label>
             <select
               name="City"
               className="form-control"
@@ -283,7 +281,7 @@ export function AddDoctors() {
 
           {/* Timing */}
           <div className="col-md-4 form-group">
-            <label>From:</label>
+            <label>From</label>
             <div className="d-flex">
               <input
                 type="text"
@@ -306,7 +304,7 @@ export function AddDoctors() {
           </div>
 
           <div className="col-md-4 form-group">
-            <label>To:</label>
+            <label>To</label>
             <div className="d-flex">
               <input
                 type="text"
@@ -330,7 +328,7 @@ export function AddDoctors() {
 
           {/* Availability */}
           <div className="col-md-4 form-group">
-            <label>Availability:</label>
+            <label>Availability</label>
             <select
               name="Availability"
               value={formData.Availability}
@@ -344,7 +342,7 @@ export function AddDoctors() {
 
           {/* Image */}
           <div className="col-md-4 form-group">
-            <label>Upload Image:</label>
+            <label>Upload Image</label>
             <input
               type="file"
               name="image"
@@ -354,7 +352,7 @@ export function AddDoctors() {
           </div>
 
           {/* Learn More */}
-          <div className="col-12 mb-3">
+          {/* <div className="col-12 mb-3">
             <label className="form-label fw-bold">Learn More URL</label>
             <input
               type="url"
@@ -364,11 +362,11 @@ export function AddDoctors() {
               className="form-control"
               placeholder="https://example.com/learn-more"
             />
-          </div>
+          </div> */}
 
           {/* Education */}
           <div className="col-12 mb-4">
-            <label className="form-label fw-bold">Education:</label>
+            <label className="form-label fw-bold">Education</label>
             <br />
             {formData.Education.map((edu, index) => (
               <div

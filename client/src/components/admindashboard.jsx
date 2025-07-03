@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
-import { Dropdown, DropdownButton, ButtonGroup } from "react-bootstrap";
+import { Dropdown, DropdownButton, ButtonGroup, Button } from "react-bootstrap";
 import ReactPaginate from "react-paginate";
 import "./AdminDashboard.css";
 import { ToastContainer, toast } from "react-toastify";
@@ -82,7 +82,7 @@ export const AdminDashboard = () => {
     <div className="admin-dashboard mt-1 px-3">
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="d-flex justify-content-between mb-4">
         <h2 className="text-primary">Admin Dashboard</h2>
         <div className="d-flex justify-content-end mb-3 flex-wrap gap-2">
           <DropdownButton
@@ -130,9 +130,12 @@ export const AdminDashboard = () => {
             </Dropdown.Item>
           </DropdownButton>
 
-          <button className="btn btn-danger" onClick={handleSignOutClick}>
+          <Button title="Logout" variant="danger" onClick={handleSignOutClick}>
             Logout
-          </button>
+          </Button>
+          {/* <button className="btn btn-danger" onClick={handleSignOutClick}>
+            Logout
+          </button> */}
         </div>
       </div>
 
@@ -148,7 +151,6 @@ export const AdminDashboard = () => {
                 <th>Reason</th>
                 <th>Treatment</th>
                 <th>Doctor</th>
-
                 <th>Status</th>
                 <th>Update</th>
               </tr>

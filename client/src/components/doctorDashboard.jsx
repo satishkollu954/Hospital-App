@@ -5,6 +5,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { Modal, Button, Form } from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
+import "./doctordashboard.css";
 
 export function DoctorDashboard() {
   const [cookies, , removeCookie] = useCookies(["email", "role"]);
@@ -118,14 +119,14 @@ export function DoctorDashboard() {
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
 
       {/* Top Buttons */}
-      <div className="d-flex justify-content-end mb-3">
-        <Link className="btn btn-primary" to="/doctor-appointments">
+      <div className="d-flex justify-content-end mb-3 dashboard-buttons gap-2 flex-wrap">
+        <Link className="btn btn-primary mt-2" to="/doctor-appointments">
           View Appointments
         </Link>
-        <Link className="btn btn-primary ms-3" to="/doctor-profile">
+        <Link className="btn btn-primary mt-2" to="/doctor-profile">
           Profile
         </Link>
-        <button onClick={handleLogoutClick} className="btn btn-danger ms-3">
+        <button onClick={handleLogoutClick} className="btn btn-danger">
           Logout
         </button>
       </div>
@@ -135,7 +136,7 @@ export function DoctorDashboard() {
       <div className="row">
         {/* Appointments */}
         <div className="col-md-3 mb-3">
-          <div className="card shadow text-center p-4">
+          <div className="card shadow text-center p-4 doctor-card">
             <h5>Total Appointments</h5>
             <h2 className="text-primary">{appointmentStats.total}</h2>
             <div className="mt-3">
@@ -151,7 +152,7 @@ export function DoctorDashboard() {
 
         {/* Availability */}
         <div className="col-md-3 mb-3">
-          <div className="card shadow text-center p-4">
+          <div className="card shadow text-center p-4 doctor-card">
             <h5>Availability</h5>
             <span
               className={`badge fs-6 ${
@@ -165,7 +166,7 @@ export function DoctorDashboard() {
 
         {/* Working Hours */}
         <div className="col-md-3 mb-3">
-          <div className="card shadow text-center p-4">
+          <div className="card shadow text-center p-4 doctor-card">
             <h5>Working Hours</h5>
             <p className="fs-5">
               {doctor?.From || "--"} to {doctor?.To || "--"}
@@ -175,7 +176,7 @@ export function DoctorDashboard() {
 
         {/* Leave Requests */}
         <div className="col-md-3 mb-3">
-          <div className="card shadow text-center p-4">
+          <div className="card shadow text-center p-4 doctor-card">
             <h5>Leave Requests</h5>
             <h2 className="text-primary">{leaveStats.total}</h2>
             <div className="mt-2">
@@ -211,7 +212,11 @@ export function DoctorDashboard() {
         <p className="mb-0">
           This is your personal space to manage appointments, view and update
           your profile, and check your working schedule. Stay connected with
-          your patients and manage your availability.
+          your patients and manage your availability efficiently. You can also
+          request leaves, monitor appointment statuses in real time, and keep
+          track of your daily working hours. Use this dashboard to stay
+          organized, ensure timely patient care, and maintain a smooth workflow
+          throughout your day.
         </p>
       </div>
 

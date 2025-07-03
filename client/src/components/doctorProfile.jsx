@@ -143,7 +143,6 @@ export function DoctorProfile() {
                     "City",
                     "From",
                     "To",
-                    "Learnmore",
                     "Qualification",
                     "Experience",
                   ].map((field) => (

@@ -95,7 +95,7 @@ export const AdminLogin = () => {
               Log In
             </button>
           </div>
-          <div>
+          <div className="mt-2">
             <Link to="/forgetPassword">Forget password</Link>
           </div>
         </form>

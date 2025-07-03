@@ -37,14 +37,26 @@ function App() {
         {/* Header */}
         <header className="bg-color text-white shadow-sm">
           <nav className="navbar navbar-expand-md navbar-light container-fluid px-4">
-            <a className="navbar-brand" href="https://raagvitech.com/">
+            <a
+              className="navbar-brand"
+              target="_blank"
+              href="https://raagvitech.com/"
+            >
               <img
                 src="/logo3.webp"
                 alt="Hospital Logo"
                 style={{ height: "60px", marginRight: "10px" }}
               />
             </a>{" "}
-            <Link to="/" className="navbar-brand text-white fs-5 fw-bold">
+            <Link
+              to="/"
+              className="navbar-brand fw-bold"
+              style={{
+                fontSize: "1.8rem",
+                color: "white",
+                textShadow: "1px 1px 2px rgba(255, 255, 255, 0.3)",
+              }}
+            >
               {t("brand")}
             </Link>
             <button
@@ -62,7 +74,7 @@ function App() {
               className="collapse navbar-collapse justify-content-end"
               id="navbarNav"
             >
-              <ul className="navbar-nav text-center">
+              <ul className="navbar-nav text-center fw-normal">
                 <li className="nav-item">
                   <Link to="/" className="nav-link text-white">
                     {t("nav.home")}
@@ -144,7 +156,6 @@ function App() {
             <Route path="/doctor/:email" element={<DoctorInformation />} />
             <Route path="location" element={<Location />} />
             <Route path="login" element={<AdminLogin />} />
-            <Route path="faq" element={<AddFAQ />} />
             <Route path="forgetPassword" element={<ForgetPassword />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
 
@@ -210,6 +221,14 @@ function App() {
               }
             />
             <Route
+              path="faq"
+              element={
+                <ProtectRoute allowedRole="admin">
+                  <AddFAQ />
+                </ProtectRoute>
+              }
+            />
+            <Route
               path="leaves"
               element={
                 <ProtectRoute>
@@ -270,28 +289,100 @@ function App() {
         </main>
 
         {/* Footer */}
-        <footer className="bg-footer text-white py-4 mt-auto">
-          <div className="container-fluid text-center px-4">
-            <p className="mb-1">
-              &copy; {new Date().getFullYear()} RaagviCare. All rights reserved.
-            </p>
-            <p className="mb-2">{t("footer.tagline")}</p>
-            <div>
-              <a href="https://raagvitech.com/" className="text-white mx-2">
-                <i className="bi bi-facebook"></i>
-              </a>
-              <a href="https://raagvitech.com/" className="text-white mx-2">
-                <i className="bi bi-twitter"></i>
-              </a>
-              <a href="https://raagvitech.com/" className="text-white mx-2">
-                <i className="bi bi-instagram"></i>
-              </a>
-              <a
-                href="https://www.linkedin.com/company/raagvitech/posts/?feedView=all"
-                className="text-white mx-2"
-              >
-                <i className="bi bi-linkedin"></i>
-              </a>
+        <footer className="bg-footer text-white py-5 mt-auto">
+          <div className="container-fluid px-5">
+            <div className="row">
+              {/* Left Side: Existing content */}
+              <div className="col-md-6 mb-3">
+                <p className="mb-2">{t("footer.tagline")}</p>
+                <p className="mb-1">
+                  &copy; {new Date().getFullYear()} RaagviCare. All rights
+                  reserved.
+                </p>
+
+                <div>
+                  <a
+                    href="https://www.facebook.com/Raagvitech"
+                    target="_blank"
+                    className="text-white me-3"
+                  >
+                    <i className="bi bi-facebook"></i>
+                  </a>
+                  <a
+                    href="https://x.com/raagvi_tech"
+                    target="_blank"
+                    className="text-white me-3"
+                  >
+                    <i className="bi bi-twitter"></i>
+                  </a>
+                  <a
+                    href="https://www.instagram.com/raagvitech/"
+                    target="_blank"
+                    className="text-white me-3"
+                  >
+                    <i className="bi bi-instagram"></i>
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/company/raagvitech/posts/?feedView=all"
+                    className="text-white me-3"
+                  >
+                    <i className="bi bi-linkedin"></i>
+                  </a>
+                </div>
+              </div>
+
+              {/* Right Side: New Content */}
+              <div className="col-md-6">
+                <h5 className="fw-bold mb-2">About RaagviCare</h5>
+                <p className="mb-2" style={{ maxWidth: "400px" }}>
+                  RaagviCare is dedicated to providing quality healthcare
+                  services with a team of experienced doctors, modern
+                  technology, and patient-first approach. We aim to make
+                  healthcare accessible, efficient, and caring.
+                </p>
+
+                <div className="row mt-4">
+                  <div className="col-sm-6">
+                    <h6 className="fw-bold">Quick Links</h6>
+                    <ul className="list-unstyled">
+                      <li>
+                        <a
+                          href="/about"
+                          className="text-white text-decoration-none"
+                        >
+                          About Us
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="/contact"
+                          className="text-white text-decoration-none"
+                        >
+                          Contact
+                        </a>
+                      </li>
+
+                      <li>
+                        <a
+                          href="/contact"
+                          className="text-white text-decoration-none"
+                        >
+                          FAQs
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="col-sm-6">
+                    <h6 className="fw-bold">Contact Us</h6>
+                    <p className="mb-1">RaagviCare Pvt. Ltd.</p>
+                    <p className="mb-1">
+                      123 Health Street, Hyderabad, Telangana
+                    </p>
+                    <p className="mb-1">Email: raagvicare@gmail.com</p>
+                    <p className="mb-0">Phone: +91 XXXXXXXXXX</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </footer>
