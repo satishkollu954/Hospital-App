@@ -100,7 +100,7 @@ export function DoctorDashboard() {
         doctorEmail: decodedEmail,
         ...leaveForm,
       });
-      toast.success("Leave requested (Pending)");
+      toast.success("Leave requested Submitted");
       closeLeaveModal();
     } catch (err) {
       console.log(err);

@@ -32,9 +32,11 @@ export function ALLLocations() {
 
     if (deleteTarget.type === "state") {
       axios
-        .delete("http://localhost:5000/admin/delete-state", {
-          data: { state: deleteTarget.state },
-        })
+        .delete(
+          `http://localhost:5000/admin/locations/${encodeURIComponent(
+            deleteTarget.state
+          )}`
+        )
         .then(() => {
           toast.success("State deleted successfully");
           fetchLocations();
@@ -43,12 +45,11 @@ export function ALLLocations() {
         .finally(() => setShowConfirmModal(false));
     } else if (deleteTarget.type === "branch") {
       axios
-        .delete("http://localhost:5000/admin/delete-branch", {
-          data: {
-            state: deleteTarget.state,
-            branchId: deleteTarget.branchId,
-          },
-        })
+        .delete(
+          `http://localhost:5000/admin/locations/${encodeURIComponent(
+            deleteTarget.state
+          )}/branches/${encodeURIComponent(deleteTarget.branchName)}`
+        )
         .then(() => {
           toast.success("Branch deleted successfully");
           fetchLocations();
@@ -221,7 +222,7 @@ export function ALLLocations() {
                             confirmDelete({
                               type: "branch",
                               state: loc.State,
-                              branchId: branch._id,
+                              branchName: branch.name, // delete by name now
                             })
                           }
                         >

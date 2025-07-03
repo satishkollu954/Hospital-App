@@ -247,7 +247,7 @@ const deleteDoctor = async (req, res) => {
 const oneDoctor = async (req, res) => {
   try {
     const { email } = req.params;
-
+    console.log("Email from doctor ", email);
     const doctor = await Doctor.findOne({ Email: email });
 
     if (!doctor) {
@@ -255,6 +255,7 @@ const oneDoctor = async (req, res) => {
     }
 
     res.status(200).json(doctor);
+    console.log("Email fetch successfully ");
   } catch (err) {
     res
       .status(500)

@@ -112,15 +112,24 @@ exports.login = async (req, res) => {
 
 exports.doctorsBasedOnCityAndDiseas = async (req, res) => {
   try {
-    const { city, Specialization } = req.query;
+    let { city, Specialization } = req.query;
 
-    // 💡 Build filter object dynamically
+    // 💡 Extract actual city from input if it contains a comma
+    if (city && city.includes(",")) {
+      const parts = city.split(",");
+      city = parts[1].trim(); // Get the part after the comma
+    }
+
+    // 🔍 Build filter dynamically
     const filter = {};
     if (city) filter.City = city;
     if (Specialization) filter.Specialization = Specialization;
+
     console.log("filter", filter);
+
     const doctors = await Doctor.find(filter);
     console.log(doctors);
+
     if (doctors.length === 0) {
       return res
         .status(404)

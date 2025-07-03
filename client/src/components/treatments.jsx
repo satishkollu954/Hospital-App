@@ -80,7 +80,11 @@ export function Treatment() {
               </div>
               <div className="ms-3">
                 {item.learnmore && (
-                  <a href={item.learnmore} style={{ color: "grey" }}>
+                  <a
+                    href={item.learnmore}
+                    target="_blank"
+                    style={{ color: "grey" }}
+                  >
                     {t("treatments.learnMore")}
                   </a>
                 )}

@@ -229,21 +229,29 @@ const updateBranchDetails = async (req, res) => {
 // Delete a branch by branchId
 const deleteBranch = async (req, res) => {
   try {
-    const { state, branchId } = req.body;
+    const { state, branchName } = req.params; // branchName URL‑decoded
 
-    const location = await HospitalLocation.findOneAndUpdate(
-      { State: state },
-      { $pull: { branches: { _id: branchId } } },
-      { new: true }
-    );
-
+    // First check whether the state exists
+    const location = await HospitalLocation.findOne({ State: state });
     if (!location) {
-      return res.status(404).json({ message: "State or branch not found" });
+      return res.status(404).json({ message: "State not found" });
     }
 
-    res.status(200).json({ message: "Branch deleted successfully", location });
-  } catch (error) {
-    console.error("Error deleting branch:", error);
+    // Check branch presence before pulling
+    const branchExists = location.branches.some((b) => b.name === branchName);
+    if (!branchExists) {
+      return res.status(404).json({ message: "Branch not found under state" });
+    }
+
+    // Remove branch by name
+    await HospitalLocation.updateOne(
+      { State: state },
+      { $pull: { branches: { name: branchName } } }
+    );
+
+    res.json({ message: "Branch deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting branch:", err);
     res.status(500).json({ message: "Failed to delete branch" });
   }
 };
@@ -251,16 +259,14 @@ const deleteBranch = async (req, res) => {
 //Delete a State with Branch
 const deleteState = async (req, res) => {
   try {
-    const { state } = req.params;
+    const { state } = req.params; // URL‑decoded by Express
 
     const deleted = await HospitalLocation.findOneAndDelete({ State: state });
+
     if (!deleted) {
       return res.status(404).json({ message: "State not found" });
     }
-
-    res
-      .status(200)
-      .json({ message: "State and all branches deleted successfully" });
+    res.json({ message: "State deleted successfully" });
   } catch (err) {
     console.error("Error deleting state:", err);
     res.status(500).json({ message: "Failed to delete state" });
