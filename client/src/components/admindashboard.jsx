@@ -162,7 +162,15 @@ export const AdminDashboard = () => {
                     <td>{appt.fullName}</td>
                     <td>{appt.email}</td>
                     <td>{appt.phone}</td>
-                    <td>{new Date(appt.date).toISOString().split("T")[0]}</td>
+                    <td>
+                      {(() => {
+                        const [year, month, day] = new Date(appt.date)
+                          .toISOString()
+                          .split("T")[0]
+                          .split("-");
+                        return `${day}-${month}-${year}`;
+                      })()}
+                    </td>
                     <td className="reason-cell text-wrap">{appt.reason}</td>
                     <td>{appt.disease}</td>
                     <td>{appt.doctor}</td>
