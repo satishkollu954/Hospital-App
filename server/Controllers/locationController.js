@@ -45,12 +45,13 @@ const addLocation = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-/* ────────────────────── 1.  Lazy‑load translator (v9 & v8) ───────────────────── */
+
+/* ────── Translation Setup ────── */
 let translateFn;
 async function getTranslator() {
   if (!translateFn) {
-    const mod = await import("@vitalets/google-translate-api"); // dynamic ESM
-    translateFn = mod.translate || mod.default; // v9 | v8
+    const mod = await import("@vitalets/google-translate-api");
+    translateFn = mod.translate || mod.default;
     if (typeof translateFn !== "function") {
       throw new Error(
         "Unable to load translate() from @vitalets/google-translate-api"
@@ -60,9 +61,17 @@ async function getTranslator() {
   return translateFn;
 }
 
-/* ────────────────────── 2.  Tiny in‑memory cache ─────────────────────────────── */
 const cache = new Map();
+
+function normalizeLangCode(lang) {
+  const langMap = {
+    "en-us": "en"
+  };
+  return langMap[lang.toLowerCase()] || lang;
+}
+
 async function tx(text = "", lang = "en") {
+  lang = normalizeLangCode(lang); // normalize here
   if (!text || lang === "en") return text;
   const key = `${text}|${lang}`;
   if (cache.has(key)) return cache.get(key);
@@ -73,16 +82,15 @@ async function tx(text = "", lang = "en") {
   return out;
 }
 
-/* ────────────────────── 3.  GET /admin/locations?lang=xx ─────────────────────── */
+/* ────── GET /admin/locations?lang=xx ────── */
 const getAllLocations = async (req, res) => {
   const lang = (req.query.lang || "en").toLowerCase();
 
   try {
-    const locations = await HospitalLocation.find(); // [{ State, branches: [] }]
+    const locations = await HospitalLocation.find();
 
     if (lang === "en") return res.status(200).json(locations);
 
-    /* Translate State and each branch.name */
     const translated = await Promise.all(
       locations.map(async (loc) => ({
         _id: loc._id,
@@ -90,7 +98,7 @@ const getAllLocations = async (req, res) => {
         branches: await Promise.all(
           (loc.branches || []).map(async (b) => ({
             name: await tx(b.name, lang),
-            mapUrl: b.mapUrl, // leave URLs untouched
+            mapUrl: b.mapUrl,
           }))
         ),
       }))
@@ -103,10 +111,10 @@ const getAllLocations = async (req, res) => {
   }
 };
 
-// fetching all Appointments
+// Other endpoints (unchanged)
 const getAllAppointment = async (req, res) => {
   try {
-    const appointments = await appointmentModel.find().sort({ date: -1 }); // optional sort
+    const appointments = await appointmentModel.find().sort({ date: -1 });
     res.status(200).json(appointments);
   } catch (error) {
     console.error("Error fetching appointments:", error);
@@ -115,7 +123,7 @@ const getAllAppointment = async (req, res) => {
       .json({ message: "Server error while fetching appointments" });
   }
 };
-// Get All Appointments Of a Doctor By Docotor Email
+
 const getAppointmentsByDoctorEmail = async (req, res) => {
   try {
     const { email } = req.params;
@@ -149,7 +157,6 @@ const getAppointmentsCountByDoctorEmail = async (req, res) => {
   }
 };
 
-// Delete an Appointment
 const DeleteAppointment = async (req, res) => {
   const { id } = req.params;
 
@@ -167,7 +174,6 @@ const DeleteAppointment = async (req, res) => {
   }
 };
 
-// Get list of States and their branch names (cities)
 const getAllStates = async (req, res) => {
   try {
     const states = await HospitalLocation.find().select("State -_id");
@@ -197,8 +203,6 @@ const getCitiesByState = async (req, res) => {
   }
 };
 
-//Update a  Branch Based on State
-// Update a branch by branchId
 const updateBranchDetails = async (req, res) => {
   try {
     const { state, branchId, newName, newMapUrl } = req.body;
@@ -225,25 +229,20 @@ const updateBranchDetails = async (req, res) => {
   }
 };
 
-//Delete a  Branch in a State
-// Delete a branch by branchId
 const deleteBranch = async (req, res) => {
   try {
-    const { state, branchName } = req.params; // branchName URL‑decoded
+    const { state, branchName } = req.params;
 
-    // First check whether the state exists
     const location = await HospitalLocation.findOne({ State: state });
     if (!location) {
       return res.status(404).json({ message: "State not found" });
     }
 
-    // Check branch presence before pulling
     const branchExists = location.branches.some((b) => b.name === branchName);
     if (!branchExists) {
       return res.status(404).json({ message: "Branch not found under state" });
     }
 
-    // Remove branch by name
     await HospitalLocation.updateOne(
       { State: state },
       { $pull: { branches: { name: branchName } } }
@@ -256,10 +255,9 @@ const deleteBranch = async (req, res) => {
   }
 };
 
-//Delete a State with Branch
 const deleteState = async (req, res) => {
   try {
-    const { state } = req.params; // URL‑decoded by Express
+    const { state } = req.params;
 
     const deleted = await HospitalLocation.findOneAndDelete({ State: state });
 
