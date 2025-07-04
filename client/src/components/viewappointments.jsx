@@ -88,7 +88,9 @@ export function ViewAppointments() {
                     minWidth: "100px",
                   }}
                 >
-                  {new Date(appt.date).toLocaleDateString()}
+                  {new Date(appt.date)
+                    .toLocaleDateString("en-GB")
+                    .replace(/\//g, "-")}
                 </td>
                 <td>{appt.time}</td>
                 <td
