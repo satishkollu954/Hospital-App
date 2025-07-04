@@ -43,14 +43,14 @@ function App() {
               href="https://raagvitech.com/"
             >
               <img
-                src="/logo3.webp"
+                src="/hospital.png"
                 alt="Hospital Logo"
                 style={{ height: "60px", marginRight: "10px", color: "black" }}
               />
             </a>{" "}
             <Link
               to="/"
-              className="navbar-brand fw-bold"
+              className="navbar-brand fw-bold mt-1"
               style={{
                 fontSize: "1.8rem",
                 color: "white",
