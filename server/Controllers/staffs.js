@@ -29,10 +29,35 @@ exports.sendOtp = async (req, res) => {
     });
 
     await transporter.sendMail({
-      from: '"Ashutosh Jena 👨‍💻" <ashutosh.jena@raagvitech.com>',
+      from: '"RaagviCare Hospital 👨‍⚕️" <ashutosh.jena@raagvitech.com>',
       to: Email,
-      subject: "Password Reset OTP",
-      html: `<p>Your OTP is: <b>${otp}</b></p>`,
+      subject: "Your OTP Verification Code - RaagviCare",
+      html: `
+      <div style="
+        font-family: Arial, sans-serif;
+        background: url('https://cdn.pixabay.com/photo/2017/08/06/00/04/medical-2585039_1280.jpg') no-repeat center;
+        background-size: cover;
+        padding: 40px;
+        color: #ffffff;
+        text-shadow: 1px 1px 2px #000;
+        border-radius: 12px;
+      ">
+        <div style="background-color: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 10px;">
+          <h2 style="color: #4fd1c5;">RaagviCare OTP Verification</h2>
+          <p style="font-size: 16px;">Dear User,</p>
+          <p style="font-size: 16px;">
+            To proceed with your request, please use the OTP (One-Time Password) below:
+          </p>
+          <h1 style="font-size: 36px; color: #ffc107; text-align: center; letter-spacing: 4px;">${otp}</h1>
+          <p style="font-size: 14px;">
+            This OTP is valid for 5 minutes. Do not share it with anyone for security reasons.
+          </p>
+          <p style="font-style: italic;">If you did not request this, please ignore this message.</p>
+          <br />
+          <p>Thank you,<br /><strong>RaagviCare Hospital Team</strong></p>
+        </div>
+      </div>
+      `,
     });
 
     res.json({ success: true, message: "OTP sent successfully" });
