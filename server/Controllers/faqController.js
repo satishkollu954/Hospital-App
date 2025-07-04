@@ -1,4 +1,4 @@
-// controllers/faqController.js  (CommonJS + dynamic ESM import)
+// controllers/faqController.js (CommonJS + dynamic ESM import)
 
 const FAQ = require("../Models/faqModel");
 
@@ -8,7 +8,6 @@ let translateFn; // cached translator function
 async function getTranslator() {
   if (!translateFn) {
     const mod = await import("@vitalets/google-translate-api"); // dynamic ESM import
-    // v9+ exports { translate }, v8 exported default
     translateFn = mod.translate || mod.default;
     if (typeof translateFn !== "function") {
       throw new Error(
@@ -19,10 +18,23 @@ async function getTranslator() {
   return translateFn;
 }
 
-/* ───────────────────────── 2. Simple in‑memory cache ────────────────────────────── */
+/* ───────────────────────── 2. Normalize lang like 'en-us' → 'en' ────────────────── */
+function normalizeLangCode(lang) {
+  const map = {
+    "en-us": "en",
+    "en_in": "en",
+    "hi-in": "hi",
+    "te-in": "te",
+  };
+  return map[lang.toLowerCase()] || lang.toLowerCase();
+}
+
+/* ───────────────────────── 3. Simple in‑memory cache ────────────────────────────── */
 const cache = new Map();
 
 async function translateText(text = "", lang = "en") {
+  lang = normalizeLangCode(lang); // ✅ apply normalization
+
   if (!text || lang === "en") return text;
 
   const key = `${text}|${lang}`;
@@ -39,17 +51,16 @@ async function translateText(text = "", lang = "en") {
   }
 }
 
-/* ───────────────────────── 3. GET /admin/faq?lang=xx ────────────────────────────── */
+/* ───────────────────────── 4. GET /admin/faq?lang=xx ────────────────────────────── */
 const getFAQs = async (req, res) => {
-  const lang = (req.query.lang || "en").toLowerCase();
+  let lang = req.query.lang || "en";
+  lang = normalizeLangCode(lang); // ✅ normalize here
 
   try {
     const faqs = await FAQ.find(); // fetch all
 
-    // Return English as‑is
     if (lang === "en") return res.json(faqs);
 
-    // Translate each Q & A concurrently
     const translatedFaqs = await Promise.all(
       faqs.map(async (f) => ({
         _id: f._id,
@@ -65,7 +76,7 @@ const getFAQs = async (req, res) => {
   }
 };
 
-/* ───────────────────────────── 4. CRUD (unchanged) ─────────────────────────────── */
+/* ───────────────────────────── 5. CRUD (unchanged) ─────────────────────────────── */
 
 const addFAQ = async (req, res) => {
   const { question, answer } = req.body;

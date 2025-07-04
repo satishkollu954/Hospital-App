@@ -5,69 +5,33 @@ const Staff = require("../Models/staffs");
 const addDoctors = async (req, res) => {
   try {
     const {
-      Name,
-      About,
-      Email,
-      Designation,
-      Specialization,
-      Age,
-      State,
-      City,
-      From,
-      To,
-      Availability,
-      Learnmore,
-      Qualification,
-      Experience,
-      BriefProfile,
-      Address,
+      Name, About, Email, Designation, Specialization, Age,
+      State, City, From, To, Availability, Learnmore,
+      Qualification, Experience, BriefProfile, Address,
     } = req.body;
+
     const Languages = JSON.parse(req.body.Languages || "[]");
     const Education = JSON.parse(req.body.Education || "[]");
     const image = req.file?.filename || null;
 
-    // 🔍 Check if email already exists in Doctor collection
     const doctorExists = await Doctor.findOne({ Email });
     if (doctorExists) {
-      return res
-        .status(400)
-        .json({ message: "Doctor with this email already exists" });
+      return res.status(400).json({ message: "Doctor with this email already exists" });
     }
 
-    // 🔍 Check if email already exists in Staff collection
     const staffExists = await Staff.findOne({ Email });
     if (staffExists) {
-      return res
-        .status(400)
-        .json({ message: "Email already exists in staff records" });
+      return res.status(400).json({ message: "Email already exists in staff records" });
     }
 
-    // ✅ Create new doctor
     const newDoctor = new Doctor({
-      image,
-      Name,
-      About,
-      Email,
-      Designation,
-      Specialization,
-      Age,
-      State,
-      City,
-      From,
-      To,
-      Availability,
-      Learnmore,
-      Qualification,
-      Experience,
-      BriefProfile,
-      Address,
-      Languages,
-      Education,
+      image, Name, About, Email, Designation, Specialization,
+      Age, State, City, From, To, Availability, Learnmore,
+      Qualification, Experience, BriefProfile, Address,
+      Languages, Education,
     });
 
     await newDoctor.save();
-
-    // ✅ Add email to Staff collection (no password/otp)
     await Staff.create({ Email, Password: "", Otp: "" });
 
     res.status(201).json({ message: "Doctor added successfully" });
@@ -76,26 +40,34 @@ const addDoctors = async (req, res) => {
   }
 };
 
-// Get all doctors
-/* ───────────────────────── 1. Lazy‑load translator (v8 & v9+) ─────────────────── */
+/* ───────────────────────── 1. Lazy‑load translator ───────────────────────── */
 let translateFn;
-
 async function getTranslator() {
   if (!translateFn) {
     const mod = await import("@vitalets/google-translate-api");
     translateFn = mod.translate || mod.default;
     if (typeof translateFn !== "function") {
-      throw new Error(
-        "Unable to load translate() from @vitalets/google-translate-api"
-      );
+      throw new Error("Unable to load translate() from @vitalets/google-translate-api");
     }
   }
   return translateFn;
 }
 
-/* ───────────────────────── 2. Tiny in‑memory cache ───────────────────────────── */
+/* ───────────────────────── 2. Normalize language code ───────────────────── */
+function normalizeLangCode(lang) {
+  const map = {
+    "en-us": "en",
+    "en_in": "en",
+    "hi-in": "hi",
+    "te-in": "te",
+  };
+  return map[lang.toLowerCase()] || lang.toLowerCase();
+}
+
+/* ───────────────────────── 3. In‑memory cache ───────────────────────────── */
 const cache = new Map();
 async function tx(text = "", lang = "en") {
+  lang = normalizeLangCode(lang);
   if (!text || lang === "en") return text;
   const key = `${text}|${lang}`;
   if (cache.has(key)) return cache.get(key);
@@ -106,36 +78,32 @@ async function tx(text = "", lang = "en") {
   return out;
 }
 
-/* ───────────────────────── 3. GET /admin/doctors?lang=xx ─────────────────────── */
+/* ───────────────────────── 4. GET /admin/doctors?lang=xx ────────────────── */
 const getAllDoctors = async (req, res) => {
-  const lang = (req.query.lang || "en").toLowerCase();
+  const lang = normalizeLangCode(req.query.lang || "en");
 
   try {
     const doctors = await Doctor.find();
-
-    // Return original English if no translation requested
     if (lang === "en") return res.status(200).json(doctors);
 
-    // Translate selected fields in parallel
     const translated = await Promise.all(
       doctors.map(async (d) => ({
         _id: d._id,
         image: d.image,
         Email: d.Email,
         Availability: d.Availability,
-        Languages: d.Languages, // keep as‑is
-        Education: d.Education, // keep as‑is
+        Languages: d.Languages,
+        Education: d.Education,
         Age: d.Age,
         From: d.From,
         To: d.To,
-        // textual fields translated:
         Name: await tx(d.Name, lang),
         About: await tx(d.About, lang),
         Designation: await tx(d.Designation, lang),
         Specialization: await tx(d.Specialization, lang),
         State: await tx(d.State, lang),
         City: await tx(d.City, lang),
-        Learnmore: d.Learnmore, // URL, leave as‑is
+        Learnmore: d.Learnmore,
         Qualification: await tx(d.Qualification, lang),
         Experience: await tx(d.Experience, lang),
         BriefProfile: await tx(d.BriefProfile, lang),
@@ -150,7 +118,7 @@ const getAllDoctors = async (req, res) => {
   }
 };
 
-//Update the doctor
+// Update doctor
 const updateDoctor = async (req, res) => {
   try {
     const { email } = req.params;
@@ -160,15 +128,10 @@ const updateDoctor = async (req, res) => {
 
     try {
       parsedLanguages = JSON.parse(req.body.Languages || "[]");
-    } catch (e) {
-      parsedLanguages = [];
-    }
-
+    } catch {}
     try {
       parsedEducation = JSON.parse(req.body.Education || "[]");
-    } catch (e) {
-      parsedEducation = [];
-    }
+    } catch {}
 
     const updatedFields = {
       Name: req.body.Name,
@@ -182,8 +145,7 @@ const updateDoctor = async (req, res) => {
       To: req.body.To,
       Password: req.body.Password,
       Learnmore: req.body.Learnmore,
-      Availability:
-        req.body.Availability === "true" || req.body.Availability === true,
+      Availability: req.body.Availability === "true" || req.body.Availability === true,
       Qualification: req.body.Qualification,
       Experience: req.body.Experience,
       BriefProfile: req.body.BriefProfile,
@@ -211,56 +173,41 @@ const updateDoctor = async (req, res) => {
       return res.status(404).json({ message: "Doctor not found" });
     }
 
-    res.status(200).json({
-      message: "Doctor updated successfully",
-      updatedDoctor,
-    });
+    res.status(200).json({ message: "Doctor updated successfully", updatedDoctor });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-//Delete the doctor from DoctorAnd Staff COllection
+// Delete doctor
 const deleteDoctor = async (req, res) => {
   try {
     const { email } = req.params;
-
-    // ❌ Delete doctor from Doctor collection
     const deletedDoctor = await Doctor.findOneAndDelete({ Email: email });
 
     if (!deletedDoctor) {
       return res.status(404).json({ message: "Doctor not found" });
     }
 
-    // ❌ Also delete from Staff collection
     await Staff.findOneAndDelete({ Email: email });
 
-    res
-      .status(200)
-      .json({ message: "Doctor and associated staff deleted successfully" });
+    res.status(200).json({ message: "Doctor and associated staff deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-//Fetch One Doctor Based On the Email
+// Get one doctor
 const oneDoctor = async (req, res) => {
   try {
     const { email } = req.params;
-    console.log("Fetching doctor with email:", email);
-
     const doctor = await Doctor.findOne({ Email: email });
-    console.log("Doctor found:", doctor);
-    if (!doctor || doctor === null) {
+    if (!doctor) {
       return res.status(404).json({ message: "Doctor not found" });
     }
-    // console.log("Doctor found:", doctor);
     res.status(200).json(doctor);
-    console.log("Doctor fetched successfully");
   } catch (err) {
-    res
-      .status(500)
-      .json({ error: "Failed to fetch doctor", details: err.message });
+    res.status(500).json({ error: "Failed to fetch doctor", details: err.message });
   }
 };
 
