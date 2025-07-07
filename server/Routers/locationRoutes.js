@@ -46,6 +46,7 @@ const {
   updateBranchDetails,
   getAppointmentsByDoctorEmail,
   getAppointmentsCountByDoctorEmail,
+  getAllAppointmentByDate,
 } = require("../Controllers/locationController");
 
 // Faq Management
@@ -77,6 +78,7 @@ router.get(
   "/appointments/count/:doctorEmail",
   getAppointmentsCountByDoctorEmail
 );
+router.get("/appointments/by-date/:date", getAllAppointmentByDate);
 // -------------------------------------
 // OTP Handling
 // -------------------------------------

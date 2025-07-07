@@ -7,8 +7,13 @@ import ReactPaginate from "react-paginate";
 import "./AdminDashboard.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export const AdminDashboard = () => {
+  const [filterType, setFilterType] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+
   const [appointments, setAppointments] = useState([]);
   const navigate = useNavigate();
   const [cookie, , removeCookie] = useCookies(["email"]);
@@ -18,11 +23,31 @@ export const AdminDashboard = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 5;
 
-  useEffect(() => {
+  const fetchAppointmentsByDate = (date) => {
+    const formattedDate = date.toLocaleDateString("en-CA"); // ✅ local date
+    console.log("querying for", formattedDate);
+
+    axios
+      .get(`http://localhost:5000/admin/appointments/by-date/${formattedDate}`)
+      .then((res) => {
+        setAppointments(res.data);
+        setCurrentPage(0);
+      })
+      .catch((err) => console.error("Error fetching by date:", err));
+  };
+
+  const fetchAllAppointments = () => {
     axios
       .get("http://localhost:5000/admin/appointments")
-      .then((res) => setAppointments(res.data))
+      .then((res) => {
+        setAppointments(res.data);
+        setCurrentPage(0);
+      })
       .catch((err) => console.error("Error fetching appointments:", err));
+  };
+
+  useEffect(() => {
+    fetchAllAppointments();
   }, []);
 
   const updateStatus = (id, newStatus) => {
@@ -84,6 +109,7 @@ export const AdminDashboard = () => {
 
       <div className="d-flex justify-content-between mb-4">
         <h2 className="text-primary">Admin Dashboard</h2>
+
         <div className="d-flex justify-content-end mb-3 flex-wrap gap-2">
           <DropdownButton
             as={ButtonGroup}
@@ -136,6 +162,48 @@ export const AdminDashboard = () => {
           {/* <button className="btn btn-danger" onClick={handleSignOutClick}>
             Logout
           </button> */}
+        </div>
+      </div>
+      <div className="mb-3">
+        <div className="mt-4 d-flex gap-3 flex-wrap align-items-center">
+          <DropdownButton
+            title="Filter By"
+            variant="info"
+            onSelect={(key) => setFilterType(key)}
+          >
+            <Dropdown.Item eventKey="date">Date</Dropdown.Item>
+            {/* More filters can go here like name, status, etc. */}
+          </DropdownButton>
+
+          {filterType === "date" && (
+            <div className="d-flex align-items-center gap-2">
+              <span>Select Date:</span>
+              <DatePicker
+                selected={selectedDate}
+                onChange={(date) => {
+                  setSelectedDate(date);
+                  if (date) fetchAppointmentsByDate(date);
+                }}
+                dateFormat="yyyy-MM-dd"
+                placeholderText="Choose date"
+                className="form-control"
+              />
+              {selectedDate && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedDate(null);
+                    setFilterType(null);
+                    fetchAllAppointments();
+                  }}
+                  className="mb-3"
+                >
+                  Reset
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

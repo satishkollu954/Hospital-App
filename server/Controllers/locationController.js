@@ -115,6 +115,41 @@ const getAllAppointment = async (req, res) => {
       .json({ message: "Server error while fetching appointments" });
   }
 };
+
+// GET  /api/appointments/by-date/:date   (e.g. /api/appointments/by-date/2025-07-07)
+const getAllAppointmentByDate = async (req, res) => {
+  try {
+    // Accept the date from the route parameter (YYYY‑MM‑DD recommended)
+    const { date: dateParam } = req.params;
+    if (!dateParam) {
+      return res.status(400).json({ message: "Missing date parameter" });
+    }
+
+    // Convert to a Date object & build the 24‑hour window for that day
+    const start = new Date(dateParam);
+    if (isNaN(start.valueOf())) {
+      return res
+        .status(400)
+        .json({ message: "Invalid date format (use YYYY‑MM‑DD)" });
+    }
+    start.setHours(0, 0, 0, 0); // 00:00:00.000 local time
+    const end = new Date(start);
+    end.setDate(end.getDate() + 1); // next day 00:00:00.000
+
+    // Query everything between start (inclusive) and end (exclusive)
+    const appointments = await appointmentModel
+      .find({ date: { $gte: start, $lt: end } })
+      .sort({ time: 1 }); // optional secondary sort by 'time' string
+
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error("Error fetching appointments by date:", error);
+    res
+      .status(500)
+      .json({ message: "Server error while fetching appointments by date" });
+  }
+};
+
 // Get All Appointments Of a Doctor By Docotor Email
 const getAppointmentsByDoctorEmail = async (req, res) => {
   try {
@@ -284,5 +319,6 @@ module.exports = {
   deleteBranch,
   updateBranchDetails,
   getAppointmentsByDoctorEmail,
+  getAllAppointmentByDate,
   getAppointmentsCountByDoctorEmail,
 };

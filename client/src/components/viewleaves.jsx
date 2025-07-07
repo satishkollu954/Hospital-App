@@ -158,8 +158,16 @@ export default function ViewLeaves() {
                   <td style={{ maxWidth: 300, whiteSpace: "pre-wrap" }}>
                     {leave.reason}
                   </td>
-                  <td>{new Date(leave.fromDate).toLocaleDateString()}</td>
-                  <td>{new Date(leave.toDate).toLocaleDateString()}</td>
+                  <td>
+                    {new Date(leave.fromDate)
+                      .toLocaleDateString("en-GB")
+                      .replace(/\//g, "-")}
+                  </td>
+                  <td>
+                    {new Date(leave.toDate)
+                      .toLocaleDateString("en-GB")
+                      .replace(/\//g, "-")}
+                  </td>
                   <td>
                     <Form.Select
                       size="sm"
