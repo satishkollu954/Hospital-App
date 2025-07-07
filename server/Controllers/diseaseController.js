@@ -1,8 +1,8 @@
-// controllers/diseaseController.js      (CommonJS + dynamic ESM import)
+// controllers/diseaseController.js (CommonJS + dynamic ESM import)
 
 const Disease = require("../Models/Disease");
 
-/* ───────────────────────── 1.  Lazy‑load translator (v8 & v9+) ─────────────────── */
+/* ───────────────────────── 1. Lazy‑load translator (v8 & v9+) ─────────────────── */
 let translateFn;
 
 async function getTranslator() {
@@ -18,10 +18,23 @@ async function getTranslator() {
   return translateFn;
 }
 
-/* ───────────────────────── 2.  Tiny in‑memory cache ───────────────────────────── */
+/* ───────────────────────── 2. Normalize lang like 'en-us' → 'en' ──────────────── */
+function normalizeLangCode(lang) {
+  const map = {
+    "en-us": "en",
+    "en_in": "en",
+    "hi-in": "hi",
+    "te-in": "te",
+  };
+  return map[lang.toLowerCase()] || lang.toLowerCase();
+}
+
+/* ───────────────────────── 3. Tiny in‑memory cache ───────────────────────────── */
 const cache = new Map();
 
 async function translateText(text = "", lang = "en") {
+  lang = normalizeLangCode(lang); // ✅ FIXED here
+
   if (!text || lang === "en") return text;
 
   const key = `${text}|${lang}`;
@@ -38,7 +51,7 @@ async function translateText(text = "", lang = "en") {
   }
 }
 
-/* ───────────────────────── 3.  Add a new disease ──────────────────────────────── */
+/* ───────────────────────── 4. Add a new disease ──────────────────────────────── */
 exports.addDisease = async (req, res) => {
   try {
     const { disease, description, learnmore } = req.body;
@@ -52,9 +65,10 @@ exports.addDisease = async (req, res) => {
   }
 };
 
-/* ───────────────────────── 4.  Get all diseases (with lang) ───────────────────── */
+/* ───────────────────────── 5. Get all diseases (with lang) ───────────────────── */
 exports.getDiseases = async (req, res) => {
-  const lang = (req.query.lang || "en").toLowerCase();
+  let lang = (req.query.lang || "en").toLowerCase();
+  lang = normalizeLangCode(lang); // ✅ FIXED here
 
   try {
     const diseases = await Disease.find(); // fetch all
@@ -78,7 +92,7 @@ exports.getDiseases = async (req, res) => {
   }
 };
 
-/* ───────────────────────── 5.  Delete disease by ID ───────────────────────────── */
+/* ───────────────────────── 6. Delete disease by ID ───────────────────────────── */
 exports.deleteDisease = async (req, res) => {
   try {
     const { id } = req.params;
@@ -94,7 +108,7 @@ exports.deleteDisease = async (req, res) => {
   }
 };
 
-/* ───────────────────────── 6.  Update disease by ID ───────────────────────────── */
+/* ───────────────────────── 7. Update disease by ID ───────────────────────────── */
 exports.updateDisease = async (req, res) => {
   try {
     const { id } = req.params;

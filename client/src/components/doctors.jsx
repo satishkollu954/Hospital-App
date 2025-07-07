@@ -17,7 +17,11 @@ export function Doctors() {
         params: { lang: i18n.language }, // hi | te | en | …
         signal: controller.signal,
       })
-      .then((res) => setDoctors(res.data))
+      .then((res) => 
+        
+      {console.log("==========================")
+         setDoctors(res.data)})      
+       
       .catch((err) => {
         if (err.name !== "CanceledError") {
           console.error("Error fetching doctor data:", err);
