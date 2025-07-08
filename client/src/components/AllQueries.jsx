@@ -71,10 +71,19 @@ export function AllQueries() {
                 <td>{data.contact}</td>
                 <td className="text-wrap message-cell">{data.message}</td>
                 <td className="text-center">
-                  <Link
-                    className="bi bi-trash bi-sm btn btn-danger"
-                    onClick={() => confirmDelete(data._id)}
-                  ></Link>
+                  <select
+                    className="form-select"
+                    defaultValue="Pending"
+                    onChange={(e) => {
+                      if (e.target.value === "Solved") {
+                        confirmDelete(data._id);
+                      }
+                    }}
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Solved">Solved</option>
+                  </select>
+
                 </td>
               </tr>
             ))}
