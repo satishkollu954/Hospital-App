@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import "./AllQueries.css";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 
 export function AllQueries() {
@@ -17,7 +17,12 @@ export function AllQueries() {
   const fetchQueries = async () => {
     try {
       const res = await axios.get("http://localhost:5000/admin/Allqueries");
-      setState(res.data);
+      // Add status field to each query (for dropdown control)
+      const updatedData = res.data.map((item) => ({
+        ...item,
+        status: "Pending",
+      }));
+      setState(updatedData);
     } catch (err) {
       console.error("Error fetching queries:", err);
     }
@@ -33,7 +38,9 @@ export function AllQueries() {
       await axios.delete(
         `http://localhost:5000/admin/deletequery/${selectedQueryId}`
       );
-      setState((prev) => prev.filter((query) => query._id !== selectedQueryId));
+      setState((prev) =>
+        prev.filter((query) => query._id !== selectedQueryId)
+      );
       toast.success("Query deleted successfully");
     } catch (err) {
       console.error("Error deleting query:", err);
@@ -42,6 +49,17 @@ export function AllQueries() {
       setShowModal(false);
       setSelectedQueryId(null);
     }
+  };
+
+  const handleCancelDelete = () => {
+    // Revert status back to Pending
+    setState((prev) =>
+      prev.map((item) =>
+        item._id === selectedQueryId ? { ...item, status: "Pending" } : item
+      )
+    );
+    setShowModal(false);
+    setSelectedQueryId(null);
   };
 
   return (
@@ -73,17 +91,25 @@ export function AllQueries() {
                 <td className="text-center">
                   <select
                     className="form-select"
-                    defaultValue="Pending"
+                    value={data.status}
                     onChange={(e) => {
-                      if (e.target.value === "Solved") {
+                      const selected = e.target.value;
+                      if (selected === "Solved") {
                         confirmDelete(data._id);
+                        // Temporarily change status to "Solved" (can revert if cancelled)
+                        setState((prev) =>
+                          prev.map((item) =>
+                            item._id === data._id
+                              ? { ...item, status: "Solved" }
+                              : item
+                          )
+                        );
                       }
                     }}
                   >
                     <option value="Pending">Pending</option>
                     <option value="Solved">Solved</option>
                   </select>
-
                 </td>
               </tr>
             ))}
@@ -111,17 +137,14 @@ export function AllQueries() {
                 <button
                   type="button"
                   className="btn-close"
-                  onClick={() => setShowModal(false)}
+                  onClick={handleCancelDelete}
                 ></button>
               </div>
               <div className="modal-body">
                 Are you sure you want to delete this query?
               </div>
               <div className="modal-footer">
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setShowModal(false)}
-                >
+                <button className="btn btn-secondary" onClick={handleCancelDelete}>
                   Cancel
                 </button>
                 <button

@@ -87,13 +87,17 @@ export const AdminDashboard = () => {
       });
   };
 
-  const handleSignOutClick = () => {
-    toast.success("Signed out successfully");
-    setTimeout(() => {
-      removeCookie("email", { path: "/" });
-      navigate("/login");
-    }, 800);
-    // navigate("/adminlogin");
+
+
+    const handleSignOutClick = () => {
+    toast.success("Signed out successfully", {
+      onClose: () => {
+        removeCookie("email", { path: "/" });
+        removeCookie("role", { path: "/" });
+        navigate("/login");
+      },
+      autoClose: 1000,
+    });
   };
 
   const offset = currentPage * itemsPerPage;

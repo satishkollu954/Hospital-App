@@ -27,9 +27,13 @@ import { Unauthorized } from "./components/unauthorized";
 import ViewLeaves from "./components/viewleaves";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
+import { useCookies } from "react-cookie";
+import { Emergency } from "./components/Emergency";
 
 function App() {
   const { t } = useTranslation();
+  const [cookies] = useCookies(["email", "role"]);
+  const isPublicRoute = !cookies.role;
 
   return (
     <BrowserRouter>
@@ -105,42 +109,53 @@ function App() {
                     {t("nav.location")}
                   </Link>
                 </li>
-                <li className="nav-item dropdown">
-                  <button
-                    className="btn btn-sm btn-light dropdown-toggle mx-2 mt-1"
-                    data-bs-toggle="dropdown"
-                  >
-                    Languages
-                  </button>
-                  <ul className="dropdown-menu dropdown-menu-end">
-                    <li>
-                      <button
-                        className="dropdown-item"
-                        onClick={() => i18n.changeLanguage("en")}
-                      >
-                        English
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className="dropdown-item"
-                        onClick={() => i18n.changeLanguage("hi")}
-                      >
-                        हिन्दी
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        className="dropdown-item"
-                        onClick={() => i18n.changeLanguage("te")}
-                      >
-                        తెలుగు
-                      </button>
-                    </li>
-                  </ul>
-                </li>
+                {isPublicRoute && (
+                  <li className="nav-item dropdown">
+                    <button
+                      className="btn btn-sm btn-light dropdown-toggle mx-2 mt-1"
+                      data-bs-toggle="dropdown"
+                    >
+                      Languages
+                    </button>
+                    <ul className="dropdown-menu dropdown-menu-end">
+                      <li>
+                        <button
+                          className="dropdown-item"
+                          onClick={() => i18n.changeLanguage("en")}
+                        >
+                          English
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className="dropdown-item"
+                          onClick={() => i18n.changeLanguage("hi")}
+                        >
+                          हिन्दी
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          className="dropdown-item"
+                          onClick={() => i18n.changeLanguage("te")}
+                        >
+                          తెలుగు
+                        </button>
+                      </li>
+                    </ul>
+                  </li>
+                )}
               </ul>
             </div>
+            {isPublicRoute && (
+              <Link
+                to="/emergency"
+                className="text-white fw-bold px-3 py-2 mb-1 me-2 rounded d-inline-block text-decoration-none boxshadow border-0"
+                style={{ cursor: "pointer" }}
+              >
+                {t("nav.bookEmergency")} <span className="ms-2">&rarr;</span>
+              </Link>
+            )}
           </nav>
         </header>
 
@@ -158,6 +173,7 @@ function App() {
             <Route path="login" element={<AdminLogin />} />
             <Route path="forgetPassword" element={<ForgetPassword />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
+            <Route path="emergency" element={<Emergency />} />
 
             {/* Doctor related routes */}
             <Route

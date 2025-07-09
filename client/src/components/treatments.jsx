@@ -83,7 +83,8 @@ export function Treatment() {
                   <a
                     href={item.learnmore}
                     target="_blank"
-                    style={{ color: "grey" }}
+                    
+                    className="btn btn-sm btn-outline-success"
                   >
                     {t("treatments.learnMore")}
                   </a>
