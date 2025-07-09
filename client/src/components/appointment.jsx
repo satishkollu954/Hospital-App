@@ -10,7 +10,7 @@ import { Spinner } from "react-bootstrap";
 export function Appointment() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-
+  const [slotsMessage, setSlotsMessage] = useState("");
   const [otpVisible, setOtpVisible] = useState(false);
   const [otp, setOtp] = useState("");
   const [emailVerified, setEmailVerified] = useState(false);
@@ -84,6 +84,10 @@ export function Appointment() {
   });
 
   useEffect(() => {
+    setSlotsMessage("");
+  }, [formik.values.date, formik.values.doctor]);
+
+  useEffect(() => {
     if (formik.values.city && formik.values.disease) {
       axios
         .get("http://localhost:5000/doctor/finddoctors", {
@@ -94,6 +98,7 @@ export function Appointment() {
         })
         .then((res) => {
           const result = res.data.doctors || res.data || [];
+          console.log("result==> ", result);
           setDoctors(result);
         })
         .catch(() => setDoctors([]));
@@ -347,32 +352,32 @@ export function Appointment() {
             <br />
             {/* Slots */}
             <div className="col-md-12">
-              {formik.values.date && formik.values.doctor && (
-                <div className="col-md-12">
-                  {(() => {
-                    const selectedDoctor = doctors.find(
-                      (d) => d.Name === formik.values.doctor
-                    );
+              {formik.values.date &&
+                formik.values.doctor &&
+                (() => {
+                  const selectedDoctor = doctors.find(
+                    (d) => d.Name === formik.values.doctor
+                  );
 
-                    if (!selectedDoctor?.Availability) {
-                      return (
-                        <p className="text-danger fw-bold">
-                          The selected Doctor is not available today.
-                        </p>
-                      );
-                    }
+                  if (!selectedDoctor) return null;
 
-                    return (
+                  return (
+                    <>
                       <SlotSelector
                         doctorEmail={selectedDoctor.Email}
                         selectedDate={formik.values.date}
                         selectedSlot={selectedSlot}
                         onSlotSelect={(slot) => setSelectedSlot(slot)}
+                        onMessage={setSlotsMessage}
                       />
-                    );
-                  })()}
-                </div>
-              )}
+                      {slotsMessage && (
+                        <p className="text-danger fw-bold mt-2">
+                          {slotsMessage}
+                        </p>
+                      )}
+                    </>
+                  );
+                })()}
             </div>
             {/* Reason */}
             <div className="col-md-12">

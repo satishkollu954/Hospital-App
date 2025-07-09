@@ -59,6 +59,7 @@ function generateSlots(
 }
 
 exports.getSlotsForDoctor = async (req, res) => {
+  console.log("hiiiiiiiiiii");
   try {
     const { doctorEmail, date } = req.query;
     if (!doctorEmail || !date) {
@@ -69,7 +70,7 @@ exports.getSlotsForDoctor = async (req, res) => {
 
     const doctor = await Doctor.findOne({ Email: doctorEmail });
     if (!doctor) return res.status(404).json({ message: "Doctor not found" });
-
+    console.log("hiiiiiiiiiii");
     const queryDate = new Date(date);
 
     /* ---------- 1️⃣  Approved leave still takes priority ---------- */
@@ -98,6 +99,7 @@ exports.getSlotsForDoctor = async (req, res) => {
 
     if (doctor.Availability === false && queryISO === todayISO) {
       // Off only for today; future dates will fall through
+      console.log("Doctor is unavailable");
       return res.status(200).json({
         date,
         doctorEmail,
@@ -105,6 +107,7 @@ exports.getSlotsForDoctor = async (req, res) => {
         message: "Doctor is unavailable today.",
       });
     }
+    console.log("Doctor is available");
 
     /* ---------- 3️⃣  Normal slot generation ---------- */
     const appointments = await appointmentModel.find({

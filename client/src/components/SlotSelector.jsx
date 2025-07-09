@@ -7,6 +7,7 @@ const SlotSelector = ({
   selectedDate,
   onSlotSelect,
   selectedSlot,
+  onMessage,
 }) => {
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -20,12 +21,15 @@ const SlotSelector = ({
           params: { doctorEmail, date: selectedDate },
         })
         .then((res) => {
+          console.log(res.data);
           setSlots(res.data.availableSlots || []);
           setError(null);
+          if (onMessage) onMessage(res.data.message || "");
         })
         .catch(() => {
           setSlots([]);
           setError("Failed to fetch slots");
+          if (onMessage) onMessage("Failed to fetch slots");
         })
         .finally(() => setLoading(false));
     }

@@ -22,7 +22,7 @@ async function getTranslator() {
 function normalizeLangCode(lang) {
   const map = {
     "en-us": "en",
-    "en_in": "en",
+    en_in: "en",
     "hi-in": "hi",
     "te-in": "te",
   };
