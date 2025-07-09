@@ -253,6 +253,112 @@ const appointmentChange = async (req, res) => {
   }
 };
 
+/**
+ * Reschedule every “pending / started / in‑progress” appointment
+ * that falls on the given date for a particular doctor.
+ *
+ * ‑ Adds a 24‑h one‑time token to each appointment.
+ * ‑ Sends an e‑mail to every patient with a “Reschedule” link.
+ * ‑ Returns the number of notifications sent.
+ */
+
+const { v4: uuid } = require("uuid");
+const { generateSlots } = require("../Controllers/slotsController");
+
+const getRescheduleInfo = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { date: dParam } = req.query; // optional ?date=...
+    const appt = await appointmentModel.findOne({
+      rescheduleToken: token,
+      rescheduleExpires: { $gt: new Date() },
+    });
+    if (!appt) return res.status(404).json({ message: "Link invalid/expired" });
+
+    const doctor = await Doctor.findOne({ Email: appt.doctorEmail });
+    if (!doctor) return res.status(404).json({ message: "Doctor not found" });
+
+    const day = dParam || new Date().toISOString().slice(0, 10); // "YYYY‑MM‑DD"
+    const dayDate = new Date(day);
+
+    const booked = await appointmentModel
+      .find({
+        doctorEmail: appt.doctorEmail,
+        date: dayDate,
+        _id: { $ne: appt._id },
+      })
+      .distinct("time");
+
+    const slots = generateSlots(doctor.From, doctor.To, 15, "13:00", 45).map(
+      (s) => ({ ...s, booked: booked.includes(s.start) })
+    );
+
+    res.json({ appointment: appt, slots, message: "" });
+  } catch (err) {
+    console.error("getRescheduleInfo:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const postReschedule = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { date, time } = req.body;
+
+    const appt = await appointmentModel.findOne({
+      rescheduleToken: token,
+      rescheduleExpires: { $gt: new Date() },
+    });
+    if (!appt) return res.status(404).json({ message: "Link invalid/expired" });
+
+    /* clash check */
+    const clash = await appointmentModel.findOne({
+      doctorEmail: appt.doctorEmail,
+      date: new Date(date),
+      time,
+    });
+    if (clash) {
+      /* refresh slot grid */
+      const doctor = await Doctor.findOne({ Email: appt.doctorEmail });
+      const booked = await appointmentModel
+        .find({
+          doctorEmail: appt.doctorEmail,
+          date: new Date(date),
+        })
+        .distinct("time");
+
+      const slots = generateSlots(doctor.From, doctor.To, 15, "13:00", 45).map(
+        (s) => ({ ...s, booked: booked.includes(s.start) })
+      );
+
+      return res.status(409).json({
+        message: "That slot was just booked, please choose another.",
+        availableSlots: slots,
+      });
+    }
+
+    /* save & confirm */
+    appt.date = new Date(date);
+    appt.time = time;
+    appt.status = "Pending";
+    appt.rescheduleToken = undefined;
+    appt.rescheduleExpires = undefined;
+    await appt.save();
+
+    await sendEmail(
+      appt.email,
+      "Appointment re‑booked",
+      `<p>Your appointment with Dr ${appt.doctor} is now on
+         <strong>${date}</strong> at <strong>${time}</strong>.</p>`
+    );
+
+    res.json({ message: "Rescheduled" });
+  } catch (err) {
+    console.error("postReschedule:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   contactus,
   appointment,
@@ -260,4 +366,6 @@ module.exports = {
   appointmentChange,
   AllQueries,
   deleteQuery,
+  getRescheduleInfo,
+  postReschedule,
 };

@@ -232,7 +232,7 @@ const getCitiesByState = async (req, res) => {
 
 const updateBranchDetails = async (req, res) => {
   try {
-    const { state, branchId, newName, newMapUrl } = req.body;
+    const { state, branchId, newName, newMapUrl, newPhone } = req.body;
 
     const location = await HospitalLocation.findOneAndUpdate(
       { State: state, "branches._id": branchId },
@@ -240,6 +240,7 @@ const updateBranchDetails = async (req, res) => {
         $set: {
           "branches.$.name": newName,
           "branches.$.mapUrl": newMapUrl,
+          "branches.$.phone": newPhone,
         },
       },
       { new: true }

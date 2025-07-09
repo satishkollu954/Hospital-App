@@ -45,6 +45,9 @@ const appointmentSchema = new mongoose.Schema({
     required: true,
   },
   time: String,
+
+  rescheduleToken: String, // one‑time link id
+  rescheduleExpires: Date, // expiry (e.g. 24 h)
 });
 
 const appointmentModel = mongoose.model("Appointments", appointmentSchema);

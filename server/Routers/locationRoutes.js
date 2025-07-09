@@ -49,6 +49,10 @@ const {
   getAllAppointmentByDate,
 } = require("../Controllers/locationController");
 
+// routes/doctorRoutes.js
+const { cancelDay } = require("../Controllers/doctorDayOff");
+// routes/appointmentRoutes.js
+
 // Faq Management
 //-----------------------
 
@@ -65,7 +69,7 @@ router.get("/alldoctors", getAllDoctors);
 router.get("/doctor/:email", oneDoctor);
 router.put("/updatedoctor/:email", upload.single("image"), updateDoctor);
 router.delete("/deletedoctor/:email", deleteDoctor);
-
+router.post("/cancel-day", cancelDay);
 // -------------------------------------
 // Appointment Management
 // -------------------------------------
@@ -79,6 +83,7 @@ router.get(
   getAppointmentsCountByDoctorEmail
 );
 router.get("/appointments/by-date/:date", getAllAppointmentByDate);
+
 // -------------------------------------
 // OTP Handling
 // -------------------------------------
