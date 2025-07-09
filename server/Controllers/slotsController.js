@@ -72,14 +72,13 @@ exports.getSlotsForDoctor = async (req, res) => {
 
     const queryDate = new Date(date);
 
-    // ✅ Check if the doctor is on approved leave for the date
+    /* ---------- 1️⃣  Approved leave still takes priority ---------- */
     const onLeave = await DoctorLeave.findOne({
       doctorEmail,
       status: "Approved",
       fromDate: { $lte: queryDate },
       toDate: { $gte: queryDate },
     });
-
     if (onLeave) {
       return res.status(200).json({
         date,
@@ -89,26 +88,39 @@ exports.getSlotsForDoctor = async (req, res) => {
       });
     }
 
-    // 🔍 Fetch existing booked appointments
-    const appointments = await appointmentModel.find({
-      doctorEmail,
-      date: new Date(date),
+    /* ---------- 2️⃣  Same‑day “Unavailable” toggle logic ---------- */
+    const todayISO = new Date().toLocaleDateString("en-CA", {
+      timeZone: "Asia/Kolkata",
+    }); // YYYY‑MM‑DD
+    const queryISO = queryDate.toLocaleDateString("en-CA", {
+      timeZone: "Asia/Kolkata",
     });
 
+    if (doctor.Availability === false && queryISO === todayISO) {
+      // Off only for today; future dates will fall through
+      return res.status(200).json({
+        date,
+        doctorEmail,
+        availableSlots: [],
+        message: "Doctor is unavailable today.",
+      });
+    }
+
+    /* ---------- 3️⃣  Normal slot generation ---------- */
+    const appointments = await appointmentModel.find({
+      doctorEmail,
+      date: queryDate,
+    });
     const bookedTimes = appointments.map((a) => a.time);
 
-    // 🕒 Generate all working slots
-    const slots = generateSlots(doctor.From, doctor.To, 15, "13:00", 45);
-
-    const updatedSlots = slots.map((slot) => ({
-      ...slot,
-      booked: bookedTimes.includes(slot.start),
-    }));
+    const slots = generateSlots(doctor.From, doctor.To, 15, "13:00", 45).map(
+      (slot) => ({ ...slot, booked: bookedTimes.includes(slot.start) })
+    );
 
     return res.status(200).json({
       date,
       doctorEmail,
-      availableSlots: updatedSlots,
+      availableSlots: slots,
     });
   } catch (err) {
     console.error("Slot generation error:", err);

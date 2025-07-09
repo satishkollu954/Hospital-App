@@ -62,14 +62,6 @@ async function getTranslator() {
 }
 
 const cache = new Map();
-
-function normalizeLangCode(lang) {
-  const langMap = {
-    "en-us": "en",
-  };
-  return langMap[lang.toLowerCase()] || lang;
-}
-
 async function tx(text = "", lang = "en") {
   lang = normalizeLangCode(lang); // normalize here
   if (!text || lang === "en") return text;
