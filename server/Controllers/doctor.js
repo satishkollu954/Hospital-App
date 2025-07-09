@@ -154,7 +154,7 @@ const updateDoctor = async (req, res) => {
       Education: parsedEducation,
     };
 
-    if (req.file?.filename) {
+    if (req.file?.filename) { 
       updatedFields.image = req.file.filename;
     }
 
