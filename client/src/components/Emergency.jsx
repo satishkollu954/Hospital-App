@@ -5,8 +5,14 @@ import axios from "axios";
 
 export function Emergency() {
   const [selectedBranches, setSelectedBranches] = useState([]);
-  const [conditions, setConditions]=useState([]);
-  const selectedDiseases = ["Cardiology", "Child Health", "Orthopedics", "Gastroenterology", "Asthma"];
+  const [conditions, setConditions] = useState([]);
+  const selectedDiseases = [
+    "Cardiology",
+    "Child Health",
+    "Orthopedics",
+    "Gastroenterology",
+    "Asthma",
+  ];
 
   useEffect(() => {
     axios
@@ -24,28 +30,30 @@ export function Emergency() {
       .catch((err) => console.error("Error fetching locations:", err));
   }, []);
 
-
-  useEffect(()=>{
+  useEffect(() => {
     axios
       .get("http://localhost:5000/admin/getdisease")
       .then((res) => {
-         const filtered = res.data.filter((item) =>
+        const filtered = res.data.filter((item) =>
           selectedDiseases.includes(item.disease)
         );
         setConditions(filtered);
       })
       .catch((err) => console.error("Error fetching conditions:", err));
-  },[])
+  }, []);
 
   return (
     <div>
       {/* Banner */}
-      <div className="emergency-bg text-white text-start d-flex align-items-center">
-        <h3 className="emergency-bg-text">Save the number - XXXXXXXX</h3>
+      <div className="emergency-bg text-white text-start d-flex align-items-center"></div>
+      <div
+        className="d-flex justify-content-center align-items-center position-relative"
+        style={{ height: "15vh" }}
+      >
+        <h3 className="emergency-bg-text">Emergency number - 040XXXXXX</h3>
       </div>
-
       {/* Heading */}
-      <div className=" my-4 text-center">
+      <div className=" my-2 text-center">
         <h4>We offer immediate care at 6 convenient walk-in locations</h4>
         <h4 className="mt-3">Our Locations</h4>
       </div>
@@ -59,6 +67,10 @@ export function Emergency() {
                 <h5 className="card-title text-primary">{entry.state}</h5>
                 <p className="mb-1">
                   <strong>City:</strong> {entry.branch.name}
+                </p>
+                <p>
+                  <strong>Call:</strong>
+                  {entry.branch.phone}
                 </p>
                 <a
                   href={entry.branch.mapUrl}
@@ -74,10 +86,10 @@ export function Emergency() {
         ))}
       </div>
 
-      <div className="text-center my-4"> 
+      <div className="text-center my-4">
         <h4>Some of the Conditions We Treat at Immediate Care</h4>
       </div>
-       <div className="row">
+      <div className="row">
         {conditions.map((item) => (
           <div key={item._id} className="col-md-6 col-lg-4 mb-4">
             <div className="card h-100 shadow-sm">
@@ -86,7 +98,6 @@ export function Emergency() {
                 <p className="card-text" style={{ fontSize: "0.95rem" }}>
                   {item.description}
                 </p>
-                
               </div>
             </div>
           </div>

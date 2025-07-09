@@ -65,6 +65,9 @@ export function ALLLocations() {
         name: locations
           .flatMap((l) => l.branches)
           .find((b) => b._id === branchId)?.name,
+        phone: locations
+          .flatMap((l) => l.branches)
+          .find((b) => b._id === branchId)?.phone,
         mapUrl: locations
           .flatMap((l) => l.branches)
           .find((b) => b._id === branchId)?.mapUrl,
@@ -83,8 +86,8 @@ export function ALLLocations() {
 
   const handleUpdateBranch = (state, branch) => {
     const updated = editBranch[branch._id];
-    if (!updated?.name || !updated?.mapUrl) {
-      toast.error("Both name and map URL are required");
+    if (!updated?.name || !updated?.mapUrl || !updated?.phone) {
+      toast.error("Both name, phone and map URL are required");
       return;
     }
 
@@ -94,6 +97,7 @@ export function ALLLocations() {
         branchId: branch._id,
         newName: updated.name,
         newMapUrl: updated.mapUrl,
+        newPhone: updated.phone,
       })
       .then(() => {
         toast.success("Branch updated successfully");
@@ -137,7 +141,8 @@ export function ALLLocations() {
               const edited = editBranch[branch._id];
               const hasChanges =
                 edited?.name !== edited?.original?.name ||
-                edited?.mapUrl !== edited?.original?.mapUrl;
+                edited?.mapUrl !== edited?.original?.mapUrl ||
+                edited?.phone !== edited?.original?.phone;
 
               return (
                 <div key={branch._id} className="border rounded p-3 mb-3">
@@ -149,6 +154,14 @@ export function ALLLocations() {
                         placeholder="Branch name"
                         onChange={(e) =>
                           handleEditChange(branch._id, "name", e.target.value)
+                        }
+                      />
+                      <input
+                        className="form-control mb-2"
+                        value={edited.phone}
+                        placeholder="Phone number"
+                        onChange={(e) =>
+                          handleEditChange(branch._id, "phone", e.target.value)
                         }
                       />
                       <input
@@ -187,6 +200,9 @@ export function ALLLocations() {
                           <strong>Name:</strong> {branch.name}
                         </p>
                         <p>
+                          <strong>Phone:</strong> {branch.phone}
+                        </p>
+                        <p>
                           <strong>Map:</strong>{" "}
                           <a
                             href={branch.mapUrl}
@@ -206,9 +222,11 @@ export function ALLLocations() {
                               [branch._id]: {
                                 name: branch.name,
                                 mapUrl: branch.mapUrl,
+                                phone: branch.phone,
                                 original: {
                                   name: branch.name,
                                   mapUrl: branch.mapUrl,
+                                  phone: branch.phone,
                                 },
                               },
                             }))
