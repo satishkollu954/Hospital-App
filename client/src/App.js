@@ -27,8 +27,6 @@ import { Unauthorized } from "./components/unauthorized";
 import ViewLeaves from "./components/viewleaves";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
-import { useCookies } from "react-cookie";
-import { Emergency } from "./components/Emergency";
 
 function App() {
   const { t } = useTranslation();
@@ -173,7 +171,6 @@ function App() {
             <Route path="login" element={<AdminLogin />} />
             <Route path="forgetPassword" element={<ForgetPassword />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
-            <Route path="emergency" element={<Emergency />} />
 
             {/* Doctor related routes */}
             <Route

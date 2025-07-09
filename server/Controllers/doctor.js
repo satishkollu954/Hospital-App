@@ -1,13 +1,27 @@
 const Doctor = require("../Models/Doctor");
 const Staff = require("../Models/staffs");
+const { rescheduleDay } = require("./rescheduleDay");
 
 // Add a new doctor
 const addDoctors = async (req, res) => {
   try {
     const {
-      Name, About, Email, Designation, Specialization, Age,
-      State, City, From, To, Availability, Learnmore,
-      Qualification, Experience, BriefProfile, Address,
+      Name,
+      About,
+      Email,
+      Designation,
+      Specialization,
+      Age,
+      State,
+      City,
+      From,
+      To,
+      Availability,
+      Learnmore,
+      Qualification,
+      Experience,
+      BriefProfile,
+      Address,
     } = req.body;
 
     const Languages = JSON.parse(req.body.Languages || "[]");
@@ -16,19 +30,38 @@ const addDoctors = async (req, res) => {
 
     const doctorExists = await Doctor.findOne({ Email });
     if (doctorExists) {
-      return res.status(400).json({ message: "Doctor with this email already exists" });
+      return res
+        .status(400)
+        .json({ message: "Doctor with this email already exists" });
     }
 
     const staffExists = await Staff.findOne({ Email });
     if (staffExists) {
-      return res.status(400).json({ message: "Email already exists in staff records" });
+      return res
+        .status(400)
+        .json({ message: "Email already exists in staff records" });
     }
 
     const newDoctor = new Doctor({
-      image, Name, About, Email, Designation, Specialization,
-      Age, State, City, From, To, Availability, Learnmore,
-      Qualification, Experience, BriefProfile, Address,
-      Languages, Education,
+      image,
+      Name,
+      About,
+      Email,
+      Designation,
+      Specialization,
+      Age,
+      State,
+      City,
+      From,
+      To,
+      Availability,
+      Learnmore,
+      Qualification,
+      Experience,
+      BriefProfile,
+      Address,
+      Languages,
+      Education,
     });
 
     await newDoctor.save();
@@ -47,7 +80,9 @@ async function getTranslator() {
     const mod = await import("@vitalets/google-translate-api");
     translateFn = mod.translate || mod.default;
     if (typeof translateFn !== "function") {
-      throw new Error("Unable to load translate() from @vitalets/google-translate-api");
+      throw new Error(
+        "Unable to load translate() from @vitalets/google-translate-api"
+      );
     }
   }
   return translateFn;
@@ -57,7 +92,7 @@ async function getTranslator() {
 function normalizeLangCode(lang) {
   const map = {
     "en-us": "en",
-    "en_in": "en",
+    en_in: "en",
     "hi-in": "hi",
     "te-in": "te",
   };
@@ -120,8 +155,12 @@ const getAllDoctors = async (req, res) => {
 
 // Update doctor
 const updateDoctor = async (req, res) => {
+  //console.log("inside updateDoctor");
   try {
     const { email } = req.params;
+
+    const current = await Doctor.findOne({ Email: email });
+    if (!current) return res.status(404).json({ message: "Doctor not found" });
 
     let parsedLanguages = [];
     let parsedEducation = [];
@@ -145,7 +184,8 @@ const updateDoctor = async (req, res) => {
       To: req.body.To,
       Password: req.body.Password,
       Learnmore: req.body.Learnmore,
-      Availability: req.body.Availability === "true" || req.body.Availability === true,
+      Availability:
+        req.body.Availability === "true" || req.body.Availability === true,
       Qualification: req.body.Qualification,
       Experience: req.body.Experience,
       BriefProfile: req.body.BriefProfile,
@@ -154,7 +194,7 @@ const updateDoctor = async (req, res) => {
       Education: parsedEducation,
     };
 
-    if (req.file?.filename) { 
+    if (req.file?.filename) {
       updatedFields.image = req.file.filename;
     }
 
@@ -163,17 +203,41 @@ const updateDoctor = async (req, res) => {
       updatedFields,
       { new: true }
     );
-
-    await Staff.findOneAndUpdate(
+    // console.log("inside updateDoctor ==> ", updatedDoctor);
+    const stafffs = await Staff.findOneAndUpdate(
       { Email: email },
       { Password: req.body.Password }
     );
-
+    // console.log("inside updateDoctor stafffs==> ", stafffs);
     if (!updatedDoctor) {
       return res.status(404).json({ message: "Doctor not found" });
     }
+    /* ④  If Availability flipped from true → false, trigger reschedule */
+    console.log(
+      "current.Availability",
+      current.Availability,
+      "updatedDoctor.Availability",
+      updatedDoctor.Availability
+    );
 
-    res.status(200).json({ message: "Doctor updated successfully", updatedDoctor });
+    let notified = 0;
+    if (current.Availability === true && updatedDoctor.Availability === false) {
+      // Date to cancel: UI may send unavailableDate else default today in IST
+      const dateISO =
+        req.body.unavailableDate ||
+        new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+      console.log("dateISO", dateISO);
+      notified = await rescheduleDay({
+        doctor: updatedDoctor,
+        dateISO,
+      });
+    }
+    console.log("inside update doctor ", notified);
+    const msg = notified
+      ? `Doctor updated – ${notified} patient(s) asked to reschedule`
+      : "Doctor updated successfully";
+
+    res.status(200).json({ message: msg, updatedDoctor });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -191,7 +255,9 @@ const deleteDoctor = async (req, res) => {
 
     await Staff.findOneAndDelete({ Email: email });
 
-    res.status(200).json({ message: "Doctor and associated staff deleted successfully" });
+    res
+      .status(200)
+      .json({ message: "Doctor and associated staff deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -207,7 +273,9 @@ const oneDoctor = async (req, res) => {
     }
     res.status(200).json(doctor);
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch doctor", details: err.message });
+    res
+      .status(500)
+      .json({ error: "Failed to fetch doctor", details: err.message });
   }
 };
 

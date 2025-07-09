@@ -21,7 +21,6 @@ const SlotSelector = ({
           params: { doctorEmail, date: selectedDate },
         })
         .then((res) => {
-          console.log(res.data);
           setSlots(res.data.availableSlots || []);
           setError(null);
           if (onMessage) onMessage(res.data.message || "");

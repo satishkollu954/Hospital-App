@@ -58,8 +58,7 @@ function generateSlots(
   return slots;
 }
 
-exports.getSlotsForDoctor = async (req, res) => {
-  console.log("hiiiiiiiiiii");
+const getSlotsForDoctor = async (req, res) => {
   try {
     const { doctorEmail, date } = req.query;
     if (!doctorEmail || !date) {
@@ -70,7 +69,7 @@ exports.getSlotsForDoctor = async (req, res) => {
 
     const doctor = await Doctor.findOne({ Email: doctorEmail });
     if (!doctor) return res.status(404).json({ message: "Doctor not found" });
-   // console.log("hiiiiiiiiiii");
+    console.log("hiiiiiiiiiii");
     const queryDate = new Date(date);
 
     /* ---------- 1️⃣  Approved leave still takes priority ---------- */
@@ -85,7 +84,7 @@ exports.getSlotsForDoctor = async (req, res) => {
         date,
         doctorEmail,
         availableSlots: [],
-        message: "Doctor is unavailable on this date",
+        message: "Doctor is unavailable on this date due to approved leave.",
       });
     }
 
@@ -132,4 +131,8 @@ exports.getSlotsForDoctor = async (req, res) => {
       error: err.message,
     });
   }
+};
+module.exports = {
+  generateSlots,
+  getSlotsForDoctor,
 };

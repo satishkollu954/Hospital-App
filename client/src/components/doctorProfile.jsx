@@ -64,6 +64,18 @@ export function DoctorProfile() {
       JSON.stringify({ ...originalData, image: undefined }) ||
     selectedFile !== null;
   const handleSave = async () => {
+    const becameUnavailable =
+      originalData.Availability === true && docData.Availability === false;
+
+    // Optional confirmation
+    if (
+      becameUnavailable &&
+      !window.confirm(
+        "Turning yourself unavailable will cancel today's pending appointments " +
+          "and e‑mail patients to reschedule. Continue?"
+      )
+    )
+      return;
     const formData = new FormData();
     Object.entries(docData).forEach(([key, value]) => {
       if (key === "Languages" || key === "Education") {
