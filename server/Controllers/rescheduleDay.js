@@ -13,33 +13,46 @@ const sendEmail = require("../Controllers/email"); // same wrapper you already u
 const Doctor = require("../Models/Doctor");
 const { generateSlots } = require("../Controllers/slotsController");
 
-async function rescheduleDay({ doctor, dateISO }) {
+async function rescheduleDay({ doctor, dateISO, cutoff }) {
   console.log("Inside reshedule method");
   // build a 24‑hour window for that calendar day (IST not required here)
+  cutoff = cutoff || new Date();
+  const cutoffHHMM = cutoff.toLocaleTimeString("en-GB", {
+    timeZone: "Asia/Kolkata",
+    hour12: false,
+    hour: "2-digit",
+    minute: "2-digit",
+  }); // e.g. "11:00"
+
+  // ── 2. build start/end of that calendar day ───────────────────────
   const start = new Date(dateISO);
   start.setHours(0, 0, 0, 0);
   const end = new Date(start);
   end.setDate(end.getDate() + 1);
 
+  // ── 3. fetch only slots today AND starting after the cutoff ───────
   const appts = await appointmentModel.find({
     doctorEmail: doctor.Email,
     date: { $gte: start, $lt: end },
-    status: { $in: ["Pending", "Started", "In Progress"] },
+    status: { $nin: ["Completed"] }, // ignore finished visits
+    time: { $gte: cutoffHHMM }, // slot on/after 11:00
   });
-  console.log();
+
   if (!appts.length) return 0;
 
+  // ── 4. generate token + send e‑mail per appointment ───────────────
   await Promise.all(
     appts.map(async (a) => {
       a.rescheduleToken = uuid();
-      a.rescheduleExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 h
+      a.rescheduleExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
       await a.save();
-      console.log("a.rescheduleToken ", a.rescheduleToken);
+
       const link = `http://localhost:3000/reschedule/${a.rescheduleToken}`;
 
       await sendEmail(
         a.email,
         "Doctor unavailable – please reschedule",
+
         `
   <div style="
     font-family: Arial, sans-serif;
@@ -51,18 +64,21 @@ async function rescheduleDay({ doctor, dateISO }) {
     border-radius: 12px;
   ">
     <div style="background-color: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 10px;">
-      <h2 style="color: #4fd1c5;">Hello Sir/Mam,</h2>
+      <h2 style="color: #4fd1c5;"> <p>Dear ${a.fullName || "patient"},</p></h2>
 
       <p style="font-size: 16px;">
-        Thank you for scheduling your appointment with us! But due to some Emergency The Doctor is not Available
+        Thank you for scheduling your appointment with us! But Doctor is Unavailable due to some Emergency Problem
       </p>
       <ul style="line-height: 1.8; font-size: 16px;">
-        
-        <p> ${doctor.Name} will be unavailable on <strong>${dateISO}</strong>.</p>
-        <p>Please choose a new date &amp; time within 24 hours:</p>
-        <p><a href="${link}" style="
-          display:inline-block;padding:10px 15px;background:#2296f3;color:#fff;
-          text-decoration:none;border-radius:4px">Reschedule Now</a></p>
+          <p>Dr ${doctor.Name} became unavailable today.</p>
+        <p>Your slot at <strong>${a.time}</strong> needs to be re‑scheduled.</p>
+        <p><a href="${link}">Click here to pick a new time</a> (link valid 24 h)</p>
+        <p>— RaagviCare Team</p>
+      </ul>
+
+      <p>
+        Please arrive 10-15 minutes early and carry any necessary documents. If you need assistance, our team is just a call away.
+      </p>
 
       <p style="font-style: italic;">We're here to care for you every step of the way.</p>
 

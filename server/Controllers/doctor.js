@@ -223,6 +223,7 @@ const updateDoctor = async (req, res) => {
     let notified = 0;
     if (current.Availability === true && updatedDoctor.Availability === false) {
       // Date to cancel: UI may send unavailableDate else default today in IST
+      updatedDoctor.unavailableSince = new Date();
       const dateISO =
         req.body.unavailableDate ||
         new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
@@ -230,6 +231,7 @@ const updateDoctor = async (req, res) => {
       notified = await rescheduleDay({
         doctor: updatedDoctor,
         dateISO,
+        cutoff: updatedDoctor.unavailableSince, // pass the toggle moment
       });
     }
     console.log("inside update doctor ", notified);
@@ -252,9 +254,7 @@ const deleteDoctor = async (req, res) => {
     if (!deletedDoctor) {
       return res.status(404).json({ message: "Doctor not found" });
     }
-
     await Staff.findOneAndDelete({ Email: email });
-
     res
       .status(200)
       .json({ message: "Doctor and associated staff deleted successfully" });
@@ -278,7 +278,6 @@ const oneDoctor = async (req, res) => {
       .json({ error: "Failed to fetch doctor", details: err.message });
   }
 };
-
 module.exports = {
   addDoctors,
   getAllDoctors,

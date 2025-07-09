@@ -60,7 +60,7 @@ export default function RescheduleAppointment() {
 
   return (
     <div className="container mt-4">
-      <h3>Reschedule your appointment with Dr {appt.doctor}</h3>
+      <h3>Reschedule your appointment with {appt.doctor}</h3>
 
       <form onSubmit={submit}>
         <label className="form-label fw-bold mt-3">Choose Date</label>

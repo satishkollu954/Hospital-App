@@ -69,55 +69,68 @@ const getSlotsForDoctor = async (req, res) => {
 
     const doctor = await Doctor.findOne({ Email: doctorEmail });
     if (!doctor) return res.status(404).json({ message: "Doctor not found" });
-    console.log("hiiiiiiiiiii");
+
     const queryDate = new Date(date);
 
-    /* ---------- 1️⃣  Approved leave still takes priority ---------- */
+    /* ---------- 1️⃣  Leave check ---------- */
     const onLeave = await DoctorLeave.findOne({
       doctorEmail,
       status: "Approved",
       fromDate: { $lte: queryDate },
       toDate: { $gte: queryDate },
     });
-    if (onLeave) {
+    if (onLeave)
       return res.status(200).json({
         date,
         doctorEmail,
         availableSlots: [],
         message: "Doctor is unavailable on this date due to approved leave.",
       });
-    }
 
-    /* ---------- 2️⃣  Same‑day “Unavailable” toggle logic ---------- */
+    /* ---------- 2️⃣  Today / availability check ---------- */
     const todayISO = new Date().toLocaleDateString("en-CA", {
       timeZone: "Asia/Kolkata",
-    }); // YYYY‑MM‑DD
+    });
     const queryISO = queryDate.toLocaleDateString("en-CA", {
       timeZone: "Asia/Kolkata",
     });
 
-    if (doctor.Availability === false && queryISO === todayISO) {
-      // Off only for today; future dates will fall through
-      console.log("Doctor is unavailable");
+    if (doctor.Availability === false && queryISO === todayISO)
       return res.status(200).json({
         date,
         doctorEmail,
         availableSlots: [],
         message: "Doctor is unavailable today.",
       });
-    }
-    console.log("Doctor is available");
 
-    /* ---------- 3️⃣  Normal slot generation ---------- */
+    /* ---------- 3️⃣  Build slots & mark booked ---------- */
     const appointments = await appointmentModel.find({
       doctorEmail,
       date: queryDate,
     });
-    const bookedTimes = appointments.map((a) => a.time);
+    const bookedTimes = appointments.map((a) => a.time); // ["11:00", …]
 
-    const slots = generateSlots(doctor.From, doctor.To, 15, "13:00", 45).map(
+    let slots = generateSlots(doctor.From, doctor.To, 15, "13:00", 45).map(
       (slot) => ({ ...slot, booked: bookedTimes.includes(slot.start) })
     );
+
+    /* ---------- 4️⃣  Hide / disable past slots if date == today ---------- */
+    if (queryISO === todayISO) {
+      const nowHHMM = new Date().toLocaleTimeString("en-GB", {
+        timeZone: "Asia/Kolkata",
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+      }); // e.g. "12:07"
+
+      // OPTION A – remove past slots entirely:
+      // slots = slots.filter((s) => s.start >= nowHHMM);
+
+      // OPTION B – keep them but grey‑out (send extra flag):
+      slots = slots.map((s) =>
+        s.start < nowHHMM ? { ...s, past: true, booked: true } : s
+      );
+    }
 
     return res.status(200).json({
       date,
@@ -126,12 +139,10 @@ const getSlotsForDoctor = async (req, res) => {
     });
   } catch (err) {
     console.error("Slot generation error:", err);
-    res.status(500).json({
-      message: "Failed to generate slots",
-      error: err.message,
-    });
+    res.status(500).json({ message: "Failed to generate slots" });
   }
 };
+
 module.exports = {
   generateSlots,
   getSlotsForDoctor,

@@ -18,6 +18,7 @@ const doctorSchema = new mongoose.Schema({
   State: String,
   City: String,
   Availability: Boolean,
+  unavailableSince: Date,
   From: String, // e.g., "10:00 AM"
   To: String, // e.g., "06:00 PM"
   Learnmore: String,
