@@ -6,7 +6,9 @@ import { ToastContainer, toast } from "react-toastify";
 
 export const AddLocation = () => {
   const [State, setState] = useState("");
-  const [branches, setBranches] = useState([{ name: "", mapUrl: "" }]);
+  const [branches, setBranches] = useState([
+    { name: "", mapUrl: "", phone: "" },
+  ]);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -18,7 +20,7 @@ export const AddLocation = () => {
   };
 
   const addBranch = () => {
-    setBranches([...branches, { name: "", mapUrl: "" }]);
+    setBranches([...branches, { name: "", mapUrl: "", phone: "" }]);
   };
 
   const removeBranch = (index) => {
@@ -90,6 +92,16 @@ export const AddLocation = () => {
                     handleBranchChange(index, "name", e.target.value)
                   }
                   placeholder="e.g., RaagviCare - Banashankari"
+                />
+                <label className="form-label">Phone Number</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={branch.phone}
+                  onChange={(e) =>
+                    handleBranchChange(index, "phone", e.target.value)
+                  }
+                  placeholder="e.g., +91-XXXXXXX"
                 />
               </div>
               <div className="col-md-6 mb-2">

@@ -27,6 +27,9 @@ import { Unauthorized } from "./components/unauthorized";
 import ViewLeaves from "./components/viewleaves";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
+import RescheduleAppointment from "./components/RescheduleAppointment";
+import { useCookies } from "react-cookie";
+import { Emergency } from "./components/Emergency";
 
 function App() {
   const { t } = useTranslation();
@@ -143,17 +146,18 @@ function App() {
                     </ul>
                   </li>
                 )}
+                {isPublicRoute && (
+                  <Link
+                    to="/emergency"
+                    className="text-white fw-bold px-3 py-2 mb-1 me-2 rounded d-inline-block text-decoration-none boxshadow border-0"
+                    style={{ cursor: "pointer" }}
+                  >
+                    {t("nav.bookEmergency")}{" "}
+                    <span className="ms-2">&rarr;</span>
+                  </Link>
+                )}
               </ul>
             </div>
-            {isPublicRoute && (
-              <Link
-                to="/emergency"
-                className="text-white fw-bold px-3 py-2 mb-1 me-2 rounded d-inline-block text-decoration-none boxshadow border-0"
-                style={{ cursor: "pointer" }}
-              >
-                {t("nav.bookEmergency")} <span className="ms-2">&rarr;</span>
-              </Link>
-            )}
           </nav>
         </header>
 
@@ -171,6 +175,11 @@ function App() {
             <Route path="login" element={<AdminLogin />} />
             <Route path="forgetPassword" element={<ForgetPassword />} />
             <Route path="/unauthorized" element={<Unauthorized />} />
+            <Route path="emergency" element={<Emergency />} />
+            <Route
+              path="/reschedule/:token"
+              element={<RescheduleAppointment />}
+            />
 
             {/* Doctor related routes */}
             <Route
