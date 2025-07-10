@@ -7,7 +7,8 @@ import SlotSelector from "../components/SlotSelector";
 export default function RescheduleAppointment() {
   const { token } = useParams();
   const navigate = useNavigate();
-  // const token = "e4be374d-c765-4879-bace-067007454124";
+  //   const token = "d11d958f-554d-476a-a1f4-01f8f29e90ff";
+  console.log("RescheduleAppointment token:", token);
   const [appt, setAppt] = useState(null);
   const [slots, setSlots] = useState([]);
   const [when, setWhen] = useState({ date: "", time: "" });
