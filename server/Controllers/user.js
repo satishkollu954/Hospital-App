@@ -113,39 +113,39 @@ const appointment = async (req, res) => {
     await newAppointment.save();
 
     await sendEmail(
-      email,
-      "Appointment Confirmation - RaagviCare",
+      a.email,
+      "Doctor unavailable – please reschedule",
       `
-  <div style="
-    font-family: Arial, sans-serif;
-    background: url('https://cdn.pixabay.com/photo/2016/03/31/20/11/doctor-1295581_1280.png') no-repeat center;
-    background-size: cover;
-    padding: 40px;
-    color: #ffffff;
-    text-shadow: 1px 1px 2px #000;
-    border-radius: 12px;
-  ">
-    <div style="background-color: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 10px;">
-      <h2 style="color: #4fd1c5;">Hello ${fullName},</h2>
-
-      <p style="font-size: 16px;">
-        Thank you for scheduling your appointment with us! Below are your appointment details:
-      </p>
-      <ul style="line-height: 1.8; font-size: 16px;">
-        <li><strong>Doctor:</strong> Dr. ${doctor}</li>
-        <li><strong>Date:</strong> ${formattedDate.toDateString()}</li>
-        <li><strong>Slot Time:</strong> ${time}</li>
-        <li><strong>Status:</strong> <span style="color: #ffc107;">Pending</span></li>
-      </ul>
-
-      <p>
-        Please arrive 10-15 minutes early and carry any necessary documents. If you need assistance, our team is just a call away.
-      </p>
-
-      <p style="font-style: italic;">We're here to care for you every step of the way.</p>
-
-      <br />
-      <p>Warm regards,<br/><strong>RaagviCare Team</strong></p>
+  <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
+    <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+      <img 
+        src="https://cdn.pixabay.com/photo/2016/03/31/20/11/doctor-1295581_1280.png" 
+        alt="Doctor" 
+        style="width: 100%; max-height: 300px; object-fit: cover;"
+      />
+      <div style="padding: 30px;">
+        <h2 style="color: #4fd1c5;">Dear ${a.fullName || "Patient"},</h2>
+        <p style="font-size: 16px; color: #333;">
+          Thank you for scheduling your appointment with us! Unfortunately, ${
+            doctor.Name
+          } is unavailable today due to an emergency.
+        </p>
+        <ul style="line-height: 1.8; font-size: 16px; color: #333; padding-left: 0; list-style: none;">
+          <li>Your slot at <strong>${
+            a.time
+          }</strong> needs to be re‑scheduled.</li>
+          <li>
+            <a href="${link}" style="color: #4fd1c5; text-decoration: underline;">Click here to pick a new time</a>
+            <span style="color: #888;">(link valid 24 h)</span>
+          </li>
+        </ul>
+        <p style="color: #333;">
+          Please arrive 10-15 minutes early and carry any necessary documents. If you need assistance, our team is just a call away.
+        </p>
+        <p style="font-style: italic; color: #555;">We're here to care for you every step of the way.</p>
+        <br />
+        <p style="color: #333;">Warm regards,<br/><strong>RaagviCare Team</strong></p>
+      </div>
     </div>
   </div>
   `
@@ -233,7 +233,7 @@ const appointmentChange = async (req, res) => {
           <div style="background-color: rgba(0, 0, 0, 0.6); padding: 20px; border-radius: 10px;">
             <h2 style="color: #4fd1c5;">Hello ${fullName},</h2>
             <p style="font-size: 16px;">
-              Your appointment with <strong>Dr. ${doctor}</strong> on <strong>${formattedDate}</strong> has been successfully completed.
+              Your appointment with <strong> ${doctor}</strong> on <strong>${formattedDate}</strong> has been successfully completed.
             </p>
             <p>We truly appreciate your trust in our care.</p>
             <p style="font-weight: bold;">Thank you for visiting RaagviCare. We hope to serve you again!</p>
@@ -348,8 +348,31 @@ const postReschedule = async (req, res) => {
     await sendEmail(
       appt.email,
       "Appointment re‑booked",
-      `<p>Your appointment with Dr ${appt.doctor} is now on
-         <strong>${date}</strong> at <strong>${time}</strong>.</p>`
+      `
+  <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
+    <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+     
+      <div style="padding: 30px;">
+          <h2 style="color: #4fd1c5;">Hello ${appt.fullName || "Sir/Mam"},</h2>
+        <p style="font-size: 16px; color: #333;">
+          Thank you for re-scheduling your appointment with us! Below are your appointment details:
+        </p>
+        <ul style="line-height: 1.8; font-size: 16px; color: #333; padding-left: 0; list-style: none;">
+          <li><strong>Doctor:</strong>  ${appt.doctor}</li>
+          <li><strong>Date:</strong> ${new Date(date).toDateString()}</li>
+          <li><strong>Slot Time:</strong> ${time}</li>
+          <li><strong>Status:</strong> <span style="color: #ffc107;">Pending</span></li>
+        </ul>
+        <p style="color: #333;">
+          Please arrive 10-15 minutes early and carry any necessary documents. If you need assistance, our team is just a call away.
+        </p>
+        <p style="font-style: italic; color: #555;">We're here to care for you every step of the way.</p>
+        <br />
+        <p style="color: #333;">Warm regards,<br/><strong>RaagviCare Team</strong></p>
+      </div>
+    </div>
+  </div>
+  `
     );
 
     res.json({ message: "Rescheduled" });
