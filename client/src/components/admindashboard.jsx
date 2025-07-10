@@ -87,9 +87,7 @@ export const AdminDashboard = () => {
       });
   };
 
-
-
-    const handleSignOutClick = () => {
+  const handleSignOutClick = () => {
     toast.success("Signed out successfully", {
       onClose: () => {
         removeCookie("email", { path: "/" });
@@ -267,18 +265,21 @@ export const AdminDashboard = () => {
                         <button
                           className="btn btn-outline-primary btn-sm"
                           onClick={() => updateStatus(appt._id, "Started")}
+                          disabled={appt.status === "Completed"}
                         >
                           Start
                         </button>
                         <button
                           className="btn btn-outline-warning btn-sm"
                           onClick={() => updateStatus(appt._id, "In Progress")}
+                          disabled={appt.status === "Completed"}
                         >
                           Progress
                         </button>
                         <button
                           className="btn btn-outline-success btn-sm"
                           onClick={() => updateStatus(appt._id, "Completed")}
+                          disabled={appt.status === "Completed"}
                         >
                           Complete
                         </button>

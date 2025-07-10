@@ -269,6 +269,7 @@ const getRescheduleInfo = async (req, res) => {
   try {
     const { token } = req.params;
     const { date: dParam } = req.query; // optional ?date=...
+    console.log("getRescheduleInfo called with token:", token);
     const appt = await appointmentModel.findOne({
       rescheduleToken: token,
       rescheduleExpires: { $gt: new Date() },
