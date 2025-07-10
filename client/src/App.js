@@ -325,13 +325,14 @@ function App() {
                 <div>
                   <a
                     href="https://www.facebook.com/Raagvitech"
-                    target="_blank"
+                    rel="noreferrer"
                     className="text-white me-3"
                   >
                     <i className="bi bi-facebook"></i>
                   </a>
                   <a
                     href="https://x.com/raagvi_tech"
+                    rel="noreferrer"
                     target="_blank"
                     className="text-white me-3"
                   >
@@ -340,6 +341,7 @@ function App() {
                   <a
                     href="https://www.instagram.com/raagvitech/"
                     target="_blank"
+                    rel="noreferrer"
                     className="text-white me-3"
                   >
                     <i className="bi bi-instagram"></i>
