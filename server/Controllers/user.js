@@ -21,6 +21,28 @@ const contactus = async (req, res) => {
     // Save to database
     await newContact.save();
 
+    await sendEmail(
+      email,
+      "Thank you for Contacting US – RaagviCare",
+      `<div style="
+    font-family: Arial, sans-serif;
+    background: url('https://cdn.pixabay.com/photo/2017/08/06/00/04/medical-2585039_1280.jpg') no-repeat center;
+    background-size: cover;
+    padding: 40px;
+    color: #ffffff;
+    text-shadow: 1px 1px 2px #000;
+    border-radius: 12px;
+  ">
+    <div style="background: rgba(0, 0, 0, 0.6); padding: 30px; border-radius: 10px; max-width: 600px; margin: auto;">
+      <h2>Hello ${fullName},</h2>
+      <p style="font-size: 16px;">
+        Thank you for submitting your query. We will get back to you shortly.
+      </p>
+    </div>
+  </div>`
+    );
+
+    console.log("✅ Contact form saved");
     res.status(201).json({ message: "Contact form submitted successfully." });
   } catch (error) {
     console.error("Error saving contact form:", error);

@@ -6,7 +6,6 @@ const app = express();
 const userRoute = require("./Routers/user");
 const locationRoutes = require("./Routers/locationRoutes");
 const staffsRoutes = require("./Routers/staffs");
-const contentRoutes = require("./Routers/content");
 
 app.use(cors());
 app.use(express.json({ limit: "20mb" }));
@@ -23,5 +22,4 @@ connectToDatabase("mongodb://localhost:27017/Hospital-App");
 app.use("/api", userRoute);
 app.use("/admin", locationRoutes);
 app.use("/doctor", staffsRoutes);
-app.use("/content", contentRoutes);
 app.use("/uploads", express.static("uploads"));
