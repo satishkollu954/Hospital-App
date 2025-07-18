@@ -32,11 +32,11 @@ export const AdminLogin = () => {
       if (res.data.success) {
         setCookie("email", loginData.email, { path: "/" });
 
-        // 👇 Set the role based on the email
+        // Set the role based on the email
         const role = loginData.email === "admin@gmail.com" ? "admin" : "doctor";
         setCookie("role", role, { path: "/" });
 
-        toast.success("Login succesfull");
+        toast.success("Login successful");
 
         setTimeout(() => {
           if (role === "admin") {
@@ -44,7 +44,7 @@ export const AdminLogin = () => {
           } else {
             navigate("/doctor-dashboard");
           }
-        }, 1000);
+        }, 700);
       } else {
         setError("Invalid credentials");
       }

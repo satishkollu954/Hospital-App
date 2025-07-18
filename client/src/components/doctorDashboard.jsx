@@ -84,7 +84,7 @@ export function DoctorDashboard() {
         removeCookie("role", { path: "/" });
         navigate("/login");
       },
-      autoClose: 1000,
+      autoClose: 10,
     });
   };
 
@@ -115,7 +115,7 @@ export function DoctorDashboard() {
   };
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-1">
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
 
       {/* Top Buttons */}

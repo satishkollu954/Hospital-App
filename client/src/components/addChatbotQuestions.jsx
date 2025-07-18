@@ -152,46 +152,49 @@ export default function ChatbotAdmin() {
           </button>
         )}
       </form>
-
-      <table className="table table-striped table-bordered">
-        <thead className="table-dark">
-          <tr>
-            <th>Question</th>
-            <th>Answer</th>
-            <th style={{ width: "150px" }}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {questions.length === 0 ? (
+      <div className="table-responsive">
+        <table className="table table-striped table-bordered chatbot-table">
+          <thead className="table-dark">
             <tr>
-              <td colSpan="3" className="text-center">
-                No questions available
-              </td>
+              <th>#</th> {/* Numbering Column */}
+              <th>Question</th>
+              <th>Answer</th>
+              <th style={{ width: "150px" }}>Actions</th>
             </tr>
-          ) : (
-            questions.map((q) => (
-              <tr key={q._id}>
-                <td>{q.question}</td>
-                <td>{q.answer}</td>
-                <td>
-                  <button
-                    className="btn btn-sm btn-warning me-2"
-                    onClick={() => handleEdit(q)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="bi bi-trash btn btn-sm btn-danger mb-2"
-                    onClick={() => confirmDeleteChatbotQuestion(q._id)}
-                  >
-                    Delete
-                  </button>
+          </thead>
+          <tbody>
+            {questions.length === 0 ? (
+              <tr>
+                <td colSpan="4" className="text-center">
+                  No questions available
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              questions.map((q, index) => (
+                <tr key={q._id}>
+                  <td>{index + 1}</td> {/* Show 1-based index */}
+                  <td>{q.question}</td>
+                  <td>{q.answer}</td>
+                  <td>
+                    <button
+                      className="btn btn-sm btn-warning me-2"
+                      onClick={() => handleEdit(q)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="bi bi-trash btn btn-sm btn-danger mb-2"
+                      onClick={() => confirmDeleteChatbotQuestion(q._id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
       {showConfirmModal && (
         <div
           className="modal fade show"

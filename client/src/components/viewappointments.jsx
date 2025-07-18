@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import ReactPaginate from "react-paginate";
 import { Link } from "react-router-dom";
 
 export function ViewAppointments() {
@@ -11,6 +12,9 @@ export function ViewAppointments() {
   const decodedEmail = decodeURIComponent(cookies.email);
   console.log("decodedEmail", decodedEmail);
 
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 5;
+
   useEffect(() => {
     if (!decodedEmail) return;
 
@@ -20,6 +24,7 @@ export function ViewAppointments() {
       )
       .then((res) => {
         setAppointments(res.data);
+        setCurrentPage(0);
         setLoading(false);
       })
       .catch((err) => {
@@ -35,6 +40,13 @@ export function ViewAppointments() {
   if (appointments.length === 0) {
     return <div className="text-center mt-4">No appointments found.</div>;
   }
+
+  const offset = currentPage * itemsPerPage;
+  const currentAppointments = appointments.slice(offset, offset + itemsPerPage);
+  
+  const handlePageClick = ({ selected }) => {
+    setCurrentPage(selected);
+  };
 
   return (
     <div className="container mt-4">
@@ -112,6 +124,20 @@ export function ViewAppointments() {
           </tbody>
         </table>
       </div>
+      <ReactPaginate
+        previousLabel={"← Previous"}
+        nextLabel={"Next →"}
+        pageCount={Math.ceil(appointments.length / itemsPerPage)}
+        onPageChange={handlePageClick}
+        containerClassName={"pagination justify-content-center mt-4"}
+        pageClassName={"page-item"}
+        pageLinkClassName={"page-link"}
+        previousClassName={"page-item"}
+        previousLinkClassName={"page-link"}
+        nextClassName={"page-item"}
+        nextLinkClassName={"page-link"}
+        activeClassName={"active"}
+      />
     </div>
   );
 }

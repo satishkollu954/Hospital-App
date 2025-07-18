@@ -73,37 +73,11 @@ export function DoctorProfile() {
       setShowConfirmModal(true);
       return;
     }
-    await submitProfileUpdate();
 
-    const formData = new FormData();
-    Object.entries(docData).forEach(([key, value]) => {
-      if (key === "Languages" || key === "Education") {
-        formData.append(key, JSON.stringify(value));
-      } else if (key !== "Email") {
-        formData.append(key, value);
-      }
-    });
-    if (selectedFile) formData.append("image", selectedFile);
-    try {
-      const res = await axios.put(
-        `http://localhost:5000/admin/updatedoctor/${decodedEmail}`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
-      toast.success("Profile updated successfully");
-      // alert("Profile updated successfully");
-      setIsEditing(false);
-      setDocData(res.data.updatedDoctor);
-      setOriginalData(res.data.updatedDoctor);
-      setSelectedFile(null);
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      toast.error("Failed to update profile");
-      // alert("Failed to update profile");
-    }
+    await submitProfileUpdate();
   };
 
-  const submitProfileUpdate = async () => {
+  const submitProfileUpdate = async (e) => {
     setPendingSave(true);
     const formData = new FormData();
     Object.entries(docData).forEach(([key, value]) => {

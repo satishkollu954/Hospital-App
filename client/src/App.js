@@ -158,6 +158,23 @@ function App() {
                     <span className="ms-2">&rarr;</span>
                   </Link>
                 )}
+                {cookies.role === "admin" && (
+                  <li className="nav-item">
+                    <Link to="/admin-dashboard" className="nav-link text-white">
+                      Admin Dashboard
+                    </Link>
+                  </li>
+                )}
+                {cookies.role === "doctor" && (
+                  <li className="nav-item">
+                    <Link
+                      to="/doctor-dashboard"
+                      className="nav-link text-white"
+                    >
+                      Doctor Dashboard
+                    </Link>
+                  </li>
+                )}
               </ul>
             </div>
           </nav>

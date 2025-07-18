@@ -19,6 +19,7 @@ export const AdminDashboard = () => {
   const [cookie, , removeCookie] = useCookies(["email"]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [appointmentToDelete, setAppointmentToDelete] = useState(null);
+  const [loadingId, setLoadingId] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 5;
@@ -51,6 +52,7 @@ export const AdminDashboard = () => {
   }, []);
 
   const updateStatus = (id, newStatus) => {
+    setLoadingId(id);
     axios
       .patch(`http://localhost:5000/admin/appointments/${id}`, {
         status: newStatus,
@@ -60,7 +62,10 @@ export const AdminDashboard = () => {
           prev.map((a) => (a._id === id ? { ...a, status: newStatus } : a))
         );
       })
-      .catch((err) => console.error("Error updating status:", err));
+      .catch((err) => console.error("Error updating status:", err))
+      .finally(() => {
+        setLoadingId(null);
+      });
   };
 
   const confirmDelete = (id) => {
@@ -217,6 +222,8 @@ export const AdminDashboard = () => {
           <table className="table table-bordered shadow-sm">
             <thead className="table-light">
               <tr>
+                <th style={{ width: "40px", textAlign: "center" }}>#</th>{" "}
+                {/* Numbering column */}
                 <th>Full Name</th>
                 <th>Email</th>
                 <th>Phone</th>
@@ -230,8 +237,9 @@ export const AdminDashboard = () => {
             </thead>
             <tbody>
               {currentAppointments.length > 0 ? (
-                currentAppointments.map((appt) => (
+                currentAppointments.map((appt, index) => (
                   <tr key={appt._id}>
+                    <td style={{ textAlign: "center" }}>{index + 1}</td>
                     <td>{appt.fullName}</td>
                     <td>{appt.email}</td>
                     <td>{appt.phone}</td>
@@ -247,7 +255,6 @@ export const AdminDashboard = () => {
                     <td className="reason-cell text-wrap">{appt.reason}</td>
                     <td>{appt.disease}</td>
                     <td>{appt.doctor}</td>
-
                     <td>
                       <span
                         className={`badge ${
@@ -266,25 +273,31 @@ export const AdminDashboard = () => {
                     <td>
                       <div className="d-flex gap-2 flex-wrap justify-content-center">
                         <button
-                          className="btn btn-outline-primary btn-sm"
-                          onClick={() => updateStatus(appt._id, "Started")}
-                          disabled={appt.status === "Completed"}
-                        >
-                          Start
-                        </button>
-                        <button
                           className="btn btn-outline-warning btn-sm"
                           onClick={() => updateStatus(appt._id, "In Progress")}
                           disabled={appt.status === "Completed"}
                         >
-                          Progress
+                          In Progress
                         </button>
                         <button
-                          className="btn btn-outline-success btn-sm"
+                          className="btn btn-outline-success btn-sm d-flex align-items-center justify-content-center gap-2"
                           onClick={() => updateStatus(appt._id, "Completed")}
-                          disabled={appt.status === "Completed"}
+                          disabled={
+                            appt.status === "Completed" ||
+                            loadingId === appt._id
+                          }
                         >
-                          Complete
+                          {loadingId === appt._id ? (
+                            <>
+                              <span
+                                className="spinner-border spinner-border-sm"
+                                role="status"
+                              />
+                              Complete...
+                            </>
+                          ) : (
+                            "Complete"
+                          )}
                         </button>
                         <button
                           className="btn btn-outline-danger btn-sm"
@@ -298,7 +311,8 @@ export const AdminDashboard = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="10" className="text-center">
+                  {/* Now 11 columns total */}
+                  <td colSpan="11" className="text-center">
                     No appointments found.
                   </td>
                 </tr>
