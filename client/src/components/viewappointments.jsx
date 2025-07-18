@@ -13,7 +13,7 @@ export function ViewAppointments() {
   console.log("decodedEmail", decodedEmail);
 
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 5;
+  const itemsPerPage = 6;
 
   useEffect(() => {
     if (!decodedEmail) return;
@@ -43,13 +43,13 @@ export function ViewAppointments() {
 
   const offset = currentPage * itemsPerPage;
   const currentAppointments = appointments.slice(offset, offset + itemsPerPage);
-  
+
   const handlePageClick = ({ selected }) => {
     setCurrentPage(selected);
   };
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-2">
       <h3 className="mb-3">
         {" "}
         <Link
@@ -79,48 +79,56 @@ export function ViewAppointments() {
             </tr>
           </thead>
           <tbody>
-            {appointments.map((appt, index) => (
-              <tr key={appt._id}>
-                <td>{index + 1}</td>
-                <td>{appt.fullName}</td>
-                <td
-                  style={{
-                    whiteSpace: "normal",
-                    wordBreak: "break-word",
-                    minWidth: "200px",
-                  }}
-                >
-                  {appt.email}
-                </td>
-                <td>{appt.phone}</td>
-                <td
-                  style={{
-                    whiteSpace: "normal",
-                    wordBreak: "break-word",
-                    minWidth: "100px",
-                  }}
-                >
-                  {new Date(appt.date)
-                    .toLocaleDateString("en-GB")
-                    .replace(/\//g, "-")}
-                </td>
-                <td>{appt.time}</td>
-                <td
-                  style={{
-                    whiteSpace: "normal",
-                    wordBreak: "break-word",
-                    minWidth: "200px",
-                  }}
-                >
-                  {appt.reason}
-                </td>
-                <td>{appt.disease}</td>
-                <td>{appt.status}</td>
-                <td>
-                  {appt.state}, {appt.city}
+            {currentAppointments.length > 0 ? (
+              currentAppointments.map((appt, index) => (
+                <tr key={appt._id}>
+                  <td>{index + 1}</td>
+                  <td>{appt.fullName}</td>
+                  <td
+                    style={{
+                      whiteSpace: "normal",
+                      wordBreak: "break-word",
+                      minWidth: "200px",
+                    }}
+                  >
+                    {appt.email}
+                  </td>
+                  <td>{appt.phone}</td>
+                  <td
+                    style={{
+                      whiteSpace: "normal",
+                      wordBreak: "break-word",
+                      minWidth: "100px",
+                    }}
+                  >
+                    {new Date(appt.date)
+                      .toLocaleDateString("en-GB")
+                      .replace(/\//g, "-")}
+                  </td>
+                  <td>{appt.time}</td>
+                  <td
+                    style={{
+                      whiteSpace: "normal",
+                      wordBreak: "break-word",
+                      minWidth: "200px",
+                    }}
+                  >
+                    {appt.reason}
+                  </td>
+                  <td>{appt.disease}</td>
+                  <td>{appt.status}</td>
+                  <td>
+                    {appt.state}, {appt.city}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="10" className="text-center">
+                  No appointments found.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
