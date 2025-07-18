@@ -1,53 +1,8 @@
 import React, { useState } from "react";
 import "./chatbot.css";
-import { MdChatBubbleOutline } from "react-icons/md"; // Chat icon
-import { IoMdClose } from "react-icons/io"; // Close icon
-
-const sampleFAQs = [
-  {
-    question: "working hours",
-    answer: "We are open 9 AM to 5 PM, Monday to Saturday.",
-  },
-  {
-    question: "appointment",
-    answer: "Visit the Appointment page to book one.",
-  },
-  {
-    question: "location",
-    answer:
-      "We are located in Hyderabad, Chennai, Bangalore, Mumbai, and Delhi.",
-  },
-  {
-    question: "emergency",
-    answer: "For emergencies, please call our 24/7 helpline at +91-9600012345.",
-  },
-  {
-    question: "available doctors",
-    answer: "You can view all available doctors on the 'Appointment' page.",
-  },
-  {
-    question: "specializations",
-    answer:
-      "We offer treatments in Cardiology, Orthopedics, Pediatrics, and more.",
-  },
-  {
-    question: "contact number",
-    answer: "You can reach us at +91-9600012345.",
-  },
-  {
-    question: "do you accept insurance",
-    answer: "Yes, we accept most major health insurance providers.",
-  },
-  {
-    question: "how to cancel appointment",
-    answer: "You can cancel your appointment by calling our helpline.",
-  },
-  {
-    question: "doctors availability",
-    answer:
-      "Doctors are available based on their schedules. Check the Appointment page for more details.",
-  },
-];
+import { MdChatBubbleOutline } from "react-icons/md";
+import { IoMdClose } from "react-icons/io";
+import axios from "axios";
 
 export default function ChatBot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -55,32 +10,48 @@ export default function ChatBot() {
     { from: "bot", text: "Hi! How can I help you today?" },
   ]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
 
     const userMessage = { from: "user", text: input };
     setMessages((prev) => [...prev, userMessage]);
+    setLoading(true);
 
-    const matched = sampleFAQs.find((faq) =>
-      input.toLowerCase().includes(faq.question.toLowerCase())
-    );
+    try {
+      const { data } = await axios.get(
+        "http://localhost:5000/api/chatbot/answer",
+        {
+          params: { question: input },
+        }
+      );
 
-    const botReply = matched
-      ? matched.answer
-      : "Sorry, I couldn't understand. Please contact us directly.";
-
-    setTimeout(() => {
-      setMessages((prev) => [...prev, { from: "bot", text: botReply }]);
-    }, 800);
+      setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          { from: "bot", text: data.answer || "I'm here to help!" },
+        ]);
+        setLoading(false);
+      }, 800);
+    } catch (err) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          from: "bot",
+          text: "Sorry, I couldn't understand. Please contact us directly.",
+        },
+      ]);
+      setLoading(false);
+    }
 
     setInput("");
   };
 
   const handleClose = () => {
     setIsOpen(false);
-    setInput(""); // Clear input field
-    setMessages([{ from: "bot", text: "Hi! How can I help you today?" }]); // Reset messages
+    setInput("");
+    setMessages([{ from: "bot", text: "Hi! How can I help you today?" }]);
   };
 
   return (
@@ -103,13 +74,21 @@ export default function ChatBot() {
               onClick={handleClose}
             />
           </div>
+
           <div className="chat-messages">
             {messages.map((msg, i) => (
               <div key={i} className={`msg ${msg.from}`}>
                 {msg.text}
               </div>
             ))}
+            {loading && (
+              <div className="msg bot">
+                <span className="spinner-border spinner-border-sm"></span>{" "}
+                Typing...
+              </div>
+            )}
           </div>
+
           <div className="chat-input">
             <input
               type="text"
@@ -117,8 +96,11 @@ export default function ChatBot() {
               placeholder="Type your question..."
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
+              disabled={loading}
             />
-            <button onClick={handleSend}>Send</button>
+            <button onClick={handleSend} disabled={loading}>
+              Send
+            </button>
           </div>
         </div>
       )}

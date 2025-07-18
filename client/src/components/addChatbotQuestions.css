@@ -1,0 +1,14 @@
+.chatbot-admin {
+  max-width: 900px;
+  margin: auto;
+}
+
+.chatbot-admin h2 {
+  font-weight: bold;
+  color: #0d6efd;
+}
+
+.chatbot-admin table th,
+.chatbot-admin table td {
+  vertical-align: middle;
+}

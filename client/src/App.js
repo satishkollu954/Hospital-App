@@ -31,6 +31,7 @@ import { useCookies } from "react-cookie";
 import { Emergency } from "./components/Emergency";
 import RescheduleAppointment from "./components/RescheduleAppointment";
 import ChatBot from "./components/chatbot";
+import ChatbotAdmin from "./components/addChatbotQuestions";
 
 function App() {
   const { t } = useTranslation();
@@ -288,6 +289,14 @@ function App() {
               element={
                 <ProtectRoute allowedRole="admin">
                   <AllQueries />
+                </ProtectRoute>
+              }
+            />
+            <Route
+              path="chatbot-questions"
+              element={
+                <ProtectRoute allowedRole="admin">
+                  <ChatbotAdmin />
                 </ProtectRoute>
               }
             />
