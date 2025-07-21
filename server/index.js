@@ -7,6 +7,7 @@ const userRoute = require("./Routers/user");
 const locationRoutes = require("./Routers/locationRoutes");
 const staffsRoutes = require("./Routers/staffs");
 const chatBotRoutes = require("./Routers/chatbot");
+const dialogflowWebhook = require("./Routers/dialogflowWebhook");
 
 app.use(cors());
 app.use(express.json({ limit: "20mb" }));
@@ -24,4 +25,6 @@ app.use("/api", userRoute);
 app.use("/api", chatBotRoutes);
 app.use("/admin", locationRoutes);
 app.use("/doctor", staffsRoutes);
+app.use("/api", dialogflowWebhook);
+
 app.use("/uploads", express.static("uploads"));
