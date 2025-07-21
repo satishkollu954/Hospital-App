@@ -11,6 +11,8 @@ export function DoctorProfile() {
   const [originalData, setOriginalData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingSave, setPendingSave] = useState(false);
   useEffect(() => {
     axios
       .get(`http://localhost:5000/admin/doctor/${decodedEmail}`)
@@ -67,15 +69,16 @@ export function DoctorProfile() {
     const becameUnavailable =
       originalData.Availability === true && docData.Availability === false;
 
-    // Optional confirmation
-    if (
-      becameUnavailable &&
-      !window.confirm(
-        "Turning yourself unavailable will cancel today's pending appointments " +
-          "and e‑mail patients to reschedule. Continue?"
-      )
-    )
+    if (becameUnavailable) {
+      setShowConfirmModal(true);
       return;
+    }
+
+    await submitProfileUpdate();
+  };
+
+  const submitProfileUpdate = async (e) => {
+    setPendingSave(true);
     const formData = new FormData();
     Object.entries(docData).forEach(([key, value]) => {
       if (key === "Languages" || key === "Education") {
@@ -85,6 +88,7 @@ export function DoctorProfile() {
       }
     });
     if (selectedFile) formData.append("image", selectedFile);
+
     try {
       const res = await axios.put(
         `http://localhost:5000/admin/updatedoctor/${decodedEmail}`,
@@ -92,7 +96,6 @@ export function DoctorProfile() {
         { headers: { "Content-Type": "multipart/form-data" } }
       );
       toast.success("Profile updated successfully");
-      // alert("Profile updated successfully");
       setIsEditing(false);
       setDocData(res.data.updatedDoctor);
       setOriginalData(res.data.updatedDoctor);
@@ -100,9 +103,12 @@ export function DoctorProfile() {
     } catch (error) {
       console.error("Error updating profile:", error);
       toast.error("Failed to update profile");
-      // alert("Failed to update profile");
+    } finally {
+      setPendingSave(false);
+      setShowConfirmModal(false);
     }
   };
+
   const handleCancel = () => {
     setDocData(originalData);
     setSelectedFile(null);
@@ -357,9 +363,16 @@ export function DoctorProfile() {
                   <button
                     className="btn btn-success me-2 mt-3"
                     onClick={handleSave}
-                    disabled={!hasChanges}
+                    disabled={!hasChanges || pendingSave}
                   >
-                    Save Changes
+                    {pendingSave ? (
+                      <>
+                        <span className="spinner-border spinner-border-sm me-2"></span>
+                        Saving...
+                      </>
+                    ) : (
+                      "Save Changes"
+                    )}
                   </button>
                   <button className="btn btn-secondary" onClick={handleCancel}>
                     Cancel
@@ -370,6 +383,51 @@ export function DoctorProfile() {
           </div>
         </div>
       </div>
+      {showConfirmModal && (
+        <div
+          className="modal fade show"
+          style={{ display: "block", backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirm Unavailability</h5>
+                <button
+                  className="btn-close"
+                  onClick={() => setShowConfirmModal(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                Turning yourself unavailable will cancel today's pending
+                appointments and send emails to patients to reschedule. Do you
+                want to continue?
+              </div>
+              <div className="modal-footer">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowConfirmModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn btn-danger mt-3"
+                  onClick={submitProfileUpdate}
+                  disabled={pendingSave}
+                >
+                  {pendingSave ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2"></span>
+                      Saving...
+                    </>
+                  ) : (
+                    "Yes, Save"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

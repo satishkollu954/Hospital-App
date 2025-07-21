@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import SlotSelector from "../components/SlotSelector";
 
 export default function RescheduleAppointment() {
   const { token } = useParams();
   const navigate = useNavigate();
-  //   const token = "d11d958f-554d-476a-a1f4-01f8f29e90ff";
-  console.log("RescheduleAppointment token:", token);
+
   const [appt, setAppt] = useState(null);
   const [slots, setSlots] = useState([]);
   const [when, setWhen] = useState({ date: "", time: "" });
   const [msg, setMsg] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false); // 🔄 Spinner state
+
   useEffect(() => {
     axios
       .get(`http://localhost:5000/api/reschedule/${token}`)
@@ -40,27 +41,34 @@ export default function RescheduleAppointment() {
       setMsg("Failed to load slots");
     }
   }
+
   async function submit(e) {
     e.preventDefault();
+    setIsSubmitting(true); // ⏳ Show spinner
     try {
       await axios.post(`http://localhost:5000/api/reschedule/${token}`, when);
-      toast.success("Appointment rescheduled!");
-      navigate("/");
+      toast.success("Appointment rescheduled successfully!");
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
     } catch (err) {
       if (err.response?.status === 409) {
         toast.error(err.response.data.message);
         setSlots(err.response.data.availableSlots || []);
         setWhen((p) => ({ ...p, time: "" }));
-        return;
+      } else {
+        toast.error(err.response?.data?.message || "Error");
       }
-      toast.error(err.response?.data?.message || "Error");
+    } finally {
+      setIsSubmitting(false); // ✅ Stop spinner
     }
   }
 
-  if (!appt) return null; // or spinner
+  if (!appt) return null;
 
   return (
     <div className="container mt-4">
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
       <h3>Reschedule your appointment with {appt.doctor}</h3>
 
       <form onSubmit={submit}>
@@ -87,8 +95,18 @@ export default function RescheduleAppointment() {
           </>
         )}
 
-        <button className="btn btn-primary mt-4" disabled={!when.time}>
-          Confirm
+        <button
+          className="btn btn-primary mt-4"
+          disabled={!when.time || isSubmitting}
+        >
+          {isSubmitting ? (
+            <>
+              <span className="spinner-border spinner-border-sm me-2"></span>
+              Rescheduling...
+            </>
+          ) : (
+            "Confirm"
+          )}
         </button>
       </form>
     </div>

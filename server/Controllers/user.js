@@ -21,6 +21,28 @@ const contactus = async (req, res) => {
     // Save to database
     await newContact.save();
 
+    await sendEmail(
+      email,
+      "Thank you for Contacting US – RaagviCare",
+      `<div style="
+    font-family: Arial, sans-serif;
+    background: url('https://cdn.pixabay.com/photo/2017/08/06/00/04/medical-2585039_1280.jpg') no-repeat center;
+    background-size: cover;
+    padding: 40px;
+    color: #ffffff;
+    text-shadow: 1px 1px 2px #000;
+    border-radius: 12px;
+  ">
+    <div style="background: rgba(0, 0, 0, 0.6); padding: 30px; border-radius: 10px; max-width: 600px; margin: auto;">
+      <h2>Hello ${fullName},</h2>
+      <p style="font-size: 16px;">
+        Thank you for submitting your query. We will get back to you shortly.
+      </p>
+    </div>
+  </div>`
+    );
+
+    console.log("✅ Contact form saved");
     res.status(201).json({ message: "Contact form submitted successfully." });
   } catch (error) {
     console.error("Error saving contact form:", error);
@@ -116,37 +138,36 @@ const appointment = async (req, res) => {
       email, // send to the patient's email
       "Appointment Confirmation – RaagviCare",
       `
-  <div style="
-    font-family: Arial, sans-serif;
-    background: url('https://cdn.pixabay.com/photo/2017/08/06/00/04/medical-2585039_1280.jpg') no-repeat center;
-    background-size: cover;
-    padding: 40px;
-    color: #ffffff;
-    text-shadow: 1px 1px 2px #000;
-    border-radius: 12px;
-  ">
-    <div style="background: rgba(0, 0, 0, 0.6); padding: 30px; border-radius: 10px; max-width: 600px; margin: auto;">
-      <h2>Hello ${fullName},</h2>
-      <p style="font-size: 16px;">
-        Thank you for scheduling your appointment with us! Below are your appointment details:
-      </p>
-      <ul style="font-size: 16px; line-height: 1.6; list-style: none; padding-left: 0;">
-        <li><strong>Doctor:</strong>  ${doctor}</li>
-        <li><strong>Date:</strong> ${new Date(
-          formattedDate
-        ).toDateString()}</li>
-        <li><strong>Slot Time:</strong> ${time}</li>
-        <li><strong>Status:</strong> Pending</li>
-      </ul>
-      <p style="font-size: 16px;">
-        Please arrive 10-15 minutes early and carry any necessary documents.
-        If you need assistance, our team is just a call away.
-      </p>
-      <p style="font-style: italic; font-size: 15px;">
-        We're here to care for you every step of the way.
-      </p>
-      <br/>
-      <p>Warm regards,<br/><strong>RaagviCare Team</strong></p>
+  <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
+    <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+      <img 
+        src="https://cdn.pixabay.com/photo/2016/03/31/20/11/doctor-1295581_1280.png" 
+        alt="Doctor" 
+        style="width: 100%; max-height: 300px; object-fit: cover;"
+      />
+      <div style="padding: 30px;">
+        <h2 style="color: #4fd1c5;">Dear ${a.fullName || "Patient"},</h2>
+        <p style="font-size: 16px; color: #333;">
+          Thank you for scheduling your appointment with us! Unfortunately, ${
+            doctor.Name
+          } is unavailable today due to an emergency.
+        </p>
+        <ul style="line-height: 1.8; font-size: 16px; color: #333; padding-left: 0; list-style: none;">
+          <li>Your slot at <strong>${
+            a.time
+          }</strong> needs to be re‑scheduled.</li>
+          <li>
+            <a href="${link}" style="color: #4fd1c5; text-decoration: underline;">Click here to pick a new time</a>
+            <span style="color: #888;">(link valid 24 h)</span>
+          </li>
+        </ul>
+        <p style="color: #333;">
+          Please arrive 10-15 minutes early and carry any necessary documents. If you need assistance, our team is just a call away.
+        </p>
+        <p style="font-style: italic; color: #555;">We're here to care for you every step of the way.</p>
+        <br />
+        <p style="color: #333;">Warm regards,<br/><strong>RaagviCare Team</strong></p>
+      </div>
     </div>
   </div>
   `

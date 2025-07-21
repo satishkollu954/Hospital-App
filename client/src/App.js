@@ -30,6 +30,8 @@ import i18n from "i18next";
 import { useCookies } from "react-cookie";
 import { Emergency } from "./components/Emergency";
 import RescheduleAppointment from "./components/RescheduleAppointment";
+import ChatBot from "./components/chatbot";
+import ChatbotAdmin from "./components/addChatbotQuestions";
 
 function App() {
   const { t } = useTranslation();
@@ -155,6 +157,23 @@ function App() {
                     {t("nav.bookEmergency")}{" "}
                     <span className="ms-2">&rarr;</span>
                   </Link>
+                )}
+                {cookies.role === "admin" && (
+                  <li className="nav-item">
+                    <Link to="/admin-dashboard" className="nav-link text-white">
+                      Admin Dashboard
+                    </Link>
+                  </li>
+                )}
+                {cookies.role === "doctor" && (
+                  <li className="nav-item">
+                    <Link
+                      to="/doctor-dashboard"
+                      className="nav-link text-white"
+                    >
+                      Doctor Dashboard
+                    </Link>
+                  </li>
                 )}
               </ul>
             </div>
@@ -290,6 +309,14 @@ function App() {
                 </ProtectRoute>
               }
             />
+            <Route
+              path="chatbot-questions"
+              element={
+                <ProtectRoute allowedRole="admin">
+                  <ChatbotAdmin />
+                </ProtectRoute>
+              }
+            />
 
             {/* unspecified route*/}
             <Route
@@ -308,6 +335,7 @@ function App() {
               }
             />
           </Routes>
+          <ChatBot />
         </main>
 
         {/* Footer */}

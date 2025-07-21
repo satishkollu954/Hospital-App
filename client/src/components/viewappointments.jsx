@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import ReactPaginate from "react-paginate";
 import { Link } from "react-router-dom";
 
 export function ViewAppointments() {
@@ -11,6 +12,9 @@ export function ViewAppointments() {
   const decodedEmail = decodeURIComponent(cookies.email);
   console.log("decodedEmail", decodedEmail);
 
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 6;
+
   useEffect(() => {
     if (!decodedEmail) return;
 
@@ -20,6 +24,7 @@ export function ViewAppointments() {
       )
       .then((res) => {
         setAppointments(res.data);
+        setCurrentPage(0);
         setLoading(false);
       })
       .catch((err) => {
@@ -36,8 +41,15 @@ export function ViewAppointments() {
     return <div className="text-center mt-4">No appointments found.</div>;
   }
 
+  const offset = currentPage * itemsPerPage;
+  const currentAppointments = appointments.slice(offset, offset + itemsPerPage);
+
+  const handlePageClick = ({ selected }) => {
+    setCurrentPage(selected);
+  };
+
   return (
-    <div className="container mt-4">
+    <div className="container mt-2">
       <h3 className="mb-3">
         {" "}
         <Link
@@ -67,51 +79,73 @@ export function ViewAppointments() {
             </tr>
           </thead>
           <tbody>
-            {appointments.map((appt, index) => (
-              <tr key={appt._id}>
-                <td>{index + 1}</td>
-                <td>{appt.fullName}</td>
-                <td
-                  style={{
-                    whiteSpace: "normal",
-                    wordBreak: "break-word",
-                    minWidth: "200px",
-                  }}
-                >
-                  {appt.email}
-                </td>
-                <td>{appt.phone}</td>
-                <td
-                  style={{
-                    whiteSpace: "normal",
-                    wordBreak: "break-word",
-                    minWidth: "100px",
-                  }}
-                >
-                  {new Date(appt.date)
-                    .toLocaleDateString("en-GB")
-                    .replace(/\//g, "-")}
-                </td>
-                <td>{appt.time}</td>
-                <td
-                  style={{
-                    whiteSpace: "normal",
-                    wordBreak: "break-word",
-                    minWidth: "200px",
-                  }}
-                >
-                  {appt.reason}
-                </td>
-                <td>{appt.disease}</td>
-                <td>{appt.status}</td>
-                <td>
-                  {appt.state}, {appt.city}
+            {currentAppointments.length > 0 ? (
+              currentAppointments.map((appt, index) => (
+                <tr key={appt._id}>
+                  <td>{index + 1}</td>
+                  <td>{appt.fullName}</td>
+                  <td
+                    style={{
+                      whiteSpace: "normal",
+                      wordBreak: "break-word",
+                      minWidth: "200px",
+                    }}
+                  >
+                    {appt.email}
+                  </td>
+                  <td>{appt.phone}</td>
+                  <td
+                    style={{
+                      whiteSpace: "normal",
+                      wordBreak: "break-word",
+                      minWidth: "100px",
+                    }}
+                  >
+                    {new Date(appt.date)
+                      .toLocaleDateString("en-GB")
+                      .replace(/\//g, "-")}
+                  </td>
+                  <td>{appt.time}</td>
+                  <td
+                    style={{
+                      whiteSpace: "normal",
+                      wordBreak: "break-word",
+                      minWidth: "200px",
+                    }}
+                  >
+                    {appt.reason}
+                  </td>
+                  <td>{appt.disease}</td>
+                  <td>{appt.status}</td>
+                  <td>
+                    {appt.state}, {appt.city}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="10" className="text-center">
+                  No appointments found.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
+      <ReactPaginate
+        previousLabel={"← Previous"}
+        nextLabel={"Next →"}
+        pageCount={Math.ceil(appointments.length / itemsPerPage)}
+        onPageChange={handlePageClick}
+        containerClassName={"pagination justify-content-center mt-4"}
+        pageClassName={"page-item"}
+        pageLinkClassName={"page-link"}
+        previousClassName={"page-item"}
+        previousLinkClassName={"page-link"}
+        nextClassName={"page-item"}
+        nextLinkClassName={"page-link"}
+        activeClassName={"active"}
+      />
     </div>
   );
 }

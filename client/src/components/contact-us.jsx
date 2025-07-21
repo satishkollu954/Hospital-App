@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./contact-us.css";
+import { Spinner } from "react-bootstrap";
 
 export function ContactUs() {
   const { t, i18n } = useTranslation();
@@ -18,6 +19,7 @@ export function ContactUs() {
 
   const [faqList, setFaqList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isSending, setIsSending] = useState(false);
   const faqsPerPage = 5;
 
   /* ───────── Fetch FAQs ───────── */
@@ -57,6 +59,8 @@ export function ContactUs() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (isSending) return; // Prevent multiple submissions
+    setIsSending(true);
     axios
       .post("http://localhost:5000/api/contactus", formData)
       .then(() => {
@@ -66,6 +70,10 @@ export function ContactUs() {
       .catch((err) => {
         toast.error(t("contact.toastError"));
         console.error(err);
+      })
+      .finally(() => {
+        setIsSending(false);
+        setCurrentPage(1); // Reset to first page after submission
       });
   };
 
@@ -173,8 +181,20 @@ export function ContactUs() {
 
           {/* Submit */}
           <div className="d-grid">
-            <button type="submit" className="btn btn-primary btn-lg">
+            <button
+              type="submit"
+              className="btn btn-primary btn-lg"
+              disabled={isSending}
+            >
               <i className="bi bi-send-fill me-2"></i>
+              {isSending && (
+                <Spinner
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  className="me-1"
+                />
+              )}
               {t("contact.send")}
             </button>
           </div>

@@ -1,0 +1,42 @@
+/* Limit table container width and add padding for mobile */
+.chatbot-admin {
+  max-width: 100%;
+  padding: 10px;
+  margin: auto;
+}
+
+/* Make table cells wrap text */
+.chatbot-table th,
+.chatbot-table td {
+  white-space: normal !important;
+  word-wrap: break-word;
+  vertical-align: middle;
+}
+
+/* Ensure table takes full width and doesn't overflow */
+.chatbot-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* Style input/button responsiveness */
+@media (max-width: 768px) {
+  .chatbot-admin table th,
+  .chatbot-admin table td {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .chatbot-admin .btn {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+}
+
+
+.chatbot-table th:first-child,
+.chatbot-table td:first-child {
+  width: 50px;
+  text-align: center;
+  white-space: nowrap;
+}

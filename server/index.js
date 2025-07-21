@@ -6,7 +6,8 @@ const app = express();
 const userRoute = require("./Routers/user");
 const locationRoutes = require("./Routers/locationRoutes");
 const staffsRoutes = require("./Routers/staffs");
-const contentRoutes = require("./Routers/content");
+const chatBotRoutes = require("./Routers/chatbot");
+const dialogflowWebhook = require("./Routers/dialogflowWebhook");
 
 app.use(cors());
 app.use(express.json({ limit: "20mb" }));
@@ -21,7 +22,9 @@ app.listen(5000, () => {
 //Connect to MongoDB
 connectToDatabase("mongodb://localhost:27017/Hospital-App");
 app.use("/api", userRoute);
+app.use("/api", chatBotRoutes);
 app.use("/admin", locationRoutes);
 app.use("/doctor", staffsRoutes);
-app.use("/content", contentRoutes);
+app.use("/api", dialogflowWebhook);
+
 app.use("/uploads", express.static("uploads"));
